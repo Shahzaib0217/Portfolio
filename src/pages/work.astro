@@ -1,0 +1,93 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const projects = [
+  {
+    name: 'Simplora.ai',
+    description: 'AI-powered meeting management platform. Generates pre-meeting briefs, AI summaries, and extracts action items automatically.',
+    tags: ['Next.js', 'Python', 'OpenAI', 'Stripe'],
+    url: 'https://simplora.ai',
+    status: 'live',
+  },
+  {
+    name: 'DreamdeskAI',
+    description: 'AI platform for the hospitality industry. RAG-powered knowledge base, AI concierge, and WhatsApp integration for hotels.',
+    tags: ['FastAPI', 'LangChain', 'Pinecone', 'GCP', 'WhatsApp'],
+    url: null,
+    status: 'building',
+  },
+  {
+    name: 'Baseera Labs',
+    description: 'Service-based software company focused on AI-first development, product engineering, and consulting. Founded 2024.',
+    tags: ['AI', 'Product Engineering', 'Consulting'],
+    url: null,
+    status: 'active',
+  },
+  {
+    name: 'AI Research — Smart Contracts',
+    description: 'First-author research on LLM-assisted property generation for Solidity smart contracts. Intersection of AI and software engineering.',
+    tags: ['LLM', 'Solidity', 'AI4SE', 'Research'],
+    url: null,
+    status: 'published',
+  },
+];
+
+const statusStyles: Record<string, string> = {
+  live: 'bg-green-50 text-green-700',
+  building: 'bg-amber-50 text-amber-700',
+  active: 'bg-blue-50 text-blue-700',
+  published: 'bg-purple-50 text-purple-700',
+};
+---
+
+<BaseLayout
+  title="Work — Shahzaib"
+  description="Projects and products built by Shahzaib — AI platforms, developer tools, and research."
+>
+  <div class="pt-12 fade-in">
+    <h1 class="text-3xl mb-2 leading-tight" style="font-family: var(--font-serif)">
+      Work
+    </h1>
+    <p class="text-[var(--color-muted)] mb-10">
+      Things I've built, shipped, and researched.
+    </p>
+
+    <div class="flex flex-col gap-6">
+      {projects.map((project, i) => (
+        <article
+          class={`border border-[var(--color-border)] rounded-xl p-6 hover:border-[#d0cdc7] transition-colors fade-in fade-in-delay-${Math.min(i + 1, 4)}`}
+        >
+          <div class="flex items-start justify-between gap-4 mb-3">
+            <div class="flex items-center gap-3">
+              <h2 class="text-lg font-medium">{project.name}</h2>
+              <span class={`text-xs px-2 py-0.5 rounded-full font-medium ${statusStyles[project.status]}`}>
+                {project.status}
+              </span>
+            </div>
+            {project.url && (
+              <a
+                href={project.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-sm text-[var(--color-muted)] hover:text-[var(--color-ink)] transition-colors flex-shrink-0"
+                aria-label={`Visit ${project.name}`}
+              >
+                ↗
+              </a>
+            )}
+          </div>
+          <p class="text-[var(--color-muted)] text-sm leading-relaxed mb-4">
+            {project.description}
+          </p>
+          <div class="flex flex-wrap gap-2">
+            {project.tags.map(tag => (
+              <span class="text-xs bg-[var(--color-border)] text-[var(--color-muted)] px-2.5 py-1 rounded-full">
+                {tag}
+              </span>
+            ))}
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+</BaseLayout>

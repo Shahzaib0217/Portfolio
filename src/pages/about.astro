@@ -1,0 +1,93 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="About — Shahzaib"
+  description="Shahzaib is a software engineer and entrepreneur based in Pakistan, building AI-first software products."
+>
+  <div class="pt-12 fade-in">
+    <h1 class="text-3xl mb-8 leading-tight" style="font-family: var(--font-serif)">
+      About
+    </h1>
+
+    <div class="flex flex-col gap-8 text-[#374151] leading-relaxed">
+      <div class="fade-in fade-in-delay-1">
+        <p class="mb-4">
+          I'm Shahzaib — a software engineer and entrepreneur based in Pakistan.
+          I build at the intersection of AI and software, with a focus on creating
+          products that are genuinely useful.
+        </p>
+        <p>
+          Currently, I'm running{' '}
+          <a
+            href="https://baseera.io"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-[var(--color-ink)] underline underline-offset-2 hover:opacity-70 transition-opacity"
+          >
+            Baseera Labs
+          </a>{' '}
+          — an AI-first software company focused on product engineering and consulting.
+          We build intelligent software that solves real problems.
+        </p>
+      </div>
+
+      <div class="fade-in fade-in-delay-2">
+        <h2 class="text-xl mb-3 font-medium">What I'm building</h2>
+        <p class="mb-3">
+          <strong class="font-medium text-[var(--color-ink)]">Simplora.ai</strong>{' '}
+          — AI meeting management. Pre-meeting briefs, real-time summaries, automatic
+          action item extraction. Helping teams run meetings that actually lead somewhere.
+        </p>
+        <p>
+          <strong class="font-medium text-[var(--color-ink)]">DreamdeskAI</strong>{' '}
+          — AI for hospitality. A RAG-powered knowledge platform with an AI concierge
+          for hotels, integrated directly into WhatsApp.
+        </p>
+      </div>
+
+      <div class="fade-in fade-in-delay-3">
+        <h2 class="text-xl mb-3 font-medium">Background</h2>
+        <p class="mb-3">
+          I studied Computer Science at NUCES (FAST), graduating in 2024. During
+          my studies I published first-author research on LLM-assisted property
+          generation for Solidity smart contracts — exploring how AI can strengthen
+          software verification.
+        </p>
+        <p>
+          I started Baseera Labs the same year, running it with two partners:
+          Aqib on lead generation and Ali on sales and delivery.
+        </p>
+      </div>
+
+      <div class="fade-in fade-in-delay-4">
+        <h2 class="text-xl mb-3 font-medium">Stack & interests</h2>
+        <p class="mb-3">
+          I work across the full stack — Python (FastAPI, LangChain, LangGraph),
+          Node.js / TypeScript, Next.js, React, Docker, GCP, PostgreSQL, and
+          various vector databases. Most of my work lives at the AI layer.
+        </p>
+        <p>
+          Outside of building, I'm interested in AI/ML research, entrepreneurship,
+          and what the future of software engineering looks like when LLMs are
+          first-class collaborators.
+        </p>
+      </div>
+    </div>
+
+    <!-- Contact -->
+    <div class="mt-12 pt-8 border-t border-[var(--color-border)] fade-in fade-in-delay-4">
+      <h2 class="text-xl mb-3 font-medium">Get in touch</h2>
+      <p class="text-[var(--color-muted)] mb-4">
+        Want to collaborate, discuss AI, or just say hi?
+      </p>
+      <a
+        href="mailto:hello@shahzaib.ai"
+        class="inline-flex items-center gap-2 text-[var(--color-ink)] underline underline-offset-2 hover:opacity-70 transition-opacity font-medium"
+      >
+        hello@shahzaib.ai
+      </a>
+    </div>
+  </div>
+</BaseLayout>

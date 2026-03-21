@@ -1,0 +1,53 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Chat from '../components/Chat';
+---
+
+<BaseLayout>
+  <div class="h-full flex flex-col overflow-hidden">
+
+    <!-- Hero -->
+    <section class="pt-10 pb-8 fade-in flex-shrink-0">
+      <div class="flex items-start gap-5">
+        <img
+          src="/shahzaib.png"
+          alt="Shahzaib"
+          width="80"
+          height="80"
+          class="rounded-full object-cover flex-shrink-0 border border-[var(--color-border)]"
+          onerror="this.style.display='none'"
+        />
+        <div>
+          <h1
+            class="text-3xl mb-2 leading-tight"
+            style="font-family: var(--font-serif)"
+          >
+            Hey, I'm Shahzaib Khan
+          </h1>
+          <p class="text-[var(--color-muted)] text-base leading-relaxed max-w-lg">
+            Software engineer and entrepreneur building at the intersection of AI
+            and software. CEO at{' '}
+            <a
+              href="https://baseera.io"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-[var(--color-ink)] underline underline-offset-2 hover:opacity-70 transition-opacity"
+            >
+              Baseera Labs
+            </a>{' '}
+            — crafting intelligent software products.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Divider -->
+    <div class="border-t border-[var(--color-border)] fade-in fade-in-delay-2 flex-shrink-0"></div>
+
+    <!-- AI Chat — fills remaining height, messages scroll inside -->
+    <section class="pt-6 pb-6 fade-in fade-in-delay-3 flex-grow overflow-hidden min-h-0">
+      <Chat client:load />
+    </section>
+
+  </div>
+</BaseLayout>
