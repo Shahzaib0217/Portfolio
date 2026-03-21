@@ -22,20 +22,11 @@ import Chat from '../components/Chat';
             class="text-3xl mb-2 leading-tight"
             style="font-family: var(--font-serif)"
           >
-            Hey, I'm Shahzaib Khan
+            <span id="greeting" class="inline-block">Salam</span>, I'm Shahzaib Khan
           </h1>
           <p class="text-[var(--color-muted)] text-base leading-relaxed max-w-lg">
             Software engineer and entrepreneur building at the intersection of AI
-            and software. CEO at{' '}
-            <a
-              href="https://baseera.io"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="text-[var(--color-ink)] underline underline-offset-2 hover:opacity-70 transition-opacity"
-            >
-              Baseera Labs
-            </a>{' '}
-            — crafting intelligent software products.
+            and software. Feel free to interview my digital clone :)
           </p>
         </div>
       </div>
@@ -51,3 +42,37 @@ import Chat from '../components/Chat';
 
   </div>
 </BaseLayout>
+
+<style>
+  #greeting {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+  #greeting.fade-out {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  #greeting.fade-in-word {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+</style>
+
+<script>
+  const greetings = ['Salam', 'Hey', 'Hola', 'Bonjour', '你好', 'Привет', 'नमस्ते'];
+  let index = 0; // start at 'Salam' to match initial HTML
+  const el = document.getElementById('greeting');
+
+  setInterval(() => {
+    index = (index + 1) % greetings.length;
+
+    el?.classList.add('fade-out');
+    setTimeout(() => {
+      if (el) el.textContent = greetings[index];
+      el?.classList.remove('fade-out');
+      el?.classList.add('fade-in-word');
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => el?.classList.remove('fade-in-word'));
+      });
+    }, 300);
+  }, 2000);
+</script>

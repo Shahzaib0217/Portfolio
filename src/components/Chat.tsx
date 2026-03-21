@@ -104,15 +104,15 @@ export default function Chat() {
   }
 
   return (
-    <div className="w-full h-full flex flex-col">
+    <div className={`w-full h-full flex flex-col ${messages.length === 0 ? 'justify-center' : ''}`}>
       {/* Header */}
       <div className="flex items-center gap-3 mb-5 flex-shrink-0">
-        <div className="w-8 h-8 rounded-full bg-[#1a1a1a] flex items-center justify-center flex-shrink-0">
-          <span className="text-white text-xs font-medium">S</span>
+        <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 bg-[var(--color-ink)]">
+          <span className="text-xs font-medium" style={{ color: 'var(--color-cream)' }}>S</span>
         </div>
         <div>
           <p className="text-sm font-medium">Chat with my digital clone</p>
-          <p className="text-xs text-[#6b7280]">Ask me anything about my work, stack, or journey</p>
+          <p className="text-xs text-[#6b7280]">Ask me anything about my work, stack, journey or interests.</p>
         </div>
       </div>
 

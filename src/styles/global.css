@@ -11,6 +11,13 @@
   --color-border: #e5e2dc;
 }
 
+html.dark {
+  --color-cream: #1c1b1a;
+  --color-ink: #ede9e3;
+  --color-muted: #8b8986;
+  --color-border: #2e2c2a;
+}
+
 *, *::before, *::after {
   box-sizing: border-box;
 }

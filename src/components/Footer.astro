@@ -3,9 +3,65 @@ const year = new Date().getFullYear();
 ---
 
 <footer class="py-4 px-6 max-w-3xl mx-auto w-full border-t border-[var(--color-border)]">
-  <div class="pt-8">
-    <p class="text-sm text-[var(--color-muted)]">
-      © {year} Shahzaib. Built with Astro.
-    </p>
+  <div class="pt-5 flex items-center justify-between">
+
+    <!-- Email — primary reachout -->
+    <a
+      href="mailto:hello@shahzaib.ai"
+      class="text-sm font-medium text-[var(--color-ink)] hover:opacity-60 transition-opacity"
+    >
+      hello@shahzaib.ai
+    </a>
+
+    <div class="flex items-center gap-4">
+      <!-- Copyright -->
+      <p class="text-xs text-[var(--color-muted)]">© {year} Shahzaib.</p>
+
+      <!-- Dark mode toggle -->
+      <button
+        id="theme-toggle"
+        aria-label="Toggle dark mode"
+        class="w-7 h-7 flex items-center justify-center rounded-lg text-[var(--color-muted)] hover:text-[var(--color-ink)] transition-colors"
+      >
+        <!-- Moon (shown in light mode) -->
+        <svg id="icon-moon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+        <!-- Sun (shown in dark mode) -->
+        <svg id="icon-sun" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+          <circle cx="12" cy="12" r="5"/>
+          <line x1="12" y1="1" x2="12" y2="3"/>
+          <line x1="12" y1="21" x2="12" y2="23"/>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+          <line x1="1" y1="12" x2="3" y2="12"/>
+          <line x1="21" y1="12" x2="23" y2="12"/>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+        </svg>
+      </button>
+    </div>
+
   </div>
 </footer>
+
+<script>
+  const html = document.documentElement;
+  const toggle = document.getElementById('theme-toggle');
+  const moon = document.getElementById('icon-moon');
+  const sun = document.getElementById('icon-sun');
+
+  function syncIcons() {
+    const dark = html.classList.contains('dark');
+    moon!.style.display = dark ? 'none' : 'block';
+    sun!.style.display  = dark ? 'block' : 'none';
+  }
+
+  syncIcons();
+
+  toggle?.addEventListener('click', () => {
+    const dark = html.classList.toggle('dark');
+    localStorage.setItem('theme', dark ? 'dark' : 'light');
+    syncIcons();
+  });
+</script>
