@@ -154,7 +154,7 @@ export default function Chat() {
             <button
               key={prompt}
               onClick={() => sendMessage(prompt)}
-              className="text-xs px-3 py-1.5 rounded-full border border-[#e5e2dc] text-[#6b7280] hover:border-[#1a1a1a] hover:text-[#1a1a1a] transition-colors bg-white"
+              className="text-xs px-3 py-2 rounded-full border border-[#e5e2dc] text-[#6b7280] hover:border-[#1a1a1a] hover:text-[#1a1a1a] transition-colors bg-white"
             >
               {prompt}
             </button>
@@ -187,7 +187,7 @@ export default function Chat() {
             </svg>
           </button>
         </div>
-        <p className="text-xs text-[#9ca3af] mt-2 px-1">Press Enter to send</p>
+        <p className="hidden sm:block text-xs text-[#9ca3af] mt-2 px-1">Press Enter to send</p>
       </div>
     </div>
   );

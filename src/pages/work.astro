@@ -98,18 +98,18 @@ const typeStyles: Record<string, string> = {
   title="Work — Shahzaib"
   description="Work experience and projects by Shahzaib — AI engineer building at the intersection of AI and software."
 >
-  <div class="pt-12 fade-in">
-    <h1 class="text-3xl mb-2 leading-tight" style="font-family: var(--font-serif)">
+  <div class="pt-8 sm:pt-12 fade-in">
+    <h1 class="text-2xl sm:text-3xl mb-2 leading-tight" style="font-family: var(--font-serif)">
       Work
     </h1>
-    <p class="text-[var(--color-muted)] mb-10">
+    <p class="text-[var(--color-muted)] mb-6 sm:mb-10">
       Roles and products across AI engineering, founding teams, and product leadership.
     </p>
 
     <div class="flex flex-col gap-5 pb-12">
       {experience.map((job, i) => (
         <article
-          class={`border border-[var(--color-border)] rounded-xl p-6 hover:border-[#d0cdc7] transition-colors fade-in fade-in-delay-${Math.min(i + 1, 4)}`}
+          class={`border border-[var(--color-border)] rounded-xl p-4 sm:p-6 hover:border-[#d0cdc7] transition-colors fade-in fade-in-delay-${Math.min(i + 1, 4)}`}
         >
           <div class="flex items-start justify-between gap-4 mb-1">
             <div class="flex-1 min-w-0">
