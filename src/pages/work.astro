@@ -1,86 +1,158 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 
-const projects = [
+const experience = [
   {
-    name: 'Simplora.ai',
-    description: 'AI-powered meeting management platform. Generates pre-meeting briefs, AI summaries, and extracts action items automatically.',
-    tags: ['Next.js', 'Python', 'OpenAI', 'Stripe'],
+    company: 'DreamDesk AI',
+    role: 'AI Product Engineer & Team Lead',
+    type: 'Full-time',
+    period: 'Dec 2025 – Present',
+    location: 'Remote · UK',
+    description: [
+      'Leading development of voice, email, and web chat agents that automate end-to-end hotel workflows and integrate with PMS platforms.',
+      'Built FastAPI backend and Next.js frontend with multi-agentic pipelines via LangGraph.',
+    ],
+    tags: ['FastAPI', 'Next.js', 'TypeScript', 'GCP', 'Cloud Run', 'CI/CD', 'Cloudflare', 'Voice AI', 'Twilio', 'Meta API', 'Pydantic AI'],
+    url: 'http://dreamdeskai.com/',
+    current: true,
+  },
+  {
+    company: 'Simplora AI',
+    role: 'Full Stack AI Engineer',
+    type: 'Part-time',
+    period: 'Aug 2025 – Present',
+    location: 'Remote · USA',
+    description: [
+      'Built Node.js backend and Next.js frontend with multi-agentic workflows; integrated MCP servers connecting agents to CRMs, ClickUp, and Notion.',
+      'Worked with STT services like AssemblyAI and Deepgram for real-time meeting transcription.',
+    ],
+    tags: ['Node.js', 'React.js', 'Docker', 'LangChain', 'MCP', 'Digital Ocean', 'Recall AI', 'Pinecone', 'Redis'],
     url: 'https://simplora.ai',
-    status: 'live',
+    current: true,
   },
   {
-    name: 'DreamdeskAI',
-    description: 'AI platform for the hospitality industry. RAG-powered knowledge base, AI concierge, and WhatsApp integration for hotels.',
-    tags: ['FastAPI', 'LangChain', 'Pinecone', 'GCP', 'WhatsApp'],
-    url: null,
-    status: 'building',
+    company: 'Reconsider AI',
+    role: 'Full-Stack AI Engineer',
+    type: 'Contract',
+    period: 'Nov 2025 – Dec 2025',
+    location: 'Remote · Estonia',
+    description: [
+      'Short-term contract building AI-powered full-stack features.',
+    ],
+    tags: ['FastAPI', 'Python', 'Next.js', 'Gemini API'],
+    url: 'https://www.reconsider.ai/',
+    current: false,
   },
   {
-    name: 'Baseera Labs',
-    description: 'Service-based software company focused on AI-first development, product engineering, and consulting. Founded 2024.',
-    tags: ['AI', 'Product Engineering', 'Consulting'],
-    url: null,
-    status: 'active',
+    company: 'AI Governance Sandbox',
+    role: 'Full-Stack AI Engineer',
+    type: 'Full-time',
+    period: 'Mar 2025 – Nov 2025',
+    location: 'Remote · USA',
+    description: [
+      'Founding engineer building a multi-agentic system for AI governance, compliance, and risk evaluation, covering EU AI Act and US state AI regulations.',
+      'Integrated tools like MIT AI Risk Repo, IBM AI Risk Atlas Nexus, and Trusted AI\'s ART; deployed on EC2 with Dockerized microservices.',
+    ],
+    tags: ['LangGraph', 'OpenAI Agents SDK', 'FastAPI', 'Next.js', 'Docker', 'AWS EC2', 'AWS S3'],
+    url: 'https://aigovsandbox.com/',
+    current: false,
   },
   {
-    name: 'AI Research — Smart Contracts',
-    description: 'First-author research on LLM-assisted property generation for Solidity smart contracts. Intersection of AI and software engineering.',
-    tags: ['LLM', 'Solidity', 'AI4SE', 'Research'],
+    company: 'Foomotion LLC',
+    role: 'Full-Stack AI Engineer',
+    type: 'Full-time',
+    period: 'Nov 2024 – Mar 2025',
+    location: 'Lahore · On-site',
+    description: [
+      'Built a scalable RAG pipeline for Pearson Labs (YC-funded), document processing with LangChain and Llama Index, multi-tenancy in Pinecone, and query expansion for efficient retrieval.',
+      'Integrated with FastAPI and Next.js; also contributed to a Rails + React.js project with RSpec test coverage.',
+    ],
+    tags: ['LangChain', 'Llama Index', 'Pinecone', 'FastAPI', 'Next.js', 'AWS S3', 'AWS EC2', 'ElevenLabs', 'n8n'],
+    url: 'https://www.foomotion.io/',
+    current: false,
+  },
+  {
+    company: 'Cyber Evangelists',
+    role: 'AI Developer',
+    type: 'Full-time',
+    period: 'Jun 2024 – Nov 2024',
+    location: 'Lahore · On-site',
+    description: [
+      'Built a real-time RAG voice calling agent with STT, TTS, and voice cloning using Node.js and LiveKit.',
+      'Developed the MVP for an Attack Surface Management tool using FastAPI microservices and gRPC. Dockerized, backed by PostgreSQL and Redis.',
+    ],
+    tags: ['Node.js', 'FastAPI', 'gRPC', 'Docker', 'LangChain', 'PostgreSQL', 'Redis'],
     url: null,
-    status: 'published',
+    current: false,
   },
 ];
 
-const statusStyles: Record<string, string> = {
-  live: 'bg-green-50 text-green-700',
-  building: 'bg-amber-50 text-amber-700',
-  active: 'bg-blue-50 text-blue-700',
-  published: 'bg-purple-50 text-purple-700',
+const typeStyles: Record<string, string> = {
+  'Full-time': 'bg-[var(--color-border)] text-[var(--color-muted)]',
+  'Part-time': 'bg-[var(--color-border)] text-[var(--color-muted)]',
+  'Contract': 'bg-[var(--color-border)] text-[var(--color-muted)]',
 };
 ---
 
 <BaseLayout
   title="Work — Shahzaib"
-  description="Projects and products built by Shahzaib — AI platforms, developer tools, and research."
+  description="Work experience and projects by Shahzaib — AI engineer building at the intersection of AI and software."
 >
   <div class="pt-12 fade-in">
     <h1 class="text-3xl mb-2 leading-tight" style="font-family: var(--font-serif)">
       Work
     </h1>
     <p class="text-[var(--color-muted)] mb-10">
-      Things I've built, shipped, and researched.
+      Roles and products across AI engineering, founding teams, and product leadership.
     </p>
 
-    <div class="flex flex-col gap-6">
-      {projects.map((project, i) => (
+    <div class="flex flex-col gap-5 pb-12">
+      {experience.map((job, i) => (
         <article
           class={`border border-[var(--color-border)] rounded-xl p-6 hover:border-[#d0cdc7] transition-colors fade-in fade-in-delay-${Math.min(i + 1, 4)}`}
         >
-          <div class="flex items-start justify-between gap-4 mb-3">
-            <div class="flex items-center gap-3">
-              <h2 class="text-lg font-medium">{project.name}</h2>
-              <span class={`text-xs px-2 py-0.5 rounded-full font-medium ${statusStyles[project.status]}`}>
-                {project.status}
-              </span>
+          <div class="flex items-start justify-between gap-4 mb-1">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 flex-wrap mb-0.5">
+                <h2 class="text-base font-medium">{job.role}</h2>
+                <span class={`text-xs px-2 py-0.5 rounded-full font-medium flex-shrink-0 ${typeStyles[job.type]}`}>
+                  {job.type}
+                </span>
+                {job.current && (
+                  <span class="text-xs px-2 py-0.5 rounded-full font-medium bg-[var(--color-border)] text-[var(--color-muted)] flex-shrink-0">
+                    current
+                  </span>
+                )}
+              </div>
+              <div class="flex items-center gap-2 text-sm text-[var(--color-muted)]">
+                <span class="font-medium text-[var(--color-ink)]">{job.company}</span>
+                <span>·</span>
+                <span>{job.period}</span>
+                <span>·</span>
+                <span>{job.location}</span>
+              </div>
             </div>
-            {project.url && (
+            {job.url && (
               <a
-                href={project.url}
+                href={job.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                class="text-sm text-[var(--color-muted)] hover:text-[var(--color-ink)] transition-colors flex-shrink-0"
-                aria-label={`Visit ${project.name}`}
+                class="text-sm text-[var(--color-muted)] hover:text-[var(--color-ink)] transition-colors flex-shrink-0 mt-1"
+                aria-label={`Visit ${job.company}`}
               >
                 ↗
               </a>
             )}
           </div>
-          <p class="text-[var(--color-muted)] text-sm leading-relaxed mb-4">
-            {project.description}
-          </p>
+
+          <ul class="text-[var(--color-muted)] text-sm leading-relaxed mt-3 mb-4 list-disc list-inside space-y-1">
+            {job.description.map((point: string) => (
+              <li>{point}</li>
+            ))}
+          </ul>
+
           <div class="flex flex-wrap gap-2">
-            {project.tags.map(tag => (
+            {job.tags.map(tag => (
               <span class="text-xs bg-[var(--color-border)] text-[var(--color-muted)] px-2.5 py-1 rounded-full">
                 {tag}
               </span>

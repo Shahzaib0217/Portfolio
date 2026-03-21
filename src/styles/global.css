@@ -55,15 +55,15 @@ body {
 .fade-in-delay-3 { animation-delay: 0.3s; opacity: 0; }
 .fade-in-delay-4 { animation-delay: 0.4s; opacity: 0; }
 
-/* Thin stylish scrollbar — whole page */
-html {
+/* Thin stylish scrollbar — apply to all scrollable elements */
+* {
   scrollbar-width: thin;
   scrollbar-color: #d0cdc7 transparent;
 }
 
 ::-webkit-scrollbar {
-  width: 4px;
-  height: 4px;
+  width: 3px;
+  height: 3px;
 }
 
 ::-webkit-scrollbar-track {

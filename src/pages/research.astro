@@ -1,0 +1,82 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const papers = [
+  {
+    title: 'LLM-assisted High-Quality Property Generation for Solidity Smart Contracts',
+    venue: 'Under review at STVR · Collaborated with Dr. Hassan (DFKI Bremen) & Dr. Jalil (UAEU)',
+    year: '2024',
+    description: [
+      'First-author paper proposing an LLM-assisted pipeline to generate high-quality test invariants for property-based testing of Solidity smart contracts.',
+      'Built an intelligent agent to automatically resolve compilation errors in LLM-generated properties.',
+      'Evaluated prompt engineering techniques and fine-tuned hyperparameters to reduce hallucinations.',
+      'Benchmarked via mutation testing, LLM-assisted approach achieved a 25.99% mutation score vs 31.75% manual, demonstrating meaningful reduction in human effort.',
+    ],
+    tags: ['LLM', 'Solidity', 'Property-based Testing', 'Mutation Testing', 'LangChain', 'Azure ML', 'AI4SE'],
+    url: null,
+    status: 'under review',
+  },
+];
+
+const statusStyles: Record<string, string> = {
+  published: 'bg-[var(--color-border)] text-[var(--color-muted)]',
+  preprint: 'bg-[var(--color-border)] text-[var(--color-muted)]',
+  ongoing: 'bg-[var(--color-border)] text-[var(--color-muted)]',
+  'under review': 'bg-[var(--color-border)] text-[var(--color-muted)]',
+};
+---
+
+<BaseLayout
+  title="Research — Shahzaib"
+  description="Academic research by Shahzaib — AI for software engineering, smart contracts, and LLMs."
+>
+  <div class="pt-12 fade-in">
+    <h1 class="text-3xl mb-2 leading-tight" style="font-family: var(--font-serif)">
+      Research
+    </h1>
+    <p class="text-[var(--color-muted)] mb-10">
+      Papers and investigations at the intersection of AI and software engineering.
+    </p>
+
+    <div class="flex flex-col gap-6">
+      {papers.map((paper, i) => (
+        <article
+          class={`border border-[var(--color-border)] rounded-xl p-6 hover:border-[#d0cdc7] transition-colors fade-in fade-in-delay-${Math.min(i + 1, 4)}`}
+        >
+          <div class="flex items-start justify-between gap-4 mb-1">
+            <div class="flex items-start gap-3 flex-col sm:flex-row sm:items-center">
+              <h2 class="text-lg font-medium leading-snug">{paper.title}</h2>
+              <span class={`text-xs px-2 py-0.5 rounded-full font-medium flex-shrink-0 ${statusStyles[paper.status]}`}>
+                {paper.status}
+              </span>
+            </div>
+            {paper.url && (
+              <a
+                href={paper.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-sm text-[var(--color-muted)] hover:text-[var(--color-ink)] transition-colors flex-shrink-0"
+                aria-label={`Read ${paper.title}`}
+              >
+                ↗
+              </a>
+            )}
+          </div>
+          <p class="text-xs text-[var(--color-muted)] mb-3">{paper.venue} · {paper.year}</p>
+          <ul class="text-[var(--color-muted)] text-sm leading-relaxed mb-4 list-disc list-inside space-y-1">
+            {paper.description.map((point: string) => (
+              <li>{point}</li>
+            ))}
+          </ul>
+          <div class="flex flex-wrap gap-2">
+            {paper.tags.map(tag => (
+              <span class="text-xs bg-[var(--color-border)] text-[var(--color-muted)] px-2.5 py-1 rounded-full">
+                {tag}
+              </span>
+            ))}
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+</BaseLayout>

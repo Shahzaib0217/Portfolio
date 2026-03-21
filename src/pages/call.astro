@@ -1,0 +1,20 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Book a Call — Shahzaib"
+  description="Schedule a 30-minute call with Shahzaib."
+>
+  <div class="h-full flex flex-col items-center justify-center gap-4">
+    <h1 class="font-serif text-2xl text-[var(--color-ink)]">Book a call</h1>
+    <p class="text-sm text-[var(--color-muted)]">30 minutes — pick a time that works.</p>
+    <a
+      href=""
+      onclick="Calendly.initPopupWidget({url:'https://calendly.com/shahzaib-khan0217/30min?hide_gdpr_banner=1'});return false;"
+      class="text-sm px-4 py-2 rounded-md border border-[var(--color-ink)] text-[var(--color-ink)] hover:bg-[var(--color-ink)] hover:text-[var(--color-cream)] transition-colors font-medium"
+    >
+      pick a time
+    </a>
+  </div>
+</BaseLayout>

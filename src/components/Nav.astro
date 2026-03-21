@@ -1,6 +1,7 @@
 ---
 const navLinks = [
   { href: '/work', label: 'work' },
+  { href: '/research', label: 'research' },
   { href: '/about', label: 'about' },
 ];
 
@@ -34,10 +35,19 @@ const currentPath = Astro.url.pathname;
       ))}
     </ul>
 
+    <!-- Book a Call CTA -->
+    <a
+      href=""
+      onclick="Calendly.initPopupWidget({url:'https://calendly.com/shahzaib-khan0217/30min?hide_gdpr_banner=1'});return false;"
+      class="text-sm px-3 py-1.5 rounded-md border transition-colors font-medium border-[var(--color-ink)] text-[var(--color-ink)] hover:bg-[var(--color-ink)] hover:text-[var(--color-cream)]"
+    >
+      book a call
+    </a>
+
     <!-- Social icons -->
     <div class="flex items-center gap-3 pl-2 border-l border-[var(--color-border)]">
       <a
-        href="https://linkedin.com/in/shahzaib"
+        href="https://linkedin.com/in/shahzaib17"
         target="_blank"
         rel="noopener noreferrer"
         class="text-[var(--color-muted)] hover:text-[var(--color-ink)] transition-colors"
@@ -48,7 +58,7 @@ const currentPath = Astro.url.pathname;
         </svg>
       </a>
       <a
-        href="https://github.com/shahzaib"
+        href="https://github.com/Shahzaib0217"
         target="_blank"
         rel="noopener noreferrer"
         class="text-[var(--color-muted)] hover:text-[var(--color-ink)] transition-colors"
@@ -76,7 +86,14 @@ const currentPath = Astro.url.pathname;
       </a>
     ))}
     <a
-      href="https://linkedin.com/in/shahzaib"
+      href=""
+      onclick="Calendly.initPopupWidget({url:'https://calendly.com/shahzaib-khan0217/30min?hide_gdpr_banner=1'});return false;"
+      class="text-xs px-2.5 py-1 rounded-md border transition-colors font-medium border-[var(--color-ink)] text-[var(--color-ink)] hover:bg-[var(--color-ink)] hover:text-[var(--color-cream)]"
+    >
+      book a call
+    </a>
+    <a
+      href="https://linkedin.com/in/shahzaib17"
       target="_blank"
       rel="noopener noreferrer"
       class="text-[var(--color-muted)] hover:text-[var(--color-ink)] transition-colors"
@@ -87,7 +104,7 @@ const currentPath = Astro.url.pathname;
       </svg>
     </a>
     <a
-      href="https://github.com/shahzaib"
+      href="https://github.com/Shahzaib0217"
       target="_blank"
       rel="noopener noreferrer"
       class="text-[var(--color-muted)] hover:text-[var(--color-ink)] transition-colors"
