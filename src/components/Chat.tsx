@@ -28,14 +28,20 @@ export default function Chat() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  const MAX_INPUT_LENGTH = 1000;
+
   async function sendMessage(text: string) {
     if (!text.trim() || isLoading) return;
+    if (text.trim().length > MAX_INPUT_LENGTH) {
+      setError(`Message too long. Please keep it under ${MAX_INPUT_LENGTH} characters.`);
+      return;
+    }
 
     setShowStarters(false);
     setError(null);
 
     const userMessage: Message = { role: 'user', content: text.trim() };
-    const newMessages = [...messages, userMessage].slice(-10); // keep last 10
+    const newMessages = [...messages, userMessage];
     setMessages(newMessages);
     setInput('');
     setIsLoading(true);
@@ -216,6 +222,7 @@ export default function Chat() {
             onKeyDown={handleKeyDown}
             placeholder="Describe your project or ask me anything..."
             disabled={isLoading}
+            maxLength={MAX_INPUT_LENGTH}
             className="flex-1 text-sm outline-none bg-transparent text-[#1a1a1a] placeholder-[#9ca3af] disabled:opacity-50"
           />
           <button
