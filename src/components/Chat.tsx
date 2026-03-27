@@ -123,7 +123,7 @@ export default function Chat() {
   }
 
   return (
-    <div className={`w-full h-full flex flex-col ${messages.length === 0 ? 'justify-center' : ''}`}>
+    <div className={`w-full h-full flex flex-col ${messages.length === 0 ? 'sm:justify-center' : ''}`}>
       {/* Header */}
       <div className="flex items-center gap-3 mb-5 flex-shrink-0">
         <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 bg-[var(--color-ink)]">
