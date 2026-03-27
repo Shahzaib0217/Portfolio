@@ -1,16 +1,19 @@
 import { useState, useRef, useEffect } from 'react';
+import Markdown from 'markdown-to-jsx';
 
 interface Message {
   role: 'user' | 'assistant';
   content: string;
 }
 
+
 const STARTER_PROMPTS = [
-  "What are you currently building?",
-  "Walk me through your tech stack",
-  "What's your entrepreneurial journey?",
-  "What excites you about AI?",
+  "I'm building an AI product — can you help?",
+  "What kind of AI systems have you shipped?",
+  "Are you open to full-time roles?",
+  "Walk me through your experience",
 ];
+
 
 export default function Chat() {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -112,7 +115,7 @@ export default function Chat() {
         </div>
         <div>
           <p className="text-sm font-medium">Chat with my digital clone</p>
-          <p className="text-xs text-[#6b7280]">Ask me anything about my work, stack, journey or interests.</p>
+          <p className="text-xs text-[#6b7280]">Tell me what you're building, or ask about my background.</p>
         </div>
       </div>
 
@@ -128,7 +131,34 @@ export default function Chat() {
                     : 'bg-white border border-[#e5e2dc] text-[#1a1a1a] rounded-bl-sm'
                 }`}
               >
-                {msg.content || (
+                {msg.content ? (
+                  msg.role === 'assistant' ? (
+                    <Markdown
+                      options={{
+                        overrides: {
+                          a: {
+                            component: ({ href, children }: { href?: string; children: React.ReactNode }) => (
+                              <a
+                                href={href}
+                                target={href?.startsWith('mailto') ? '_self' : '_blank'}
+                                rel="noopener noreferrer"
+                                className="text-blue-600 underline underline-offset-2 hover:text-blue-800 transition-colors"
+                              >
+                                {children}
+                              </a>
+                            ),
+                          },
+                          p: { props: { className: 'mb-1.5 last:mb-0' } },
+                          ul: { props: { className: 'list-disc list-inside mb-1.5 space-y-0.5' } },
+                          ol: { props: { className: 'list-decimal list-inside mb-1.5 space-y-0.5' } },
+                          strong: { props: { className: 'font-semibold' } },
+                        },
+                      }}
+                    >
+                      {msg.content}
+                    </Markdown>
+                  ) : msg.content
+                ) : (
                   <span className="inline-flex gap-1 items-center py-1">
                     <span className="w-1.5 h-1.5 bg-[#6b7280] rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
                     <span className="w-1.5 h-1.5 bg-[#6b7280] rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
@@ -171,7 +201,7 @@ export default function Chat() {
             value={input}
             onChange={e => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Ask me something..."
+            placeholder="Describe your project or ask me anything..."
             disabled={isLoading}
             className="flex-1 text-sm outline-none bg-transparent text-[#1a1a1a] placeholder-[#9ca3af] disabled:opacity-50"
           />
