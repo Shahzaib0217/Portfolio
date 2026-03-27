@@ -150,7 +150,7 @@ export default function Chat() {
 
       {/* Messages — fills remaining space and scrolls */}
       {messages.length > 0 && (
-        <div className="chat-messages flex flex-col gap-4 mb-5 sm:overflow-y-auto sm:flex-1 sm:min-h-0">
+        <div className="chat-messages flex flex-col gap-4 mb-5 overflow-y-auto flex-1 min-h-0">
           {messages.map((msg, i) => (
             <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
               <div
