@@ -6,13 +6,14 @@ const experience = [
     company: 'DreamDesk AI',
     role: 'AI Product Engineer & Team Lead',
     type: 'Full-time',
-    period: 'Dec 2025 – Present',
+    period: 'Jan 2026 – Present',
     location: 'Remote · UK',
     description: [
-      'Leading development of voice, email, and web chat agents that automate end-to-end hotel workflows and integrate with PMS platforms.',
-      'Built FastAPI backend and Next.js frontend with multi-agentic pipelines via LangGraph.',
+      'Led a team of 2 engineers and shipped POC within 4 weeks.',
+      'Designed end-to-end product architecture and UX for a hospitality AI platform; collaborated directly with the product owner to scope features and drive R&D.',
+      'Built multi-channel AI agents handling phone calls, emails, web chat, WhatsApp, and Booking.com messages. Integrated Mews & Guestline PMS platforms for real-time reservation sync and built a RAG pipeline ingesting hotel knowledge bases.',
     ],
-    tags: ['FastAPI', 'Next.js', 'TypeScript', 'GCP', 'Cloud Run', 'CI/CD', 'Cloudflare', 'Voice AI', 'Twilio', 'Meta API', 'Pydantic AI'],
+    tags: ['FastAPI', 'Next.js', 'GCP', 'Cloud Run', 'Pydantic AI', 'Pinecone', 'PostgreSQL', 'GitHub Actions'],
     url: 'http://dreamdeskai.com/',
     current: true,
   },
@@ -20,13 +21,14 @@ const experience = [
     company: 'Simplora AI',
     role: 'Full Stack AI Engineer',
     type: 'Part-time',
-    period: 'Aug 2025 – Present',
+    period: 'Jul 2025 – Present',
     location: 'Remote · USA',
     description: [
-      'Built Node.js backend and Next.js frontend with multi-agentic workflows; integrated MCP servers connecting agents to CRMs, ClickUp, and Notion.',
-      'Worked with STT services like AssemblyAI and Deepgram for real-time meeting transcription.',
+      'Founding AI Engineer. Shipped MVP in 2 months and scaled platform from launch to 300+ active users.',
+      'Built agentic workflows using LangChain to automate the complete meeting lifecycle. Integrated MCP servers connecting agents with CRMs and platforms like ClickUp, Slack, Google Drive, and Notion.',
+      'Integrated third-party APIs like Apollo and optimized DB queries, reducing response latency from 60s to under 2s.',
     ],
-    tags: ['Node.js', 'React.js', 'Docker', 'LangChain', 'MCP', 'Digital Ocean', 'Recall AI', 'Pinecone', 'Redis'],
+    tags: ['Node.js', 'Next.js', 'LangChain', 'MCP', 'PostgreSQL', 'Digital Ocean', 'GitHub Actions'],
     url: 'https://simplora.ai',
     current: true,
   },
@@ -37,7 +39,8 @@ const experience = [
     period: 'Nov 2025 – Dec 2025',
     location: 'Remote · Estonia',
     description: [
-      'Short-term contract building AI-powered full-stack features.',
+      'Developed a Chrome extension to detect deepfake and AI-generated images on e-commerce websites, integrating image classification models into a real-time browser-side pipeline.',
+      'Handled latency challenges by improving UX during processing time, keeping users engaged while results were being computed.',
     ],
     tags: ['FastAPI', 'Python', 'Next.js', 'Gemini API'],
     url: 'https://www.reconsider.ai/',
@@ -47,13 +50,13 @@ const experience = [
     company: 'AI Governance Sandbox',
     role: 'Full-Stack AI Engineer',
     type: 'Full-time',
-    period: 'Mar 2025 – Nov 2025',
+    period: 'Apr 2025 – Dec 2025',
     location: 'Remote · USA',
     description: [
-      'Founding engineer building a multi-agentic system for AI governance, compliance, and risk evaluation, covering EU AI Act and US state AI regulations.',
-      'Integrated tools like MIT AI Risk Repo, IBM AI Risk Atlas Nexus, and Trusted AI\'s ART; deployed on EC2 with Dockerized microservices.',
+      'Founding Fullstack AI Engineer. Built a multi-agentic system for automated evaluation of AI systems against EU AI Act, US state-level AI regulations, and global compliance frameworks.',
+      'Fixed retrieval accuracy issues by building an agentic retrieval system that performs repeated iterations until the correct context is retrieved.',
     ],
-    tags: ['LangGraph', 'OpenAI Agents SDK', 'FastAPI', 'Next.js', 'Docker', 'AWS EC2', 'AWS S3'],
+    tags: ['Python', 'FastAPI', 'LangGraph', 'Docker', 'MongoDB', 'AWS EC2', 'AWS S3', 'GitHub Actions'],
     url: 'https://aigovsandbox.com/',
     current: false,
   },
@@ -61,25 +64,25 @@ const experience = [
     company: 'Foomotion LLC',
     role: 'Full-Stack AI Engineer',
     type: 'Full-time',
-    period: 'Nov 2024 – Mar 2025',
+    period: 'Dec 2024 – Apr 2025',
     location: 'Lahore · On-site',
     description: [
-      'Built a scalable RAG pipeline for Pearson Labs (YC-funded), document processing with LangChain and Llama Index, multi-tenancy in Pinecone, and query expansion for efficient retrieval.',
-      'Integrated with FastAPI and Next.js; also contributed to a Rails + React.js project with RSpec test coverage.',
+      'Worked directly with YC-funded startups, scoped requirements, led daily client syncs, and independently owned AI development end-to-end.',
+      'Built LLM-powered RAG and multi-agentic systems using AWS Bedrock, LangGraph, LangChain, and LlamaIndex. Developed LiveKit voice agents and n8n automation workflows.',
     ],
-    tags: ['LangChain', 'Llama Index', 'Pinecone', 'FastAPI', 'Next.js', 'AWS S3', 'AWS EC2', 'ElevenLabs', 'n8n'],
+    tags: ['FastAPI', 'Next.js', 'LangGraph', 'LangChain', 'LlamaIndex', 'LiveKit', 'n8n', 'PostgreSQL', 'AWS EC2', 'AWS S3', 'AWS Bedrock'],
     url: 'https://www.foomotion.io/',
     current: false,
   },
   {
     company: 'Cyber Evangelists',
-    role: 'AI Developer',
+    role: 'AI Engineer',
     type: 'Full-time',
-    period: 'Jun 2024 – Nov 2024',
+    period: 'Jun 2024 – Dec 2024',
     location: 'Lahore · On-site',
     description: [
-      'Built a real-time RAG voice calling agent with STT, TTS, and voice cloning using Node.js and LiveKit.',
-      'Developed the MVP for an Attack Surface Management tool using FastAPI microservices and gRPC. Dockerized, backed by PostgreSQL and Redis.',
+      'Developed a real-time RAG voice calling agent using Node.js, integrating TTS, STT, and voice cloning for automated customer conversations.',
+      'Built the MVP for an Attack Surface Management (ASM) platform using FastAPI and gRPC microservices. Dockerized each service with PostgreSQL and Redis for storage and caching.',
     ],
     tags: ['Node.js', 'FastAPI', 'gRPC', 'Docker', 'LangChain', 'PostgreSQL', 'Redis'],
     url: null,
@@ -102,9 +105,16 @@ const typeStyles: Record<string, string> = {
     <h1 class="text-2xl sm:text-3xl mb-2 leading-tight" style="font-family: var(--font-serif)">
       Work
     </h1>
-    <p class="text-[var(--color-muted)] mb-6 sm:mb-10">
+    <p class="text-[var(--color-muted)] mb-6 sm:mb-8">
       Roles and products across AI engineering, founding teams, and product leadership.
     </p>
+
+    <h2 class="text-base font-medium text-[var(--color-ink)] mb-2">Highlights</h2>
+    <ul class="list-disc list-inside text-sm text-[var(--color-muted)] leading-relaxed space-y-1.5 mb-8 sm:mb-10">
+      <li>3+ years building production AI systems: RAG pipelines, multi-agent workflows, and voice AI agents.</li>
+      <li>Founding engineer at multiple AI startups including a Y-Combinator funded company.</li>
+      <li>Shipped MVPs, scaled products to 300+ users, and led engineering teams.</li>
+    </ul>
 
     <div class="flex flex-col gap-5 pb-12">
       {experience.map((job, i) => (
