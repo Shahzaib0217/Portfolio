@@ -8,7 +8,7 @@ interface Message {
 
 
 const STARTER_PROMPTS = [
-  "I'm building an AI product — can you help?",
+  "I'm building an AI product, can you help?",
   "What kind of AI systems have you shipped?",
   "Are you open to full-time roles?",
   "Walk me through your experience",
@@ -113,10 +113,23 @@ export default function Chat() {
         <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 bg-[var(--color-ink)]">
           <span className="text-xs font-medium" style={{ color: 'var(--color-cream)' }}>S</span>
         </div>
-        <div>
-          <p className="text-sm font-medium">Chat with my digital clone</p>
+        <div className="flex-1">
+          <p className="text-sm font-medium">Chat with Shahzaib's AI</p>
           <p className="text-xs text-[#6b7280]">Tell me what you're building, or ask about my background.</p>
         </div>
+        {messages.length > 0 && (
+          <button
+            onClick={() => { setMessages([]); setShowStarters(true); setError(null); }}
+            className="text-[#9ca3af] hover:text-[#1a1a1a] transition-colors flex-shrink-0"
+            aria-label="Reset conversation"
+            title="Reset conversation"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+              <path d="M3 3v5h5" />
+            </svg>
+          </button>
+        )}
       </div>
 
       {/* Messages — fills remaining space and scrolls */}
