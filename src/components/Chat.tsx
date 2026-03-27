@@ -28,6 +28,16 @@ export default function Chat() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  useEffect(() => {
+    const hero = document.getElementById('hero-section');
+    const divider = document.getElementById('hero-divider');
+    const isMobile = window.matchMedia('(max-width: 639px)').matches;
+    if (isMobile) {
+      if (hero) hero.hidden = messages.length > 0;
+      if (divider) divider.hidden = messages.length > 0;
+    }
+  }, [messages.length]);
+
   const MAX_INPUT_LENGTH = 1000;
 
   async function sendMessage(text: string) {
@@ -144,7 +154,7 @@ export default function Chat() {
           {messages.map((msg, i) => (
             <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
               <div
-                className={`max-w-[85%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${
+                className={`max-w-[90%] sm:max-w-[85%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${
                   msg.role === 'user'
                     ? 'bg-[#1a1a1a] text-white rounded-br-sm'
                     : 'bg-white border border-[#e5e2dc] text-[#1a1a1a] rounded-bl-sm'
@@ -228,7 +238,7 @@ export default function Chat() {
           <button
             onClick={() => sendMessage(input)}
             disabled={!input.trim() || isLoading}
-            className="w-7 h-7 rounded-lg bg-[#1a1a1a] text-white flex items-center justify-center disabled:opacity-30 hover:opacity-80 transition-opacity flex-shrink-0"
+            className="w-8 h-8 sm:w-7 sm:h-7 rounded-lg bg-[#1a1a1a] text-white flex items-center justify-center disabled:opacity-30 hover:opacity-80 transition-opacity flex-shrink-0"
             aria-label="Send"
           >
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">

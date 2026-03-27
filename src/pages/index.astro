@@ -3,18 +3,18 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Chat from '../components/Chat';
 ---
 
-<BaseLayout>
+<BaseLayout fullHeight>
   <div class="h-full flex flex-col overflow-hidden">
 
     <!-- Hero -->
-    <section class="pt-6 pb-5 sm:pt-10 sm:pb-8 fade-in flex-shrink-0">
-      <div class="flex items-start gap-5">
+    <section id="hero-section" class="pt-6 pb-5 sm:pt-10 sm:pb-8 fade-in flex-shrink-0">
+      <div class="flex items-start gap-3 sm:gap-5">
         <img
           src="/shahzaib.png"
           alt="Shahzaib"
           width="80"
           height="80"
-          class="rounded-full object-cover flex-shrink-0 border border-[var(--color-border)]"
+          class="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover flex-shrink-0 border border-[var(--color-border)]"
           onerror="this.style.display='none'"
         />
         <div>
@@ -32,7 +32,7 @@ import Chat from '../components/Chat';
     </section>
 
     <!-- Divider -->
-    <div class="border-t border-[var(--color-border)] fade-in fade-in-delay-2 flex-shrink-0"></div>
+    <div id="hero-divider" class="border-t border-[var(--color-border)] fade-in fade-in-delay-2 flex-shrink-0"></div>
 
     <!-- AI Chat — fills remaining height, messages scroll inside -->
     <section class="pt-6 pb-6 fade-in fade-in-delay-3 flex-grow overflow-hidden min-h-0">

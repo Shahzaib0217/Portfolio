@@ -8,7 +8,7 @@ const navLinks = [
 const currentPath = Astro.url.pathname;
 ---
 
-<nav class="flex items-center justify-between py-4 px-6 max-w-3xl mx-auto w-full">
+<nav class="flex items-center justify-between py-4 px-4 sm:px-6 max-w-3xl mx-auto w-full">
   <a
     href="/"
     class="font-serif text-xl tracking-wide text-[var(--color-ink)] hover:opacity-70 transition-opacity"
@@ -72,7 +72,7 @@ const currentPath = Astro.url.pathname;
   </div>
 
   <!-- Mobile nav -->
-  <div class="flex sm:hidden items-center gap-3">
+  <div class="flex sm:hidden items-center gap-2">
     {navLinks.map(({ href, label }) => (
       <a
         href={href}
@@ -88,7 +88,7 @@ const currentPath = Astro.url.pathname;
     <a
       href=""
       onclick="Calendly.initPopupWidget({url:'https://calendly.com/shahzaib-khan0217/30min?hide_gdpr_banner=1'});return false;"
-      class="text-xs px-2.5 py-1 rounded-md border transition-colors font-medium border-[var(--color-ink)] text-[var(--color-ink)] hover:bg-[var(--color-ink)] hover:text-[var(--color-cream)]"
+      class="text-xs px-2.5 py-2 rounded-md border transition-colors font-medium border-[var(--color-ink)] text-[var(--color-ink)] hover:bg-[var(--color-ink)] hover:text-[var(--color-cream)]"
     >
       book a call
     </a>

@@ -7,12 +7,14 @@ interface Props {
   title?: string;
   description?: string;
   ogImage?: string;
+  fullHeight?: boolean;
 }
 
 const {
   title = 'Shahzaib Khan - Full-Stack AI Engineer',
   description = 'Full-Stack AI Engineer shipping production AI systems end-to-end. Agents, RAG pipelines, voice AI, and more.',
   ogImage = '/og-image.png',
+  fullHeight = false,
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
@@ -62,7 +64,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
       <Nav />
     </header>
     <main class="flex-1 min-h-0 overflow-y-auto w-full">
-      <div class="max-w-3xl mx-auto px-4 sm:px-6 h-full">
+      <div class={`max-w-3xl mx-auto px-4 sm:px-6 ${fullHeight ? 'h-full' : ''}`}>
         <slot />
       </div>
     </main>
