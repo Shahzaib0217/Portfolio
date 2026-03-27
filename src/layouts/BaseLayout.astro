@@ -63,7 +63,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     <header class="flex-shrink-0 sticky top-0 z-50 bg-[var(--color-cream)]/90 backdrop-blur-sm border-b border-[var(--color-border)]">
       <Nav />
     </header>
-    <main class={`flex-1 min-h-0 w-full ${fullHeight ? 'overflow-hidden' : 'overflow-y-auto'}`}>
+    <main class="flex-1 min-h-0 overflow-y-auto w-full">
       <div class={`max-w-3xl mx-auto px-4 sm:px-6 ${fullHeight ? 'h-full' : ''}`}>
         <slot />
       </div>

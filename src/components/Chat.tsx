@@ -32,7 +32,7 @@ export default function Chat() {
     const hero = document.getElementById('hero-section');
     const divider = document.getElementById('hero-divider');
     const isMobile = window.matchMedia('(max-width: 639px)').matches;
-    if (isMobile) {
+    if (!isMobile) {
       if (hero) hero.hidden = messages.length > 0;
       if (divider) divider.hidden = messages.length > 0;
     }
@@ -123,7 +123,7 @@ export default function Chat() {
   }
 
   return (
-    <div className={`w-full h-full flex flex-col ${messages.length === 0 ? 'justify-center' : ''}`}>
+    <div className={`w-full sm:h-full flex flex-col ${messages.length === 0 ? 'sm:justify-center' : ''}`}>
       {/* Header */}
       <div className="flex items-center gap-3 mb-5 flex-shrink-0">
         <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 bg-[var(--color-ink)]">
@@ -150,7 +150,7 @@ export default function Chat() {
 
       {/* Messages — fills remaining space and scrolls */}
       {messages.length > 0 && (
-        <div className="chat-messages flex flex-col gap-4 mb-5 overflow-y-auto flex-1 min-h-0">
+        <div className="chat-messages flex flex-col gap-4 mb-5 sm:overflow-y-auto sm:flex-1 sm:min-h-0">
           {messages.map((msg, i) => (
             <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
               <div
