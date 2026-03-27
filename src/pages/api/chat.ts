@@ -58,13 +58,13 @@ Availability and preferences:
 Full-Stack AI Engineer and founding engineer at multiple AI startups, based in Pakistan. 3+ years building production AI systems end-to-end. I take products from zero to deployment: architecture, backend, frontend, AI systems, infra, CI/CD. I also do product research, sprint planning, and lead engineering teams. Age ~24.
 
 Current roles:
-- DreamDesk AI (Jan 2026 – Present, full-time, remote UK): AI Product Engineer & Team Lead; led team of 2 engineers, shipped POC in 4 weeks; built multi-channel AI agents (phone, email, web chat, WhatsApp, Booking.com) + PMS integrations (Mews, Guestline) + hotel RAG pipeline; stack: FastAPI, Next.js, GCP, Cloud Run, Pydantic AI, Pinecone, PostgreSQL
-- Simplora AI (Jul 2025 – Present, part-time, remote USA): Founding AI Engineer; shipped MVP in 2 months, scaled to 300+ active users; full meeting lifecycle automation with LangChain; MCP integrations (ClickUp, Slack, Google Drive, Notion); cut query latency from 60s to under 2s; stack: Node.js, Next.js, LangChain, MCP, PostgreSQL, Digital Ocean
+- [DreamDesk AI](http://dreamdeskai.com/) (Jan 2026 – Present, full-time, remote UK): AI Product Engineer & Team Lead; led team of 2 engineers, shipped POC in 4 weeks; built multi-channel AI agents (phone, email, web chat, WhatsApp, Booking.com) + PMS integrations (Mews, Guestline) + hotel RAG pipeline; stack: FastAPI, Next.js, GCP, Cloud Run, Pydantic AI, Pinecone, PostgreSQL
+- [Simplora AI](https://simplora.ai) (Jul 2025 – Present, part-time, remote USA): Founding AI Engineer; shipped MVP in 2 months, scaled to 300+ active users; full meeting lifecycle automation with LangChain; MCP integrations (ClickUp, Slack, Google Drive, Notion); cut query latency from 60s to under 2s; stack: Node.js, Next.js, LangChain, MCP, PostgreSQL, Digital Ocean
 
 Past roles:
-- Reconsider AI (Nov–Dec 2025, contract, Estonia): Chrome extension for deepfake/AI-image detection on e-commerce sites; real-time browser-side classification pipeline; stack: FastAPI, Next.js, C2PA
-- AI Governance Sandbox (Apr–Nov 2025, full-time, USA): Founding engineer; multi-agentic AI compliance platform covering EU AI Act and US regulations; agentic retrieval with iterative context refinement; stack: Python, FastAPI, LangGraph, Docker, MongoDB, AWS EC2/S3
-- Foomotion LLC (Dec 2024 – Apr 2025, full-time, Lahore): YC-funded startup work; RAG and multi-agentic systems with AWS Bedrock, LangGraph, LangChain, LlamaIndex; LiveKit voice agents; n8n automation; stack: FastAPI, Next.js, AWS EC2/S3/Bedrock
+- [Reconsider AI](https://www.reconsider.ai/) (Nov–Dec 2025, contract, Estonia): Chrome extension for deepfake/AI-image detection on e-commerce sites; real-time browser-side classification pipeline; stack: FastAPI, Next.js, C2PA
+- [AI Governance Sandbox](https://aigovsandbox.com/) (Apr–Nov 2025, full-time, USA): Founding engineer; multi-agentic AI compliance platform covering EU AI Act and US regulations; agentic retrieval with iterative context refinement; stack: Python, FastAPI, LangGraph, Docker, MongoDB, AWS EC2/S3
+- [Foomotion LLC](https://www.foomotion.io/) (Dec 2024 – Apr 2025, full-time, Lahore): YC-funded startup work; RAG and multi-agentic systems with AWS Bedrock, LangGraph, LangChain, LlamaIndex; LiveKit voice agents; n8n automation; stack: FastAPI, Next.js, AWS EC2/S3/Bedrock
 - Cyber Evangelists (Jun–Dec 2024, full-time, Lahore): real-time RAG voice agent with STT/TTS/voice cloning; Attack Surface Management MVP with FastAPI, gRPC microservices, Docker; stack: Node.js, FastAPI, gRPC, Docker, LangChain, PostgreSQL, Redis
 - Freelancing since June 2023: AI-powered MVPs and ERP systems for stealth startups
 
