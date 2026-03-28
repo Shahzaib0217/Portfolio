@@ -155,8 +155,8 @@ export const POST: APIRoute = async ({ request }) => {
     );
   }
 
-  // Keep last 10 messages to manage context
-  const recentMessages = messages.slice(-10).map(m => ({
+  // Keep last 2 messages to manage context
+  const recentMessages = messages.slice(-2).map(m => ({
     role: m.role as 'user' | 'assistant',
     content: String(m.content),
   }));
@@ -169,13 +169,14 @@ export const POST: APIRoute = async ({ request }) => {
         'Authorization': `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: 'llama-3.3-70b-versatile',
+        // model: 'llama-3.3-70b-versatile',
+        model: 'llama-3.1-8b-instant',
         messages: [
           { role: 'system', content: SYSTEM_PROMPT },
           ...recentMessages,
         ],
         stream: true,
-        max_tokens: 1500,
+        max_tokens: 768,
         temperature: 0.7,
       }),
     });

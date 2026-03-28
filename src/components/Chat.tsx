@@ -28,16 +28,6 @@ export default function Chat() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  useEffect(() => {
-    const hero = document.getElementById('hero-section');
-    const divider = document.getElementById('hero-divider');
-    const isMobile = window.matchMedia('(max-width: 639px)').matches;
-    if (!isMobile) {
-      if (hero) hero.hidden = messages.length > 0;
-      if (divider) divider.hidden = messages.length > 0;
-    }
-  }, [messages.length]);
-
   const MAX_INPUT_LENGTH = 1000;
 
   async function sendMessage(text: string) {
@@ -55,6 +45,7 @@ export default function Chat() {
     setMessages(newMessages);
     setInput('');
     setIsLoading(true);
+    setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
 
     try {
       const response = await fetch('/api/chat', {
@@ -65,6 +56,17 @@ export default function Chat() {
 
       if (!response.ok) {
         const data = await response.json().catch(() => ({}));
+        if (response.status === 429) {
+          setMessages(prev => {
+            const updated = [...prev];
+            updated[updated.length - 1] = {
+              role: 'assistant',
+              content: "You've sent too many messages. Please wait a few minutes before trying again.",
+            };
+            return updated;
+          });
+          return;
+        }
         throw new Error(data.error || 'Something went wrong.');
       }
 
@@ -74,8 +76,6 @@ export default function Chat() {
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
       let assistantText = '';
-
-      setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
 
       while (true) {
         const { done, value } = await reader.read();
@@ -123,7 +123,7 @@ export default function Chat() {
   }
 
   return (
-    <div className={`w-full h-full flex flex-col ${messages.length === 0 ? 'sm:justify-center' : ''}`}>
+    <div className="w-full h-full flex flex-col">
       {/* Header */}
       <div className="flex items-center gap-3 mb-5 flex-shrink-0">
         <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 bg-[var(--color-ink)]">
