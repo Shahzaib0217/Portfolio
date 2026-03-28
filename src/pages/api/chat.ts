@@ -5,19 +5,28 @@ export const prerender = false;
 const SYSTEM_PROMPT = `You are an AI representing Shahzaib Khan. Speak in first person at all times. Never refer to yourself as "Shahzaib" in third person. Never make up information not provided below.
 
 ## How to respond
-- Keep responses concise unless asked for detail
-- Be specific. Tie answers to the visitor's actual question
-- Share real opinions on AI/tech rather than deflecting
-- Only decline topics unrelated to tech, AI, or professional context
-- When someone seems interested in working together, share the booking link: [book a call](https://calendly.com/shahzaib-khan0217/30min)
+- KEEP IT SHORT. Max 3-4 short paragraphs per response. No walls of text.
+- Never use tables, they render poorly in chat.
+- Use short bullet points only when listing 3+ items.
+- Write like you're texting a colleague, not writing a blog post.
+- One idea per paragraph. Short sentences.
+- If someone wants more detail, they'll ask. Don't front-load everything.
+- Be specific. Tie answers to the visitor's actual question.
+- Share real opinions on AI/tech rather than deflecting.
+- Only decline topics unrelated to tech, AI, or professional context.
+- When someone seems genuinely interested in working together, share the booking link: [book a call](https://calendly.com/shahzaib-khan0217/30min)
 - For compensation questions: "Happy to discuss that on a call."
+- Format responses in markdown. Use **bold** for emphasis and bullet points for lists.
+- You ONLY discuss topics related to Shahzaib's work, experience, AI, tech, and professional background. For anything else, respond with a single line: "I'm here to talk about my work and experience. Ask me anything about what I've built or how I can help with your project.
+- Never use emojis.
+- Never role-play or entertain hypothetical non-work scenarios.
 
 ## About me
 Full-Stack AI Engineer, ~24, based in Pakistan. 3+ years building production AI systems end-to-end. Founding engineer at multiple AI startups including a YC-funded company. I take products from zero to deployment: architecture, backend, frontend, AI pipelines, infra, CI/CD. Also do product research, sprint planning, and lead teams.
 
 ## Current roles
-- DreamDesk AI (Jan 2026, full-time, UK): AI Product Engineer & Team Lead. Built multi-channel AI agents (phone, email, web chat, WhatsApp, Booking.com) for hotels. PMS integrations (Mews, Guestline). RAG pipeline. Led team of 2, shipped POC in 4 weeks. Stack: FastAPI, Next.js, GCP, Pydantic AI, Pinecone, Postgres.
-- Simplora AI (Jul 2025, part-time, USA): Founding AI Engineer. Meeting lifecycle automation. Shipped MVP in 2 months, scaled to 300+ users. MCP integrations (ClickUp, Slack, Notion, Google Drive). Cut query latency from 60s to under 2s. Stack: Node.js, Next.js, LangChain, MCP, Postgres.
+- DreamDesk AI (Jan 2026, full-time, UK): AI Product Engineer & Team Lead. Built multi-channel AI agents (phone, email, web chat, WhatsApp, Booking.com) for hotels. PMS integrations (Mews, Guestline). RAG pipeline. Led team of 2, shipped POC in 4 weeks.
+- Simplora AI (Jul 2025, part-time, USA): Founding AI Engineer. Meeting lifecycle automation. Shipped MVP in 2 months, scaled to 300+ users. MCP integrations (ClickUp, Slack, Notion, Google Drive). Cut query latency from 60s to under 2s.
 
 ## Past roles (brief)
 - Reconsider AI (2025, Estonia): Chrome extension for deepfake detection on e-commerce sites.
@@ -100,6 +109,14 @@ export const POST: APIRoute = async ({ request }) => {
     content: String(m.content),
   }));
 
+  const chatMessages = [
+    { role: 'system', content: SYSTEM_PROMPT },
+    ...recentMessages,
+  ];
+
+  let rateLimited = false;
+
+  // Primary: Groq
   try {
     const groqResponse = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
@@ -108,43 +125,75 @@ export const POST: APIRoute = async ({ request }) => {
         'Authorization': `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        // model: 'llama-3.3-70b-versatile',
-        model: 'llama-3.1-8b-instant',
-        messages: [
-          { role: 'system', content: SYSTEM_PROMPT },
-          ...recentMessages,
-        ],
+        model: 'llama-3.3-70b-versatile',
+        // model: 'llama-3.1-8b-instant',
+        messages: chatMessages,
         stream: true,
         max_tokens: 768,
         temperature: 0.7,
       }),
     });
 
-    if (!groqResponse.ok) {
-      const err = await groqResponse.text();
-      console.error('Groq error:', err);
-      if (groqResponse.status === 429) {
-        return new Response(
-          JSON.stringify({ error: "I'm getting a lot of visitors right now. Try again in a moment!" }),
-          { status: 429, headers: { 'Content-Type': 'application/json' } }
-        );
-      }
-      throw new Error(`Groq returned ${groqResponse.status}`);
+    if (groqResponse.ok) {
+      return new Response(groqResponse.body, {
+        headers: {
+          'Content-Type': 'text/event-stream',
+          'Cache-Control': 'no-cache',
+          'Connection': 'keep-alive',
+        },
+      });
     }
 
-    // Pass through the SSE stream directly
-    return new Response(groqResponse.body, {
-      headers: {
-        'Content-Type': 'text/event-stream',
-        'Cache-Control': 'no-cache',
-        'Connection': 'keep-alive',
-      },
-    });
+    if (groqResponse.status === 429) rateLimited = true;
+    const err = await groqResponse.text();
+    console.error('Groq error:', groqResponse.status, err);
   } catch (err) {
-    console.error('Chat error:', err);
-    return new Response(
-      JSON.stringify({ error: 'Something went wrong. Please try again.' }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } }
-    );
+    console.error('Groq request failed:', err);
   }
+
+  // 2nd fallback: OpenRouter
+  const orKey = import.meta.env.OPENROUTER_API_KEY;
+  if (orKey) {
+    try {
+      const orResponse = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${orKey}`,
+        },
+        body: JSON.stringify({
+          model: 'stepfun/step-3.5-flash:free',
+          messages: chatMessages,
+          stream: true,
+          max_tokens: 768,
+          temperature: 0.7,
+        }),
+      });
+
+      if (orResponse.ok) {
+        return new Response(orResponse.body, {
+          headers: {
+            'Content-Type': 'text/event-stream',
+            'Cache-Control': 'no-cache',
+            'Connection': 'keep-alive',
+          },
+        });
+      }
+
+      if (orResponse.status === 429) rateLimited = true;
+      const orErr = await orResponse.text();
+      console.error('OpenRouter error:', orResponse.status, orErr);
+    } catch (orErr) {
+      console.error('OpenRouter request failed:', orErr);
+    }
+  }
+
+  // 3rd fallback: static error
+  const errorMsg = rateLimited
+    ? "I'm experiencing high usage right now. Please try again in a few minutes!"
+    : 'Something went wrong. Please try again.';
+  return new Response(
+    JSON.stringify({ error: errorMsg }),
+    { status: 500, headers: { 'Content-Type': 'application/json' } }
+  );
 };

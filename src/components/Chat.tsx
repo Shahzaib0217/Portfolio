@@ -7,6 +7,16 @@ interface Message {
 }
 
 
+const LOADING_MESSAGES = [
+  "Thinking...",
+  "Let me pull that up...",
+  "One sec...",
+  "On it...",
+  "Connecting the dots...",
+];
+
+const LOADING_MESSAGE_FIRST = "Free tier, please bear with me 😭";
+
 const STARTER_PROMPTS = [
   "Walk me through your experience",
   "What kind of AI systems have you shipped?",
@@ -19,6 +29,7 @@ export default function Chat() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [loadingMessage, setLoadingMessage] = useState('');
   const [showStarters, setShowStarters] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -27,6 +38,15 @@ export default function Chat() {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  useEffect(() => {
+    if (!isLoading) return;
+    setLoadingMessage(LOADING_MESSAGE_FIRST);
+    const interval = setInterval(() => {
+      setLoadingMessage(LOADING_MESSAGES[Math.floor(Math.random() * LOADING_MESSAGES.length)]);
+    }, 2000);
+    return () => clearInterval(interval);
+  }, [isLoading]);
 
   const MAX_INPUT_LENGTH = 1000;
 
@@ -108,8 +128,11 @@ export default function Chat() {
       }
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Something went wrong.';
-      setError(msg);
-      setMessages(prev => prev.slice(0, -1)); // remove empty assistant bubble
+      setMessages(prev => {
+        const updated = [...prev];
+        updated[updated.length - 1] = { role: 'assistant', content: msg };
+        return updated;
+      });
     } finally {
       setIsLoading(false);
     }
@@ -188,10 +211,13 @@ export default function Chat() {
                     </Markdown>
                   ) : msg.content
                 ) : (
-                  <span className="inline-flex gap-1 items-center py-1">
-                    <span className="w-1.5 h-1.5 bg-[#6b7280] rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                    <span className="w-1.5 h-1.5 bg-[#6b7280] rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                    <span className="w-1.5 h-1.5 bg-[#6b7280] rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                  <span className="inline-flex gap-2 items-center py-1">
+                    <span className="inline-flex gap-1 items-center">
+                      <span className="w-1.5 h-1.5 bg-[#6b7280] rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                      <span className="w-1.5 h-1.5 bg-[#6b7280] rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                      <span className="w-1.5 h-1.5 bg-[#6b7280] rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                    </span>
+                    <span className="text-[#6b7280]">{loadingMessage}</span>
                   </span>
                 )}
               </div>
