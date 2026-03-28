@@ -8,10 +8,10 @@ interface Message {
 
 
 const STARTER_PROMPTS = [
-  "I'm building an AI product, can you help?",
+  "Walk me through your experience",
   "What kind of AI systems have you shipped?",
   "Are you open to full-time roles?",
-  "Walk me through your experience",
+  "I'm building an AI product, can you help?",
 ];
 
 
@@ -230,7 +230,7 @@ export default function Chat() {
             value={input}
             onChange={e => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Describe your project or ask me anything..."
+            placeholder="Ask me anything about my work..."
             disabled={isLoading}
             maxLength={MAX_INPUT_LENGTH}
             className="flex-1 text-sm outline-none bg-transparent text-[#1a1a1a] placeholder-[#9ca3af] disabled:opacity-50"
