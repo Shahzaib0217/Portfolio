@@ -3,7 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
 <BaseLayout
-  title="About — Shahzaib"
+  title="About | Shahzaib"
   description="Shahzaib is a Full-Stack AI Engineer based in Pakistan, building production AI systems end-to-end as a founding engineer across hospitality, legal, governance, and SaaS."
 >
   <div class="pt-8 sm:pt-12 fade-in">
@@ -27,6 +27,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           translate them into sprint plans. I'm comfortable owning a product end-to-end
           or plugging into an existing team as a technical lead.
         </p>
+          <p class="mt-3">
+          Outside of work, I'm driven by my faith. It shapes how I approach building, leading, and solving problems.
+        </p>
       </div>
 
       <div class="fade-in fade-in-delay-2">
@@ -46,15 +49,34 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       </div>
 
       <div class="fade-in fade-in-delay-3">
-        <h2 class="text-xl mb-3 font-medium text-[var(--color-ink)]">Background</h2>
-        <p class="mb-3">
+        <h2 class="text-xl mb-3 font-medium text-[var(--color-ink)]">Educational Background</h2>
+        <p class="mb-4">
           I studied Computer Science at NUCES (FAST), graduating in 2024. During
-          my studies I co-authored research on LLM-assisted property generation
-          for Solidity smart contracts, exploring how AI can strengthen software
-          verification. The work benchmarked LLM-generated test invariants against
-          manually written ones, achieving 25.99% mutation score vs 31.75% manual,
-          showing LLMs can meaningfully reduce human effort in testing.
+          my studies I co-authored research at the intersection of AI and software engineering.
         </p>
+        <p class="text-xs uppercase tracking-widest text-[var(--color-muted)] mb-3">Research Project Details:</p>
+        <article class="border border-[var(--color-border)] rounded-xl p-4 sm:p-5 hover:border-[#d0cdc7] transition-colors">
+          <div class="flex items-start gap-3 flex-col sm:flex-row sm:items-center mb-1">
+            <h3 class="text-sm sm:text-base font-medium leading-snug text-[var(--color-ink)]">
+              LLM-assisted High-Quality Property Generation for Solidity Smart Contracts
+            </h3>
+            <span class="text-xs px-2 py-0.5 rounded-full font-medium flex-shrink-0 bg-[var(--color-border)] text-[var(--color-muted)]">
+              under review
+            </span>
+          </div>
+          <p class="text-xs text-[var(--color-muted)] mb-3">Under review at STVR · Collaborated with Dr. Hassan (DFKI Bremen) & Dr. Jalil (UAEU) · 2024</p>
+          <ul class="text-[var(--color-muted)] text-sm leading-relaxed mb-4 list-disc list-inside space-y-1">
+            <li>Proposed an LLM-assisted pipeline to generate high-quality test invariants for property-based testing of Solidity smart contracts.</li>
+            <li>Built an intelligent agent to automatically resolve compilation errors in LLM-generated properties.</li>
+            <li>Evaluated prompt engineering techniques and fine-tuned hyperparameters to reduce hallucinations.</li>
+            <li>Benchmarked via mutation testing, LLM-assisted approach achieved a 25.99% mutation score vs 31.75% manual, demonstrating meaningful reduction in human effort.</li>
+          </ul>
+          <div class="flex flex-wrap gap-2">
+            {['LLM', 'Solidity', 'Property-based Testing', 'Mutation Testing', 'LangChain', 'Azure ML', 'AI4SE'].map(tag => (
+              <span class="text-xs bg-[var(--color-border)] text-[var(--color-muted)] px-2.5 py-1 rounded-full">{tag}</span>
+            ))}
+          </div>
+        </article>
       </div>
 
       <div class="fade-in fade-in-delay-4">
