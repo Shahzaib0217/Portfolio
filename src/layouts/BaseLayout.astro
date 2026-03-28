@@ -59,12 +59,12 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet" />
     <script is:inline src="https://assets.calendly.com/assets/external/widget.js" type="text/javascript" async></script>
   </head>
-  <body class="flex flex-col bg-[var(--color-cream)] text-[var(--color-ink)]">
+  <body class="flex flex-col sm:h-dvh bg-[var(--color-cream)] text-[var(--color-ink)]">
     <header class="flex-shrink-0 sticky top-0 z-50 bg-[var(--color-cream)]/90 backdrop-blur-sm border-b border-[var(--color-border)]">
       <Nav />
     </header>
     <main class="flex-1 w-full">
-      <div class="max-w-3xl mx-auto px-4 sm:px-6">
+      <div class={`max-w-3xl mx-auto px-4 sm:px-6 ${fullHeight ? 'sm:h-full' : ''}`}>
         <slot />
       </div>
     </main>

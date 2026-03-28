@@ -3,8 +3,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Chat from '../components/Chat';
 ---
 
-<BaseLayout>
-  <div class="flex flex-col">
+<BaseLayout fullHeight>
+  <div class="flex flex-col sm:h-full sm:overflow-hidden">
 
     <!-- Hero -->
     <section id="hero-section" class="pt-6 pb-5 sm:pt-10 sm:pb-8 fade-in flex-shrink-0">
@@ -35,7 +35,7 @@ import Chat from '../components/Chat';
     <div id="hero-divider" class="border-t border-[var(--color-border)] fade-in fade-in-delay-2 flex-shrink-0"></div>
 
     <!-- AI Chat — fills remaining height, messages scroll inside -->
-    <section class="pt-6 pb-6 fade-in fade-in-delay-3 h-[28rem] overflow-hidden">
+    <section class="pt-6 pb-6 fade-in fade-in-delay-3 h-[28rem] overflow-hidden sm:h-auto sm:flex-grow sm:min-h-0">
       <Chat client:load />
     </section>
 
