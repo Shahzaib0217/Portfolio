@@ -1,120 +1,170 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { profilePage, faqPage, person } from '../data/site';
+
+const faqs = [
+  {
+    q: 'What does Shahzaib Khan do?',
+    a: 'I\'m an AI engineer. I build AI agents that run in production: meeting agents at Bridge, guest-service voice and chat agents at DreamDesk AI, and the RAG pipelines, MCP integrations, backend and infrastructure behind them.',
+  },
+  {
+    q: 'Is Shahzaib Khan open to new work?',
+    a: `Yes. I'm open to roles and contracts building AI products. I work remotely from Pakistan (PKT) and overlap with US and UK working hours. Email ${person.email} or book a call at ${person.calendly}.`,
+  },
+  {
+    q: 'What kind of AI systems has he built?',
+    a: 'Agentic workflows with LangChain, LangGraph and Pydantic AI; voice agents with LiveKit, VAPI, AssemblyAI and Deepgram; RAG pipelines on Pinecone and pgvector; and MCP integrations with ClickUp, Slack, Google Drive and Notion. I ship them full stack with FastAPI, Node.js and Next.js on GCP, AWS and DigitalOcean.',
+  },
+  {
+    q: 'Where is Shahzaib Khan based?',
+    a: 'Pakistan. I work remotely with teams in the US and UK.',
+  },
+  {
+    q: 'What is Bridge?',
+    a: 'Bridge (meetonbridge.com, built by Simplora) is a workspace where teams and AI agents meet: calls, live notes, memory of people and companies, and agents that join meetings and act on what was said. I joined as its first engineer in August 2025 and became Founding Senior Engineer in October 2026.',
+  },
+];
+
+const stack = [
+  { area: 'AI and agents', items: 'LangChain, LangGraph, LlamaIndex, Pydantic AI, RAG, MCP servers, AWS Bedrock' },
+  { area: 'Voice', items: 'LiveKit, VAPI, AssemblyAI, Deepgram, TTS and voice cloning' },
+  { area: 'Backend', items: 'FastAPI, Node.js, gRPC, REST' },
+  { area: 'Frontend', items: 'Next.js, React, TypeScript' },
+  { area: 'Data', items: 'PostgreSQL, MongoDB, Redis, Supabase, Pinecone, pgvector' },
+  { area: 'Infra', items: 'Docker, GCP Cloud Run, AWS EC2 and S3, DigitalOcean, Nginx, GitHub Actions' },
+];
+
+const principles = [
+  { title: 'Ship to real users early', body: 'Bridge went from first commit to MVP in two months. DreamDesk had a working proof of concept in four weeks. Feedback from people using it beats a perfect spec.' },
+  { title: 'Own it end to end', body: 'Architecture, backend, frontend, AI pipelines, infra and CI/CD. I also write the specs, plan the sprints and lead the engineers.' },
+];
 ---
 
 <BaseLayout
-  title="About | Shahzaib"
-  description="Shahzaib is a Full-Stack AI Engineer based in Pakistan, building production AI systems end-to-end as a founding engineer across hospitality, legal, governance, and SaaS."
+  title="About Shahzaib Khan · AI Engineer"
+  description="About Shahzaib Khan, an AI engineer from Pakistan: Bridge, DreamDesk AI and Zehn, how he works, his stack, education and research."
+  ogType="profile"
+  jsonLd={[profilePage('/about', 'About Shahzaib Khan'), faqPage('/about', faqs)]}
 >
-  <div class="pt-8 sm:pt-12 fade-in">
-    <h1 class="text-2xl sm:text-3xl mb-6 sm:mb-8 leading-tight" style="font-family: var(--font-serif)">
-      About
-    </h1>
+  <section class="pt-12 sm:pt-20 pb-14 grid lg:grid-cols-12 gap-10 lg:gap-12 items-end fade-in">
+    <div class="lg:col-span-8">
+      <p class="label">About</p>
+      <h1 class="display text-5xl sm:text-7xl mt-4 max-w-[16ch]">Hi, I'm Shahzaib.</h1>
+    </div>
+    <div class="lg:col-span-4">
+      <img
+        src="/shahzaib.jpg"
+        alt="Portrait of Shahzaib Khan"
+        width="320"
+        height="320"
+        class="w-36 h-36 sm:w-44 sm:h-44 rounded-2xl object-cover grayscale border border-[var(--color-rule)]"
+      />
+    </div>
+  </section>
 
-    <div class="flex flex-col gap-6 sm:gap-8 text-[var(--color-muted)] leading-relaxed">
-      <div class="fade-in fade-in-delay-1">
-        <p>
-          I'm Shahzaib, a Full-Stack AI Engineer based in Pakistan.
-          I build production AI systems end-to-end: RAG pipelines, multi-agent workflows,
-          voice AI agents, and the backend and frontend that ships them to users.
-        </p>
-        <p class="mt-3">
-          As a founding engineer across hospitality, legal, governance, and SaaS,
-          I've led teams, owned roadmaps, and shipped from zero to production.
-        </p>
-        <p class="mt-3">
-          Beyond writing code, I do product research, write technical specs, and
-          translate them into sprint plans. I'm comfortable owning a product end-to-end
-          or plugging into an existing team as a technical lead.
-        </p>
-          <p class="mt-3">
-          Outside of work, I'm driven by my faith. It shapes how I approach building, leading, and solving problems.
-        </p>
-      </div>
+  <section class="grid lg:grid-cols-12 gap-10 lg:gap-12 pb-16 border-t border-[var(--color-ink)] pt-10">
+    <div class="lg:col-span-4">
+      <p class="label">The short version</p>
+    </div>
+    <div class="lg:col-span-8 space-y-5 text-lg leading-relaxed max-w-[62ch]">
+      <p>
+        I'm Shahzaib, a full-stack AI engineer from Pakistan. Since graduating from FAST NUCES in 2024 I've been
+        an engineer, often the first or lead one, at AI startups in the US, UK and Europe, across meetings, hospitality,
+        legal tech, AI governance and security.
+      </p>
+      <p class="text-[var(--color-muted)]">
+        My best work so far is <a href="/#bridge" class="link text-[var(--color-ink)]">Bridge</a>. I joined as the first engineer,
+        shipped the MVP, grew it to ~500 users, and now lead engineering across product and growth as Founding Senior Engineer.
+        At <a href="/#dreamdesk" class="link text-[var(--color-ink)]">DreamDesk AI</a> I lead the team building guest-service agents for Second Nature, DreamDesk's parent company, live across its hometels.
+      </p>
+      <p class="text-[var(--color-muted)]">
+        In September 2026 I started <a href="/#zehn" class="link text-[var(--color-ink)]">Zehn</a>, a startup teaching schools and colleges in Pakistan
+        to build with AI. It keeps me close to the part of a company that isn't code: selling, teaching and earning trust.
+      </p>
+      <p class="text-[var(--color-muted)]">
+        Outside of work, I'm driven by my faith. It shapes how I build, lead and treat the people I work with.
+      </p>
+    </div>
+  </section>
 
-      <div class="fade-in fade-in-delay-2">
-        <h2 class="text-xl mb-3 font-medium text-[var(--color-ink)]">What I'm building</h2>
-        <p class="mb-3">
-          <strong class="font-medium text-[var(--color-ink)]">Simplora.ai</strong>
-          : AI-powered meeting management platform that automates the complete meeting
-          lifecycle with pre-meeting briefs, real-time summaries, and automatic action
-          item extraction. Scaled to 300+ active users.
-        </p>
-        <p class="mb-2">
-          <strong class="font-medium text-[var(--color-ink)]">DreamDesk AI</strong>
-          : Enterprise AI for hospitality with multi-channel agents handling phone calls,
-          emails, web chat, WhatsApp, and Booking.com. Integrates with Mews and Guestline
-          PMS for real-time reservation sync.
-        </p>
-      </div>
+  <section class="grid lg:grid-cols-12 gap-10 lg:gap-12 pb-16 border-t border-[var(--color-rule)] pt-10">
+    <div class="lg:col-span-4">
+      <h2 class="label">How I work</h2>
+    </div>
+    <div class="lg:col-span-8 grid gap-8">
+      {principles.map(p => (
+        <div>
+          <h3 class="display text-2xl sm:text-3xl">{p.title}</h3>
+          <p class="mt-2 text-[var(--color-muted)] leading-relaxed max-w-[60ch]">{p.body}</p>
+        </div>
+      ))}
+    </div>
+  </section>
 
-      <div class="fade-in fade-in-delay-3">
-        <h2 class="text-xl mb-3 font-medium text-[var(--color-ink)]">Educational Background</h2>
-        <p class="mb-4">
-          I studied Computer Science at NUCES (FAST), graduating in 2024. During
-          my studies I co-authored research at the intersection of AI and software engineering.
-        </p>
-        <p class="text-xs uppercase tracking-widest text-[var(--color-muted)] mb-3">Research Project Details:</p>
-        <article class="border border-[var(--color-border)] rounded-xl p-4 sm:p-5 hover:border-[#d0cdc7] transition-colors">
-          <div class="flex items-start gap-3 flex-col sm:flex-row sm:items-center mb-1">
-            <h3 class="text-sm sm:text-base font-medium leading-snug text-[var(--color-ink)]">
-              LLM-assisted High-Quality Property Generation for Solidity Smart Contracts
-            </h3>
-            <span class="text-xs px-2 py-0.5 rounded-full font-medium flex-shrink-0 bg-[var(--color-border)] text-[var(--color-muted)]">
-              under review
-            </span>
-          </div>
-          <p class="text-xs text-[var(--color-muted)] mb-3">Under review at STVR · Collaborated with Dr. Hassan (DFKI Bremen) & Dr. Jalil (UAEU) · 2024</p>
-          <ul class="text-[var(--color-muted)] text-sm leading-relaxed mb-4 list-disc list-inside space-y-1">
-            <li>Proposed an LLM-assisted pipeline to generate high-quality test invariants for property-based testing of Solidity smart contracts.</li>
-            <li>Built an intelligent agent to automatically resolve compilation errors in LLM-generated properties.</li>
-            <li>Evaluated prompt engineering techniques and fine-tuned hyperparameters to reduce hallucinations.</li>
-            <li>Benchmarked via mutation testing, LLM-assisted approach achieved a 25.99% mutation score vs 31.75% manual, demonstrating meaningful reduction in human effort.</li>
-          </ul>
-          <div class="flex flex-wrap gap-2">
-            {['LLM', 'Solidity', 'Property-based Testing', 'Mutation Testing', 'LangChain', 'Azure ML', 'AI4SE'].map(tag => (
-              <span class="text-xs bg-[var(--color-border)] text-[var(--color-muted)] px-2.5 py-1 rounded-full">{tag}</span>
-            ))}
-          </div>
-        </article>
-      </div>
+  <section class="grid lg:grid-cols-12 gap-10 lg:gap-12 pb-16 border-t border-[var(--color-rule)] pt-10">
+    <div class="lg:col-span-4">
+      <p class="label">Stack</p>
+    </div>
+    <dl class="lg:col-span-8">
+      {stack.map(s => (
+        <div class="grid sm:grid-cols-[10rem_1fr] gap-1 sm:gap-6 py-3 border-b border-[var(--color-rule)] first:pt-0">
+          <dt class="font-medium">{s.area}</dt>
+          <dd class="text-[var(--color-muted)]">{s.items}</dd>
+        </div>
+      ))}
+    </dl>
+  </section>
 
-      <div class="fade-in fade-in-delay-4">
-        <h2 class="text-xl mb-3 font-medium text-[var(--color-ink)]">Stack & how I work</h2>
-        <p class="mb-3">
-          I work across the full stack and own deployment end-to-end:
-        </p>
-        <ul class="list-none flex flex-col gap-1 mb-3 text-sm text-[var(--color-muted)]">
-          <li><strong class="text-[var(--color-ink)] font-medium">Backend:</strong> FastAPI, Node.js, gRPC, REST</li>
-          <li><strong class="text-[var(--color-ink)] font-medium">Frontend:</strong> Next.js, React, TypeScript</li>
-          <li><strong class="text-[var(--color-ink)] font-medium">AI / Agents:</strong> LangChain, LangGraph, LlamaIndex, RAG, Voice AI (LiveKit, VAPI), Pydantic AI, AWS Bedrock, MCP servers</li>
-          <li><strong class="text-[var(--color-ink)] font-medium">Infra & DevOps:</strong> Docker, GCP, AWS EC2/S3, Nginx, GitHub Actions, Digital Ocean</li>
-          <li><strong class="text-[var(--color-ink)] font-medium">Databases:</strong> PostgreSQL, MongoDB, Redis, Supabase, Pinecone, pgvector</li>
+  <section class="grid lg:grid-cols-12 gap-10 lg:gap-12 pb-20 border-t border-[var(--color-rule)] pt-10">
+    <div class="lg:col-span-4">
+      <p class="label">Education and research</p>
+    </div>
+    <div class="lg:col-span-8">
+      <p class="font-medium">BS Computer Science, FAST NUCES · 2024</p>
+      <div class="mt-6 rounded-xl border border-[var(--color-rule)] bg-[var(--color-panel)] p-5 sm:p-6">
+        <p class="label">Paper · Under review at STVR</p>
+        <h2 class="mt-2 font-medium text-lg leading-snug">LLM-assisted High-Quality Property Generation for Solidity Smart Contracts</h2>
+        <p class="mt-1 text-sm text-[var(--color-muted)]">First author · with Dr. Hassan (DFKI Bremen) and Dr. Jalil (UAEU)</p>
+        <ul class="mt-4 space-y-2 text-[0.95rem] text-[var(--color-muted)] leading-relaxed">
+          <li>An LLM pipeline that generates test invariants for property-based testing of Solidity contracts.</li>
+          <li>An agent that automatically fixes compilation errors in the generated properties.</li>
+          <li>Evaluated with mutation testing: 25.99% mutation score for the LLM approach vs 31.75% for hand-written properties, with much less human effort.</li>
         </ul>
       </div>
     </div>
+  </section>
 
-    <!-- Contact -->
-    <div class="mt-12 pt-8 border-t border-[var(--color-border)] pb-10 fade-in fade-in-delay-4">
-      <h2 class="text-xl mb-3 font-medium">Get in touch</h2>
-      <p class="text-[var(--color-muted)] mb-6">
-        Want to collaborate, discuss AI, or just say hi?
-      </p>
-      <div class="flex items-center flex-wrap gap-3">
-        <a
-          href="mailto:hello@shahzaib.ai"
-          class="text-sm px-4 py-2 rounded-md border border-[var(--color-ink)] text-[var(--color-ink)] hover:bg-[var(--color-ink)] hover:text-[var(--color-cream)] transition-colors font-medium"
-        >
-          hello@shahzaib.ai
-        </a>
-        <a
-          href=""
-          onclick="Calendly.initPopupWidget({url:'https://calendly.com/shahzaib-khan0217/30min?hide_gdpr_banner=1'});return false;"
-          class="text-sm px-4 py-2 rounded-md bg-[var(--color-ink)] text-[var(--color-cream)] hover:opacity-80 transition-opacity font-medium"
-        >
-          book a call
-        </a>
-      </div>
+  <section class="grid lg:grid-cols-12 gap-10 lg:gap-12 pb-20 border-t border-[var(--color-rule)] pt-10" aria-labelledby="faq-heading">
+    <div class="lg:col-span-4">
+      <h2 id="faq-heading" class="label">Questions</h2>
     </div>
-  </div>
+    <div class="lg:col-span-8">
+      {faqs.map(f => (
+        <details class="group border-b border-[var(--color-rule)] py-4 first:pt-0">
+          <summary class="flex items-center justify-between gap-4 cursor-pointer list-none font-medium">
+            <h3>{f.q}</h3>
+            <span class="text-[var(--color-muted)] transition-transform group-open:rotate-45" aria-hidden="true">+</span>
+          </summary>
+          <p class="mt-3 text-[var(--color-muted)] leading-relaxed max-w-[62ch]">{f.a}</p>
+        </details>
+      ))}
+    </div>
+  </section>
+
+  <section class="pb-24 border-t border-[var(--color-ink)] pt-10">
+    <h2 class="display text-4xl sm:text-5xl">Say hello</h2>
+    <p class="mt-3 text-[var(--color-muted)]">Want to build something together, talk about AI, or just compare notes?</p>
+    <div class="mt-6 flex flex-wrap gap-3">
+      <a
+        href="/call"
+        onclick="if(window.Calendly){Calendly.initPopupWidget({url:'https://calendly.com/shahzaib-khan0217/30min?hide_gdpr_banner=1'});return false;}"
+        class="text-sm px-5 py-3 rounded-full bg-[var(--color-ink)] text-[var(--color-paper)] font-medium hover:opacity-85 transition-opacity"
+      >
+        Book a 30-minute call
+      </a>
+      <a href="mailto:hello@shahzaib.ai" class="text-sm px-5 py-3 rounded-full border border-[var(--color-rule)] font-medium hover:border-[var(--color-ink)] transition-colors">
+        hello@shahzaib.ai
+      </a>
+    </div>
+  </section>
 </BaseLayout>

@@ -1,0 +1,60 @@
+---
+import { render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getPosts, formatDate } from '../../data/posts';
+import { SITE, PERSON_ID, WEBSITE_ID, person } from '../../data/site';
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  return posts.map(post => ({ params: { id: post.id }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const url = `${SITE}/blog/${post.id}`;
+---
+
+<BaseLayout
+  title={`${post.data.title} · Shahzaib Khan`}
+  description={post.data.description}
+  ogType="article"
+  publishedTime={post.data.pubDate.toISOString()}
+  jsonLd={[{
+    '@type': 'BlogPosting',
+    '@id': `${url}#article`,
+    url,
+    mainEntityOfPage: url,
+    headline: post.data.title,
+    description: post.data.description,
+    datePublished: post.data.pubDate.toISOString(),
+    dateModified: (post.data.updatedDate ?? post.data.pubDate).toISOString(),
+    keywords: post.data.tags.join(', '),
+    author: { '@id': PERSON_ID },
+    publisher: { '@id': PERSON_ID },
+    isPartOf: { '@id': WEBSITE_ID },
+    image: `${SITE}/og-image.png`,
+    inLanguage: 'en',
+  }]}
+>
+  <article class="pt-12 sm:pt-20 pb-20 max-w-[68ch]">
+    <p class="label">
+      <a href="/blog" class="hover:text-[var(--color-ink)]">Writing</a> ·
+      <time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time>
+      {post.data.updatedDate && <> · updated <time datetime={post.data.updatedDate.toISOString()}>{formatDate(post.data.updatedDate)}</time></>}
+    </p>
+    <h1 class="display text-4xl sm:text-6xl mt-4">{post.data.title}</h1>
+    <p class="mt-5 text-lg leading-relaxed">{post.data.description}</p>
+
+    <div class="prose mt-10">
+      <Content />
+    </div>
+
+    <footer class="mt-16 pt-8 border-t border-[var(--color-rule)] flex items-center gap-4">
+      <img src="/shahzaib-256.webp" alt="" width="48" height="48" class="w-12 h-12 rounded-full object-cover grayscale" />
+      <div>
+        <p class="font-medium">Written by <a href="/about" rel="author" class="link">{person.name}</a></p>
+        <p class="text-sm text-[var(--color-muted)]">AI engineer, Founding Senior Engineer at Bridge. <a href="/#clone" class="link">Ask my AI clone</a> about this post.</p>
+      </div>
+    </footer>
+  </article>
+</BaseLayout>

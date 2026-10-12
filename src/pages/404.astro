@@ -2,18 +2,13 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
-<BaseLayout title="404 | Shahzaib" description="Page not found.">
-  <div class="pt-12 pb-10 sm:pt-24 sm:pb-16 text-center fade-in">
-    <p class="text-4xl sm:text-6xl mb-6" style="font-family: var(--font-serif)">404</p>
-    <h1 class="text-xl font-medium mb-3">Page not found</h1>
-    <p class="text-[var(--color-muted)] mb-8">
-      This page doesn't exist or has been moved.
-    </p>
-    <a
-      href="/"
-      class="text-sm underline underline-offset-2 text-[var(--color-ink)] hover:opacity-70 transition-opacity"
-    >
-      Go home
+<BaseLayout title="Page not found · Shahzaib Khan" description="This page doesn't exist.">
+  <section class="min-h-[calc(100dvh-10rem)] flex flex-col justify-center py-16 fade-in">
+    <p class="label">Error 404</p>
+    <h1 class="display text-5xl sm:text-7xl mt-4">This page doesn't exist.</h1>
+    <p class="mt-4 text-[var(--color-muted)]">It may have moved, or the link has a typo.</p>
+    <a href="/" class="mt-8 self-start text-sm px-5 py-3 rounded-full bg-[var(--color-ink)] text-[var(--color-paper)] font-medium hover:opacity-85 transition-opacity">
+      Go to the home page
     </a>
-  </div>
+  </section>
 </BaseLayout>

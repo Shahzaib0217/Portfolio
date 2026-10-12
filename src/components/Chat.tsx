@@ -4,8 +4,8 @@ import Markdown from 'markdown-to-jsx';
 interface Message {
   role: 'user' | 'assistant';
   content: string;
+  at: number; // ms since the conversation started
 }
-
 
 const LOADING_MESSAGES = [
   "Thinking...",
@@ -15,31 +15,60 @@ const LOADING_MESSAGES = [
   "Connecting the dots...",
 ];
 
-const LOADING_MESSAGE_FIRST = "Free tier, please bear with me 😭";
+const LOADING_MESSAGE_FIRST = "Pulling from my work history...";
 
 const STARTER_PROMPTS = [
-  "Walk me through your experience",
-  "What kind of AI systems have you shipped?",
-  "Are you open to full-time roles?",
+  "What did you build at Bridge?",
+  "How do you get a voice agent under 2 seconds?",
+  "Tell me about Zehn",
   "I'm building an AI product, can you help?",
 ];
 
+const MAX_INPUT_LENGTH = 1000;
+
+function stamp(ms: number) {
+  const s = Math.floor(ms / 1000);
+  return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
+}
+
+function emit(name: string, detail?: unknown) {
+  window.dispatchEvent(new CustomEvent(name, { detail }));
+}
+
+function Speaker({ role, at }: { role: Message['role']; at: number }) {
+  return (
+    <div className="flex sm:flex-col gap-2 sm:gap-0.5 pt-0.5 font-mono text-[0.68rem] uppercase tracking-wider leading-tight">
+      <span className={role === 'assistant' ? 'text-[var(--color-signal)] font-medium' : 'text-[var(--color-ink)] font-medium'}>
+        {role === 'assistant' ? 'Clone' : 'You'}
+      </span>
+      <span className="text-[var(--color-muted)]">{stamp(at)}</span>
+    </div>
+  );
+}
 
 export default function Chat() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState('');
-  const [showStarters, setShowStarters] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const startedAt = useRef<number | null>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const abortRef = useRef<AbortController | null>(null);
 
+  useEffect(() => () => abortRef.current?.abort(), []);
+
+  // Scroll the transcript itself, never the page.
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    const el = scrollRef.current;
+    if (!el || messages.length === 0) return;
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    el.scrollTo({ top: el.scrollHeight, behavior: reduce ? 'auto' : 'smooth' });
   }, [messages]);
 
   useEffect(() => {
+    emit('clone:speaking', isLoading);
     if (!isLoading) return;
     setLoadingMessage(LOADING_MESSAGE_FIRST);
     const interval = setInterval(() => {
@@ -48,43 +77,59 @@ export default function Chat() {
     return () => clearInterval(interval);
   }, [isLoading]);
 
-  const MAX_INPUT_LENGTH = 1000;
+  function elapsed() {
+    if (startedAt.current === null) startedAt.current = Date.now();
+    return Date.now() - startedAt.current;
+  }
+
+  function setLastAssistant(content: string) {
+    setMessages(prev => {
+      if (prev.length === 0) return prev;
+      const updated = [...prev];
+      updated[updated.length - 1] = { ...updated[updated.length - 1], content };
+      return updated;
+    });
+  }
+
+  function reset() {
+    abortRef.current?.abort();
+    setIsLoading(false);
+    setMessages([]);
+    setError(null);
+    startedAt.current = null;
+    inputRef.current?.focus();
+  }
 
   async function sendMessage(text: string) {
     if (!text.trim() || isLoading) return;
     if (text.trim().length > MAX_INPUT_LENGTH) {
-      setError(`Message too long. Please keep it under ${MAX_INPUT_LENGTH} characters.`);
+      setError(`Keep your message under ${MAX_INPUT_LENGTH} characters.`);
       return;
     }
 
-    setShowStarters(false);
     setError(null);
 
-    const userMessage: Message = { role: 'user', content: text.trim() };
+    const userMessage: Message = { role: 'user', content: text.trim(), at: elapsed() };
     const newMessages = [...messages, userMessage];
-    setMessages(newMessages);
+    setMessages([...newMessages, { role: 'assistant', content: '', at: elapsed() }]);
     setInput('');
     setIsLoading(true);
-    setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
+    const controller = new AbortController();
+    abortRef.current = controller;
+    let assistantText = '';
 
     try {
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: newMessages }),
+        body: JSON.stringify({ messages: newMessages.map(({ role, content }) => ({ role, content })) }),
+        signal: controller.signal,
       });
 
       if (!response.ok) {
         const data = await response.json().catch(() => ({}));
         if (response.status === 429) {
-          setMessages(prev => {
-            const updated = [...prev];
-            updated[updated.length - 1] = {
-              role: 'assistant',
-              content: "You've sent too many messages. Please wait a few minutes before trying again.",
-            };
-            return updated;
-          });
+          setLastAssistant("You've sent a lot of messages. Wait a few minutes, then try again.");
           return;
         }
         throw new Error(data.error || 'Something went wrong.');
@@ -92,49 +137,44 @@ export default function Chat() {
 
       if (!response.body) throw new Error('No response body');
 
-      // Streaming
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
-      let assistantText = '';
+      let buffer = '';
 
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
 
-        const chunk = decoder.decode(value, { stream: true });
-        const lines = chunk.split('\n');
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop() ?? '';
 
         for (const line of lines) {
-          if (line.startsWith('data: ')) {
-            const data = line.slice(6).trim();
-            if (data === '[DONE]') continue;
-            try {
-              const parsed = JSON.parse(data);
-              const delta = parsed.choices?.[0]?.delta?.content ?? '';
-              assistantText += delta;
-              setMessages(prev => {
-                const updated = [...prev];
-                updated[updated.length - 1] = {
-                  role: 'assistant',
-                  content: assistantText,
-                };
-                return updated;
-              });
-            } catch {
-              // skip malformed chunks
-            }
+          if (!line.startsWith('data: ')) continue;
+          const data = line.slice(6).trim();
+          if (data === '[DONE]') continue;
+          try {
+            const parsed = JSON.parse(data);
+            const delta = parsed.choices?.[0]?.delta?.content ?? '';
+            if (!delta) continue;
+            assistantText += delta;
+            emit('clone:token');
+            setLastAssistant(assistantText);
+          } catch {
+            // skip malformed chunks
           }
         }
       }
+      if (!assistantText) setLastAssistant('I could not put an answer together. Try asking again.');
     } catch (err) {
-      const msg = err instanceof Error ? err.message : 'Something went wrong.';
-      setMessages(prev => {
-        const updated = [...prev];
-        updated[updated.length - 1] = { role: 'assistant', content: msg };
-        return updated;
-      });
+      if (controller.signal.aborted) return;
+      setLastAssistant(err instanceof Error ? err.message : 'Something went wrong.');
     } finally {
-      setIsLoading(false);
+      if (abortRef.current === controller) {
+        abortRef.current = null;
+        setIsLoading(false);
+        requestAnimationFrame(() => inputRef.current?.focus());
+      }
     }
   }
 
@@ -146,24 +186,31 @@ export default function Chat() {
   }
 
   return (
-    <div className={`w-full h-full flex flex-col ${messages.length === 0 ? 'sm:justify-center' : ''}`}>
+    <div className="w-full h-full flex flex-col rounded-2xl border border-[var(--color-rule)] bg-[var(--color-panel)] overflow-hidden">
       {/* Header */}
-      <div className="flex items-center gap-3 mb-5 flex-shrink-0">
-        <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 bg-[var(--color-ink)]">
-          <span className="text-xs font-medium" style={{ color: 'var(--color-cream)' }}>S</span>
+      <div className="flex items-center gap-3 px-4 sm:px-5 py-3 border-b border-[var(--color-rule)] flex-shrink-0">
+        <img
+          src="/shahzaib-256.webp"
+          alt=""
+          width="32"
+          height="32"
+          className="w-8 h-8 rounded-full object-cover flex-shrink-0 grayscale"
+        />
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-medium leading-tight">Shahzaib, AI clone</p>
+          <p className="text-xs text-[var(--color-muted)] truncate">Answers from my work history. It can get things wrong.</p>
         </div>
-        <div className="flex-1">
-          <p className="text-sm font-medium">Chat with Shahzaib's AI</p>
-          <p className="text-xs text-[#6b7280]">Tell me what you're building, or ask about my background.</p>
-        </div>
+        <span className="hidden sm:inline-flex items-center gap-2 font-mono text-[0.68rem] uppercase tracking-wider text-[var(--color-muted)]">
+          <span className="live-dot" /> {isLoading ? 'Speaking' : 'Listening'}
+        </span>
         {messages.length > 0 && (
           <button
-            onClick={() => { setMessages([]); setShowStarters(true); setError(null); }}
-            className="text-[#9ca3af] hover:text-[#1a1a1a] transition-colors flex-shrink-0"
-            aria-label="Reset conversation"
-            title="Reset conversation"
+            onClick={reset}
+            className="ml-1 w-8 h-8 rounded-full flex items-center justify-center text-[var(--color-muted)] hover:text-[var(--color-ink)] hover:bg-[var(--color-wash)] transition-colors flex-shrink-0"
+            aria-label="Start a new conversation"
+            title="Start a new conversation"
           >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
               <path d="M3 3v5h5" />
             </svg>
@@ -171,109 +218,114 @@ export default function Chat() {
         )}
       </div>
 
-      {/* Messages — fills remaining space and scrolls */}
-      {messages.length > 0 && (
-        <div className="chat-messages flex flex-col gap-4 mb-5 overflow-y-auto flex-1 min-h-0">
-          {messages.map((msg, i) => (
-            <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-              <div
-                className={`max-w-[90%] sm:max-w-[85%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${
-                  msg.role === 'user'
-                    ? 'bg-[#1a1a1a] text-white rounded-br-sm'
-                    : 'bg-white border border-[#e5e2dc] text-[#1a1a1a] rounded-bl-sm'
-                }`}
-              >
-                {msg.content ? (
-                  msg.role === 'assistant' ? (
-                    <Markdown
-                      options={{
-                        overrides: {
-                          a: {
-                            component: ({ href, children }: { href?: string; children: React.ReactNode }) => (
-                              <a
-                                href={href}
-                                target={href?.startsWith('mailto') ? '_self' : '_blank'}
-                                rel="noopener noreferrer"
-                                className="text-blue-600 underline underline-offset-2 hover:text-blue-800 transition-colors"
-                              >
-                                {children}
-                              </a>
-                            ),
-                          },
-                          p: { props: { className: 'mb-1.5 last:mb-0' } },
-                          ul: { props: { className: 'list-disc list-inside mb-1.5 space-y-0.5' } },
-                          ol: { props: { className: 'list-decimal list-inside mb-1.5 space-y-0.5' } },
-                          strong: { props: { className: 'font-semibold' } },
-                        },
-                      }}
-                    >
-                      {msg.content}
-                    </Markdown>
-                  ) : msg.content
-                ) : (
-                  <span className="inline-flex gap-2 items-center py-1">
-                    <span className="inline-flex gap-1 items-center">
-                      <span className="w-1.5 h-1.5 bg-[#6b7280] rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                      <span className="w-1.5 h-1.5 bg-[#6b7280] rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                      <span className="w-1.5 h-1.5 bg-[#6b7280] rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
-                    </span>
-                    <span className="text-[#6b7280]">{loadingMessage}</span>
-                  </span>
-                )}
+      {/* Transcript */}
+      <div ref={scrollRef} className="flex-1 min-h-0 overflow-y-auto px-4 sm:px-5 py-5" aria-busy={isLoading}>
+        {messages.length === 0 ? (
+          <div className="h-full flex flex-col justify-between gap-6">
+            <div className="grid sm:grid-cols-[4.5rem_1fr] gap-1 sm:gap-4">
+              <Speaker role="assistant" at={0} />
+              <p className="text-[0.95rem] leading-relaxed">
+                Hi, I'm an AI version of Shahzaib. Ask me about Bridge, the voice agents I run in production,
+                Zehn, or tell me what you're building and I'll tell you how I'd approach it.
+              </p>
+            </div>
+            <div>
+              <p className="label mb-2.5">Try asking</p>
+              <div className="flex flex-wrap gap-2">
+                {STARTER_PROMPTS.map(prompt => (
+                  <button
+                    key={prompt}
+                    onClick={() => sendMessage(prompt)}
+                    className="text-[0.8rem] px-3 py-1.5 rounded-full border border-[var(--color-muted)]/50 text-[var(--color-muted)] hover:border-[var(--color-ink)] hover:text-[var(--color-ink)] transition-colors text-left"
+                  >
+                    {prompt}
+                  </button>
+                ))}
               </div>
             </div>
-          ))}
-          <div ref={messagesEndRef} />
-        </div>
-      )}
+          </div>
+        ) : (
+          <div className="flex flex-col gap-5">
+            {messages.map((msg, i) => (
+              <div key={i} className="grid sm:grid-cols-[4.5rem_1fr] gap-1 sm:gap-4">
+                <Speaker role={msg.role} at={msg.at} />
+                <div className={`text-[0.95rem] leading-relaxed min-w-0 ${msg.role === 'user' ? 'text-[var(--color-muted)]' : ''}`}>
+                  {msg.content ? (
+                    msg.role === 'assistant' ? (
+                      <Markdown
+                        options={{
+                          overrides: {
+                            a: {
+                              component: ({ href, children }: { href?: string; children: React.ReactNode }) => (
+                                <a
+                                  href={href}
+                                  target={href?.startsWith('mailto') ? '_self' : '_blank'}
+                                  rel="noopener noreferrer"
+                                  className="text-[var(--color-signal)] underline underline-offset-2"
+                                >
+                                  {children}
+                                </a>
+                              ),
+                            },
+                            p: { props: { className: 'mb-2 last:mb-0' } },
+                            ul: { props: { className: 'list-disc pl-5 mb-2 space-y-0.5' } },
+                            ol: { props: { className: 'list-decimal pl-5 mb-2 space-y-0.5' } },
+                            strong: { props: { className: 'font-semibold' } },
+                          },
+                        }}
+                      >
+                        {msg.content}
+                      </Markdown>
+                    ) : msg.content
+                  ) : (
+                    <span className="inline-flex gap-2 items-center text-[var(--color-muted)]">
+                      <span className="inline-flex gap-1 items-center">
+                        <span className="w-1 h-3 bg-[var(--color-signal)] rounded-full animate-pulse motion-reduce:animate-none" />
+                        <span className="w-1 h-4 bg-[var(--color-signal)] rounded-full animate-pulse motion-reduce:animate-none" style={{ animationDelay: '150ms' }} />
+                        <span className="w-1 h-2.5 bg-[var(--color-signal)] rounded-full animate-pulse motion-reduce:animate-none" style={{ animationDelay: '300ms' }} />
+                      </span>
+                      {loadingMessage}
+                    </span>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
 
-      {/* Error */}
-      {error && (
-        <p className="text-sm text-red-500 mb-4 px-1 flex-shrink-0">{error}</p>
-      )}
+      <p className="sr-only" role="status">{isLoading ? 'The clone is replying' : messages.length ? 'Reply ready' : ''}</p>
 
-      {/* Starter prompts */}
-      {showStarters && (
-        <div className="flex flex-wrap gap-2 mb-2 flex-shrink-0">
-          {STARTER_PROMPTS.map(prompt => (
-            <button
-              key={prompt}
-              onClick={() => sendMessage(prompt)}
-              className="text-xs px-3 py-2 rounded-full border border-[#e5e2dc] text-[#6b7280] hover:border-[#1a1a1a] hover:text-[#1a1a1a] transition-colors bg-white"
-            >
-              {prompt}
-            </button>
-          ))}
-        </div>
-      )}
+      {error && <p className="text-sm text-red-500 px-5 pb-2 flex-shrink-0">{error}</p>}
 
       {/* Input */}
-      <div className="flex-shrink-0">
-        <div className="flex items-center gap-2 border border-[#e5e2dc] rounded-xl px-4 py-2.5 bg-white focus-within:border-[#1a1a1a] transition-colors">
+      <div className="flex-shrink-0 border-t border-[var(--color-rule)] p-2.5 sm:p-3">
+        <div className="flex items-center gap-2 rounded-xl bg-[var(--color-wash)] pl-4 pr-1.5 py-1.5 focus-within:ring-2 focus-within:ring-[var(--color-signal)] transition-shadow">
+          <label htmlFor="clone-input" className="sr-only">Ask the AI clone a question</label>
           <input
+            id="clone-input"
             ref={inputRef}
             type="text"
             value={input}
             onChange={e => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Ask me anything about my work..."
+            placeholder="Ask about my work, or describe what you're building"
             disabled={isLoading}
             maxLength={MAX_INPUT_LENGTH}
-            className="flex-1 text-sm outline-none bg-transparent text-[#1a1a1a] placeholder-[#9ca3af] disabled:opacity-50"
+            className="flex-1 min-w-0 text-sm outline-none focus-visible:outline-none bg-transparent text-[var(--color-ink)] placeholder-[var(--color-muted)] disabled:opacity-50 py-1.5"
           />
           <button
             onClick={() => sendMessage(input)}
             disabled={!input.trim() || isLoading}
-            className="w-8 h-8 sm:w-7 sm:h-7 rounded-lg bg-[#1a1a1a] text-white flex items-center justify-center disabled:opacity-30 hover:opacity-80 transition-opacity flex-shrink-0"
+            className="w-9 h-9 rounded-lg bg-[var(--color-ink)] text-[var(--color-paper)] flex items-center justify-center disabled:opacity-25 hover:opacity-80 transition-opacity flex-shrink-0"
             aria-label="Send"
           >
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <line x1="12" y1="19" x2="12" y2="5" />
               <polyline points="5 12 12 5 19 12" />
             </svg>
           </button>
         </div>
-        <p className="hidden sm:block text-xs text-[#9ca3af] mt-2 px-1">Press Enter to send</p>
       </div>
     </div>
   );

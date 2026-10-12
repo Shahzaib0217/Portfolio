@@ -2,33 +2,26 @@
 const year = new Date().getFullYear();
 ---
 
-<footer class="py-4 px-4 sm:px-6 max-w-3xl mx-auto w-full border-t border-[var(--color-border)]">
-  <div class="flex flex-row items-center justify-between">
-
-    <!-- Email — primary reachout -->
-    <a
-      href="mailto:hello@shahzaib.ai"
-      class="text-sm font-medium text-[var(--color-ink)] hover:opacity-60 transition-opacity"
-    >
+<footer class="mt-auto border-t border-[var(--color-rule)]">
+  <div class="max-w-6xl mx-auto w-full px-4 sm:px-8 py-5 flex flex-wrap items-center justify-between gap-4">
+    <a href="mailto:hello@shahzaib.ai" class="text-sm font-medium hover:text-[var(--color-signal)] transition-colors">
       hello@shahzaib.ai
     </a>
 
-    <div class="flex items-center gap-4">
-      <!-- Copyright -->
-      <p class="text-xs text-[var(--color-muted)]">© {year} Shahzaib.</p>
+    <div class="flex items-center gap-5">
+      <a href="https://linkedin.com/in/shahzaib17" target="_blank" rel="noopener noreferrer" class="label hover:text-[var(--color-ink)] transition-colors">LinkedIn</a>
+      <a href="https://github.com/Shahzaib0217" target="_blank" rel="noopener noreferrer" class="label hover:text-[var(--color-ink)] transition-colors">GitHub</a>
+      <span class="label">© {year}</span>
 
-      <!-- Dark mode toggle -->
       <button
         id="theme-toggle"
         aria-label="Toggle dark mode"
-        class="w-8 h-8 flex items-center justify-center rounded-lg text-[var(--color-muted)] hover:text-[var(--color-ink)] transition-colors"
+        class="w-8 h-8 flex items-center justify-center rounded-full text-[var(--color-muted)] hover:text-[var(--color-ink)] hover:bg-[var(--color-wash)] transition-colors"
       >
-        <!-- Moon (shown in light mode) -->
-        <svg id="icon-moon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg id="icon-moon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
         </svg>
-        <!-- Sun (shown in dark mode) -->
-        <svg id="icon-sun" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+        <svg id="icon-sun" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none" aria-hidden="true">
           <circle cx="12" cy="12" r="5"/>
           <line x1="12" y1="1" x2="12" y2="3"/>
           <line x1="12" y1="21" x2="12" y2="23"/>
@@ -41,7 +34,6 @@ const year = new Date().getFullYear();
         </svg>
       </button>
     </div>
-
   </div>
 </footer>
 
@@ -61,7 +53,7 @@ const year = new Date().getFullYear();
 
   toggle?.addEventListener('click', () => {
     const dark = html.classList.toggle('dark');
-    localStorage.setItem('theme', dark ? 'dark' : 'light');
+    try { localStorage.setItem('theme', dark ? 'dark' : 'light'); } catch {}
     syncIcons();
   });
 </script>

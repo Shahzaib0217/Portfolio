@@ -1,0 +1,43 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getPosts, formatDate } from '../../data/posts';
+import { SITE, PERSON_ID } from '../../data/site';
+
+const posts = await getPosts();
+---
+
+<BaseLayout
+  noindex={posts.length === 0}
+  title="Writing · Shahzaib Khan"
+  description="Notes from building AI agents in production: voice agents, meeting agents, RAG, MCP and the infrastructure behind them."
+  jsonLd={[{
+    '@type': 'Blog',
+    '@id': `${SITE}/blog#blog`,
+    url: `${SITE}/blog`,
+    name: 'Writing by Shahzaib Khan',
+    author: { '@id': PERSON_ID },
+  }]}
+>
+  <section class="pt-12 sm:pt-20 pb-10">
+    <p class="label">Writing</p>
+    <h1 class="display text-5xl sm:text-7xl mt-4">Notes from building AI agents</h1>
+    <p class="mt-5 text-lg text-[var(--color-muted)] leading-relaxed max-w-[52ch]">
+      What I learn shipping voice agents, meeting agents, RAG and MCP integrations to real users.
+    </p>
+  </section>
+
+  <ul class="border-t border-[var(--color-ink)] pb-24">
+    {posts.length === 0 && <li class="py-10 text-[var(--color-muted)]">The first post is on its way.</li>}
+    {posts.map(post => (
+      <li class="border-b border-[var(--color-rule)]">
+        <a href={`/blog/${post.id}`} class="grid sm:grid-cols-12 gap-1 sm:gap-6 py-6 group">
+          <time class="sm:col-span-3 label pt-1" datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}{post.data.draft && ' · draft'}</time>
+          <div class="sm:col-span-9">
+            <h2 class="text-xl font-medium group-hover:text-[var(--color-signal)] transition-colors">{post.data.title}</h2>
+            <p class="mt-1 text-[var(--color-muted)] leading-relaxed">{post.data.description}</p>
+          </div>
+        </a>
+      </li>
+    ))}
+  </ul>
+</BaseLayout>
