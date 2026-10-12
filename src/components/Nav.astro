@@ -9,7 +9,7 @@ const navLinks = [
   { href: '/cv', label: 'CV' },
 ];
 
-const currentPath = Astro.url.pathname;
+const currentPath = Astro.url.pathname.replace(/\.html$/, '');
 const isActive = (href: string) => currentPath === href || currentPath.startsWith(href + '/');
 ---
 

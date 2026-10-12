@@ -27,7 +27,9 @@ const {
 
 const graph = { '@context': 'https://schema.org', '@graph': [...baseGraph(), ...jsonLd] };
 
-const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+// Pages build as about.html etc.; canonical URLs drop the extension and trailing slash.
+const cleanPath = Astro.url.pathname.replace(/(\/index)?\.html$/, '').replace(/\/$/, '') || '/';
+const canonicalURL = new URL(cleanPath, Astro.site);
 ---
 
 <!doctype html>
