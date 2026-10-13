@@ -6,3 +6,10 @@
 - Local browser: before the click, no Calendly CSS/JS. After clicking Book a call, the scripts load, the popup opens and the URL is unchanged.
 - Notification history reads "Joined Foomotion…", "Started freelancing…", "Joined DevDen…".
 - _headers is only applied on Cloudflare, so check after deploy.
+
+## After deploy (live)
+- Security headers present on /.
+- No Calendly CSS in the page HTML.
+- /call returns noindex.
+- New CV served (53283 bytes).
+- Lighthouse mobile on the live homepage: Accessibility 100, Best Practices 100 (was 77), SEO 100, Agentic Browsing 100; 0 failed audits.
