@@ -83,7 +83,11 @@ const before = roles.filter(r => !r.current);
     <div class="ml-auto flex items-center gap-2 md:gap-4">
       <span class="inline-flex items-center gap-2 text-[0.8rem]"><span class="live-dot"></span><span class="md:hidden">Open to work</span><span class="hidden md:inline">Open to new work</span></span>
       <span class="hidden md:inline font-mono text-[0.75rem] text-[var(--color-muted)] whitespace-nowrap">Lahore <time class="clock text-[var(--color-ink)]">--:--</time></span>
-      <ThemeToggle />
+      <span class="flex items-center">
+        <a href={person.linkedin} target="_blank" rel="noopener noreferrer" class="bar-link hidden md:grid" aria-label="LinkedIn (opens in a new tab)" title="LinkedIn"><Glyph name="linkedin" /></a>
+        <a href={person.github} target="_blank" rel="noopener noreferrer" class="bar-link hidden md:grid" aria-label="GitHub (opens in a new tab)" title="GitHub"><Glyph name="github" /></a>
+        <ThemeToggle />
+      </span>
       <a href="/call" onclick={calendly} class="hidden md:inline-block text-[0.8rem] px-3 py-1 rounded-full bg-[var(--color-ink)] text-[var(--color-paper)] font-medium hover:opacity-85 transition-opacity whitespace-nowrap">Book a call</a>
     </div>
   </header>
@@ -278,6 +282,9 @@ const before = roles.filter(r => !r.current);
   }
   .menu-link { padding: 0.2rem 0.55rem; border-radius: 6px; color: var(--color-muted); }
   .menu-link:hover { color: var(--color-ink); background: var(--color-wash); }
+  .bar-link { width: 2rem; height: 2rem; place-items: center; border-radius: 9999px; color: var(--color-muted); transition: color 0.15s, background 0.15s; }
+  .bar-link:hover { color: var(--color-ink); background: var(--color-wash); }
+  .bar-link svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 
   .desktop {
     position: relative;
