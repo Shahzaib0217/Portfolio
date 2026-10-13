@@ -10,7 +10,7 @@ export const GET: APIRoute = async () => {
 
   const body = `# ${person.name}
 
-> ${person.summary} Open to new work: roles and contracts building AI products, remote from Pakistan with US and UK overlap.
+> ${person.summary} He has been working in AI for 3 years (university research from 2023, professionally since 2024). Open to new work: roles and contracts building AI products, remote from Pakistan with US and UK overlap.
 
 Contact: ${person.email} · Book a call: ${person.calendly}
 LinkedIn: ${person.linkedin} · GitHub: ${person.github}

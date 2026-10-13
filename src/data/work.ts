@@ -48,7 +48,7 @@ export const roles: Role[] = [
   {
     company: 'DreamDesk AI',
     org: 'Second Nature',
-    role: 'Lead AI Product Engineer',
+    role: 'Lead Product Engineer',
     type: 'Full-time',
     period: 'Jan 2026 – Present',
     location: 'Remote · UK',
