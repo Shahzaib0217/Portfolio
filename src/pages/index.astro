@@ -109,9 +109,9 @@ const before = roles.filter(r => !r.current);
       <p class="mt-3 text-[0.9rem] leading-snug">I build AI agents that run in production: meeting agents, voice agents, RAG and MCP.</p>
       <p class="label mt-4 mb-1">Now</p>
       <ul class="widget-rows">
-        <li><button type="button" data-open="bridge"><span class="row-top"><span class="font-medium">Bridge</span><span class="meta">~500 users</span></span><span class="row-sub">Founding Senior Engineer</span></button></li>
-        <li><button type="button" data-open="dreamdesk"><span class="row-top"><span class="font-medium">DreamDesk AI</span><span class="meta inline-flex items-center gap-1.5" title="Live at 3 locations"><span class="live-dot"></span>live at 3 locations</span></span><span class="row-sub">Lead AI Product Engineer</span></button></li>
-        <li><a href="https://zehn.school/" target="_blank" rel="noopener noreferrer"><span class="row-top"><span class="font-medium">Zehn</span><span class="meta">zehn.school ↗</span></span><span class="row-sub">Hobby startup</span></a></li>
+        <li><button type="button" data-open="bridge"><span><span class="font-medium">Bridge</span><span class="text-[var(--color-muted)]"> · Founding Senior Engineer</span></span><span class="row-go" aria-hidden="true">›</span></button></li>
+        <li><button type="button" data-open="dreamdesk"><span><span class="font-medium">DreamDesk AI</span><span class="text-[var(--color-muted)]"> · Lead AI Product Engineer</span></span><span class="row-go" aria-hidden="true">›</span></button></li>
+        <li><a href="https://zehn.school/" target="_blank" rel="noopener noreferrer"><span><span class="font-medium">Zehn</span><span class="text-[var(--color-muted)]"> · Side project</span></span><span class="row-go" aria-hidden="true">↗</span></a></li>
       </ul>
       <button type="button" data-open="readme" class="mt-3 text-[0.85rem] font-medium text-[var(--color-signal)]">Read the full README →</button>
     </section>
@@ -165,7 +165,7 @@ const before = roles.filter(r => !r.current);
           <ul class="space-y-2">
             <li><span class="font-medium">Founding Senior Engineer, <button type="button" data-open="bridge" class="link">Bridge</button></span> <span class="meta">since Aug 2025 · part-time</span><br /><span class="text-[var(--color-muted)]">First engineer. MVP in 2 months, ~500 users.</span></li>
             <li><span class="font-medium">Lead AI Product Engineer, <button type="button" data-open="dreamdesk" class="link">DreamDesk AI</button></span> <span class="meta">since Jan 2026 · full-time</span><br /><span class="text-[var(--color-muted)]">Voice and chat agents for Second Nature hometels, live at 3 locations.</span></li>
-            <li><span class="font-medium"><a href="https://zehn.school/" target="_blank" rel="noopener noreferrer" class="link">Zehn</a>, my hobby startup</span> <span class="meta">since Sep 2026</span><br /><span class="text-[var(--color-muted)]">Computing and AI programmes for schools in Pakistan.</span></li>
+            <li><span class="font-medium"><a href="https://zehn.school/" target="_blank" rel="noopener noreferrer" class="link">Zehn</a>, my side project</span> <span class="meta">since Sep 2026</span><br /><span class="text-[var(--color-muted)]">Computing and AI programmes for schools in Pakistan.</span></li>
           </ul>
         </dd>
 
@@ -395,9 +395,8 @@ const before = roles.filter(r => !r.current);
       box-shadow: 0 8px 24px -16px color-mix(in srgb, var(--color-ink) 30%, transparent);
     }
     .widget-rows li + li { border-top: 1px solid var(--color-rule); }
-    .widget-rows button, .widget-rows a { width: 100%; display: block; padding: 0.5rem 0; font-size: 0.9rem; text-align: left; }
-    .widget-rows .row-top { display: flex; align-items: baseline; justify-content: space-between; gap: 0.75rem; }
-    .widget-rows .row-sub { display: block; font-size: 0.82rem; color: var(--color-muted); margin-top: 0.05rem; }
+    .widget-rows button, .widget-rows a { width: 100%; display: flex; align-items: baseline; justify-content: space-between; gap: 0.75rem; padding: 0.55rem 0; font-size: 0.88rem; text-align: left; }
+    .widget-rows .row-go { color: var(--color-muted); font-size: 1rem; line-height: 1; }
 
     .icons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem 0.25rem; margin-top: 1.5rem; }
     .icon-tile { width: 3.6rem; height: 3.6rem; border-radius: 16px; }
