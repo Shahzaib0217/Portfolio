@@ -101,6 +101,17 @@ const history: Note[] = [
   ogType="profile"
   jsonLd={[profilePage('/', 'Shahzaib Khan · AI Engineer')]}
 >
+  <!-- The real visible height, measured before first paint. Some phone browsers (e.g. Samsung Internet) report
+       100dvh as taller than what is visible, which pushed the dock under the browser's bottom edge. -->
+  <script is:inline>
+    (function () {
+      var set = function () { document.documentElement.style.setProperty('--app-h', window.innerHeight + 'px'); };
+      set();
+      addEventListener('resize', set);
+      if (window.visualViewport) visualViewport.addEventListener('resize', set);
+    })();
+  </script>
+
   <!-- Menu bar (desktop) / status bar (phone) -->
   <header class="menubar">
     <a href="/" class="hidden md:flex items-center gap-2 font-medium" aria-label="Shahzaib Khan, home">
@@ -476,7 +487,7 @@ const history: Note[] = [
     html, body { height: 100%; overflow: hidden; overscroll-behavior: none; }
     /* One flex column fills the screen: widget, apps, then search + dock pinned to the bottom by layout,
        so the dock can never cover the search bar whatever the screen height or system text size. */
-    body { height: 100dvh; }
+    body { height: var(--app-h, 100vh); }
     .desktop { display: flex; flex-direction: column; flex: 1; min-height: 0; padding: 1rem 1rem calc(1.6rem + env(safe-area-inset-bottom)); overflow: hidden; }
     .home-widget, .home-search, .dock { flex-shrink: 0; }
     /* If a screen is too short, the app grid gives way first, never the search bar or dock */
@@ -591,7 +602,7 @@ const history: Note[] = [
   /* ---------- Desktop ---------- */
   @media (min-width: 768px) {
     .phone-only, .home-widget, .dock, .home-bar, .notifs, .home-search { display: none !important; }
-    body { height: 100dvh; overflow: hidden; }
+    body { height: var(--app-h, 100vh); overflow: hidden; }
     .desktop { overflow: hidden; }
     .icons { position: absolute; left: 0.75rem; top: 1rem; display: flex; flex-direction: column; gap: 0.5rem; width: 6rem; z-index: 1; }
     /* Once an icon is dragged, every icon is placed absolutely on a grid (until the page reloads) */
