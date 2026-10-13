@@ -162,6 +162,17 @@ const history: Note[] = [
       <button type="button" data-open="readme" class="mt-3 text-[0.85rem] font-medium text-[var(--color-signal)]">Read the full README →</button>
     </section>
 
+    <!-- Phone search widget, under the hero card: really a door to the AI clone, plus "copy my profile for AI" -->
+    <div class="home-search">
+      <button type="button" class="home-search-field" data-ask-clone aria-label="Ask my AI clone a question">
+        <span class="home-search-icon" aria-hidden="true"><Glyph name="chat" /></span>
+        <span class="truncate">Ask my clone anything…</span>
+      </button>
+      <button type="button" class="home-search-copy" data-copy-ai aria-label="Copy my profile for ChatGPT or Claude" title="Copy profile for AI">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5.5A1.5 1.5 0 0014.5 4h-9A1.5 1.5 0 004 5.5v9A1.5 1.5 0 005.5 16H8"/></svg>
+      </button>
+    </div>
+
     <!-- Icons: desktop column / phone app grid -->
     <nav class="icons" aria-label="Apps">
       {apps.map(app => (
@@ -177,17 +188,6 @@ const history: Note[] = [
         </a>
       ))}
     </nav>
-
-    <!-- Phone search widget: really a door to the AI clone, plus "copy my profile for AI" -->
-    <div class="home-search">
-      <button type="button" class="home-search-field" data-ask-clone aria-label="Ask my AI clone a question">
-        <span class="home-search-icon" aria-hidden="true"><Glyph name="chat" /></span>
-        <span class="truncate">Ask my clone anything…</span>
-      </button>
-      <button type="button" class="home-search-copy" data-copy-ai aria-label="Copy my profile for ChatGPT or Claude" title="Copy profile for AI">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5.5A1.5 1.5 0 0014.5 4h-9A1.5 1.5 0 004 5.5v9A1.5 1.5 0 005.5 16H8"/></svg>
-      </button>
-    </div>
 
     <!-- Phone dock -->
     <nav class="dock" aria-label="Quick actions">
@@ -485,17 +485,10 @@ const history: Note[] = [
     .desk-only { display: none !important; }
     /* The home screen doesn't scroll, like a phone: vertical swipes are free for the swipe-up gesture */
     html, body { height: 100%; overflow: hidden; overscroll-behavior: none; }
-    /* One flex column fills the screen: widget, apps, then search + dock pinned to the bottom by layout,
-       so the dock can never cover the search bar whatever the screen height or system text size. */
-    body { height: var(--app-h, 100vh); }
-    .desktop { display: flex; flex-direction: column; flex: 1; min-height: 0; padding: 1rem 1rem calc(1.6rem + env(safe-area-inset-bottom)); overflow: hidden; }
-    .home-widget, .home-search, .dock { flex-shrink: 0; }
-    /* If a screen is too short, the app grid gives way first, never the search bar or dock */
-    .icons { min-height: 0; overflow: hidden; }
-
-    /* Search widget sits just above the dock, in the space a phone home screen leaves free */
+    .desktop { padding: 1rem 1rem calc(7.5rem + env(safe-area-inset-bottom)); height: calc(var(--app-h, 100dvh) - 2.75rem); overflow: hidden; }
+    /* Search widget sits right under the hero card */
     .home-search {
-      margin-top: auto; display: flex; align-items: center; gap: 0.25rem;
+      margin-top: 0.75rem; display: flex; align-items: center; gap: 0.25rem;
       height: 3rem; padding: 0 0.35rem 0 0.4rem; border-radius: 9999px;
       background: color-mix(in srgb, var(--color-panel) 88%, transparent);
       backdrop-filter: blur(8px);
@@ -560,7 +553,7 @@ const history: Note[] = [
     .icon-label { background: none; font-size: 0.74rem; }
 
     .dock {
-      position: relative; z-index: 60; margin-top: 0.75rem;
+      position: fixed; z-index: 60; left: 0.75rem; right: 0.75rem; bottom: calc(1.4rem + env(safe-area-inset-bottom));
       display: grid; grid-template-columns: repeat(4, 1fr);
       padding: 0.6rem 0.4rem 0.45rem;
       background: color-mix(in srgb, var(--color-panel) 75%, transparent);
@@ -590,8 +583,8 @@ const history: Note[] = [
       .icon-tile svg { width: 1.45rem; height: 1.45rem; }
       .dock { padding: 0.45rem 0.4rem 0.35rem; }
       .dock .icon-tile { width: 2.9rem; height: 2.9rem; }
-      .desktop { padding-bottom: calc(1.5rem + env(safe-area-inset-bottom)); }
-      .home-search { height: 2.75rem; }
+      .desktop { padding-bottom: calc(6.5rem + env(safe-area-inset-bottom)); }
+      .home-search { height: 2.75rem; margin-top: 0.6rem; }
     }
     /* Very short screens: no room for the search widget */
     @media (max-height: 600px) {
