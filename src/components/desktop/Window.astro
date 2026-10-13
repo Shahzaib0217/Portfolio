@@ -1,0 +1,54 @@
+---
+// A desktop window: title bar (drag handle, minimize, maximize, close) and a scrolling body.
+// On phones it becomes a full-screen app sheet with a "Home" back button.
+// Behaviour lives in the home page script.
+interface Props {
+  id: string;
+  title: string;
+  /** Open on load on desktop (phones always start on the home screen). */
+  open?: boolean;
+  /** CSS width on desktop, e.g. '40rem'. */
+  width?: string;
+  /** Fixed CSS height on desktop; omit to size to content. */
+  height?: string;
+  /** Default position inside the desktop, in px. */
+  x?: number;
+  y?: number;
+  bodyClass?: string;
+}
+
+const { id, title, open = false, width = '36rem', height, x = 140, y = 32, bodyClass = 'p-5 sm:p-6' } = Astro.props;
+---
+
+<section
+  id={id}
+  class:list={['window', { 'desk-open': open }]}
+  data-window
+  role="dialog"
+  aria-label={title}
+  tabindex="-1"
+  style={`--w:${width};--x:${x}px;--y:${y}px;${height ? `--h:${height};` : ''}`}
+>
+  <header class="window-bar" data-drag>
+    <button type="button" class="window-back" data-close aria-label="Back to home screen">
+      <svg width="9" height="14" viewBox="0 0 9 14" aria-hidden="true"><path d="M7.5 1.5L2 7l5.5 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Home
+    </button>
+    <span class="window-title">{title}</span>
+    <div class="window-ctrls">
+      <button type="button" data-min aria-label={`Minimize ${title}`} title="Minimize">
+        <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+      <button type="button" data-max aria-label={`Maximize ${title}`} title="Maximize">
+        <svg class="i-max" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><rect x="2" y="2" width="8" height="8" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+        <svg class="i-restore" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><rect x="1.75" y="4.25" width="6" height="6" rx="1.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M4.25 4.25V3a1.25 1.25 0 011.25-1.25H9A1.25 1.25 0 0110.25 3v3.5A1.25 1.25 0 019 7.75H7.75" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+      </button>
+      <button type="button" data-close aria-label={`Close ${title}`} title="Close">
+        <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 2.5l7 7M9.5 2.5l-7 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+  </header>
+  <div class={`window-body ${bodyClass}`}>
+    <slot />
+  </div>
+</section>

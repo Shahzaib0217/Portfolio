@@ -31,10 +31,6 @@ function stamp(ms: number) {
   return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
 }
 
-function emit(name: string, detail?: unknown) {
-  window.dispatchEvent(new CustomEvent(name, { detail }));
-}
-
 function Speaker({ role, at }: { role: Message['role']; at: number }) {
   return (
     <div className="flex sm:flex-col gap-2 sm:gap-0.5 pt-0.5 font-mono text-[0.68rem] uppercase tracking-wider leading-tight">
@@ -46,7 +42,8 @@ function Speaker({ role, at }: { role: Message['role']; at: number }) {
   );
 }
 
-export default function Chat() {
+/** `bare` drops the outer border, for use inside a desktop window. */
+export default function Chat({ bare = false }: { bare?: boolean }) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -68,7 +65,6 @@ export default function Chat() {
   }, [messages]);
 
   useEffect(() => {
-    emit('clone:speaking', isLoading);
     if (!isLoading) return;
     setLoadingMessage(LOADING_MESSAGE_FIRST);
     const interval = setInterval(() => {
@@ -158,7 +154,6 @@ export default function Chat() {
             const delta = parsed.choices?.[0]?.delta?.content ?? '';
             if (!delta) continue;
             assistantText += delta;
-            emit('clone:token');
             setLastAssistant(assistantText);
           } catch {
             // skip malformed chunks
@@ -186,7 +181,7 @@ export default function Chat() {
   }
 
   return (
-    <div className="w-full h-full flex flex-col rounded-2xl border border-[var(--color-rule)] bg-[var(--color-panel)] overflow-hidden">
+    <div className={`w-full h-full flex flex-col bg-[var(--color-panel)] overflow-hidden ${bare ? '' : 'rounded-2xl border border-[var(--color-rule)]'}`}>
       {/* Header */}
       <div className="flex items-center gap-3 px-4 sm:px-5 py-3 border-b border-[var(--color-rule)] flex-shrink-0">
         <img
@@ -194,14 +189,14 @@ export default function Chat() {
           alt=""
           width="32"
           height="32"
-          className="w-8 h-8 rounded-full object-cover flex-shrink-0 grayscale"
+          className="avatar w-8 h-8"
         />
         <div className="flex-1 min-w-0">
           <p className="text-sm font-medium leading-tight">Shahzaib, AI clone</p>
           <p className="text-xs text-[var(--color-muted)] truncate">Answers from my work history. It can get things wrong.</p>
         </div>
         <span className="hidden sm:inline-flex items-center gap-2 font-mono text-[0.68rem] uppercase tracking-wider text-[var(--color-muted)]">
-          <span className="live-dot" /> {isLoading ? 'Speaking' : 'Listening'}
+          <span className="live-dot" /> {isLoading ? 'Typing' : 'Online'}
         </span>
         {messages.length > 0 && (
           <button

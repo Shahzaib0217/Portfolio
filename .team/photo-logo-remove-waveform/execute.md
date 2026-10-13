@@ -1,0 +1,17 @@
+# Execute
+- Removed:
+  - `src/components/Waveform.astro`
+  - `public/favicon.svg`
+  - wallpaper markup and CSS in `index.astro`
+  - `emit()` in `Chat.tsx`
+- Added:
+  - `.avatar` in `global.css`
+  - `public/favicon-96.png`
+  - regenerated `favicon.ico` and `apple-touch-icon.png` from `shahzaib.jpg` (PIL)
+- Photo logo:
+  - `Nav.astro`, menu bar and README h1 row
+  - widget and chat header now use `.avatar`, in colour
+  - /about portrait and the blog author photo are no longer greyscale, for consistency
+- `BaseLayout.astro` links the PNG favicon instead of the SVG.
+- `Window.astro`: redrawn min/max/close glyphs plus a restore glyph; CSS swaps them on `.is-max`.
+- Share image (`public/og-image.png`) re-rendered as a README window with the round photo (headless Chrome, 1200×630).

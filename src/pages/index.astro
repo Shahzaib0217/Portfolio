@@ -1,327 +1,646 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Chat from '../components/Chat';
-import Waveform from '../components/Waveform.astro';
-import { roles, earlier } from '../data/work';
-import { profilePage } from '../data/site';
+import ThemeToggle from '../components/ThemeToggle.astro';
+import Window from '../components/desktop/Window.astro';
+import Glyph, { type GlyphName } from '../components/desktop/Glyph.astro';
+import { roles } from '../data/work';
+import { profilePage, person } from '../data/site';
+import { getPosts } from '../data/posts';
 
 const bridge = roles.find(r => r.company === 'Bridge')!;
+const dreamdesk = roles.find(r => r.company === 'DreamDesk AI')!;
+const hasPosts = (await getPosts()).length > 0;
 
-const pipeline = [
-  { step: 'Meet', detail: 'Bridge calls, live or captured' },
-  { step: 'Transcribe', detail: 'AssemblyAI · Deepgram' },
-  { step: 'Reason', detail: 'LangChain agent workflows' },
-  { step: 'Act', detail: 'MCP → ClickUp · Slack · Drive · Notion' },
+const calendly = `if(window.Calendly){Calendly.initPopupWidget({url:'${person.calendly}?hide_gdpr_banner=1'});return false;}`;
+
+interface App {
+  label: string;
+  glyph: GlyphName;
+  /** No-JS fallback, or the destination for apps that are plain links. */
+  href: string;
+  /** Window the script opens instead of following href. */
+  open?: string;
+  external?: boolean;
+  /** Where the icon shows: desktop icon column, phone home grid, or both. */
+  on?: 'desk' | 'phone';
+  accent?: boolean;
+}
+
+const apps: App[] = [
+  { label: 'README.md', glyph: 'doc', open: 'readme', href: '/about' },
+  { label: 'Ask my clone', glyph: 'chat', open: 'clone', href: '/about', on: 'desk', accent: true },
+  { label: 'Bridge', glyph: 'meet', open: 'bridge', href: '/work#bridge' },
+  { label: 'DreamDesk', glyph: 'bell', open: 'dreamdesk', href: '/work#dreamdesk-ai' },
+  { label: 'Work', glyph: 'folder', open: 'work', href: '/work' },
+  ...(hasPosts ? [{ label: 'Writing', glyph: 'pen', href: '/blog' } as App] : []),
+  { label: 'CV.pdf', glyph: 'pdf', href: '/cv' },
+  { label: 'About', glyph: 'user', href: '/about', on: 'phone' },
+  { label: 'Zehn', glyph: 'school', href: 'https://zehn.school/', external: true, on: 'phone' },
+  { label: 'GitHub', glyph: 'github', href: person.github, external: true, on: 'phone' },
+  { label: 'Contact', glyph: 'mail', open: 'contact', href: `mailto:${person.email}`, on: 'desk' },
 ];
 
-const bridgeProduct = [
-  'Lead architecture across the agentic AI pipeline, backend services and integrations.',
-  'Built the agent workflows that turn a meeting into summaries, tasks and follow-ups.',
-  'Built speech-to-text on AssemblyAI and Deepgram.',
-  'Cut database query latency from 60s to under 2s.',
+// Phone dock: the four things a visitor most likely wants to do.
+const dock: App[] = [
+  { label: 'Chat', glyph: 'chat', open: 'clone', href: '/about', accent: true },
+  { label: 'Email', glyph: 'mail', href: `mailto:${person.email}` },
+  { label: 'Book a call', glyph: 'call', href: '/call' },
+  { label: 'LinkedIn', glyph: 'linkedin', href: person.linkedin, external: true },
 ];
 
-const bridgeGrowth = [
-  'A content engine that researches, writes and publishes SEO articles end to end.',
-  'Programmatic SEO, AEO and GEO pipelines built to get Bridge ranked on Google and cited by ChatGPT, Perplexity and AI Overviews.',
-  'Structured data, llms.txt and AI-crawler optimization.',
-];
+const tasks = [
+  { id: 'readme', label: 'README.md', glyph: 'doc' },
+  { id: 'clone', label: 'Ask my clone', glyph: 'chat' },
+  { id: 'bridge', label: 'Bridge', glyph: 'meet' },
+  { id: 'dreamdesk', label: 'DreamDesk', glyph: 'bell' },
+  { id: 'work', label: 'Work', glyph: 'folder' },
+  { id: 'contact', label: 'Contact', glyph: 'mail' },
+] as const;
 
-const channels = ['Voice', 'WhatsApp', 'Email', 'Web chat'];
-const hometels = ['Chiswick, London', 'Belfast', 'Southampton'];
-
-const zehnProgrammes = [
-  { name: 'Zehn School', meta: 'Grades 5–7 · 3 years', body: 'Computing, AI and entrepreneurship, taught by the school’s own teachers. Scratch in year one, Python apps in year two, an AI product they pitch in year three.' },
-  { name: 'Zehn College', meta: 'FSc · ICS · FA · 8 Saturdays', body: 'On-campus sessions on tech careers, AI tools and paid online work, ending with a personal 90-day plan.' },
-  { name: 'Zehn Online', meta: 'Ages 8–18', body: 'Live coding and AI classes with a real instructor, where parents learn alongside their kids.' },
-];
+const before = roles.filter(r => !r.current);
 ---
 
 <BaseLayout
+  variant="desktop"
   title="Shahzaib Khan · AI Engineer for AI Agents, Voice AI and MCP"
   ogType="profile"
   jsonLd={[profilePage('/', 'Shahzaib Khan · AI Engineer')]}
 >
-  <!-- Hero -->
-  <section class="pt-12 pb-12 sm:pt-20 sm:pb-16">
-    <p class="label flex items-center gap-2.5 fade-in">
-      <span class="live-dot"></span>
-      Open to new work <span aria-hidden="true">·</span> Founding Senior Engineer at <a href="https://meetonbridge.com" target="_blank" rel="noopener noreferrer" class="text-[var(--color-ink)] link">Bridge</a>
-    </p>
+  <!-- Menu bar (desktop) / status bar (phone) -->
+  <header class="menubar">
+    <a href="/" class="hidden md:flex items-center gap-2 font-medium" aria-label="Shahzaib Khan, home">
+      <img src="/shahzaib-256.webp" alt="" width="28" height="28" class="avatar w-7 h-7" />
+      <span class="display text-[1.05rem] leading-none whitespace-nowrap" style="font-variation-settings:'wdth' 72">Shahzaib Khan</span>
+    </a>
+    <time class="clock md:hidden font-mono text-[0.85rem] font-medium" aria-label="Local time in Lahore">--:--</time>
+    <nav class="hidden md:flex items-center gap-1 ml-4" aria-label="Pages">
+      <a href="/work" class="menu-link">Work</a>
+      <a href="/about" class="menu-link">About</a>
+      {hasPosts && <a href="/blog" class="menu-link">Writing</a>}
+      <a href="/cv" class="menu-link">CV</a>
+    </nav>
+    <div class="ml-auto flex items-center gap-2 md:gap-4">
+      <span class="inline-flex items-center gap-2 text-[0.8rem]"><span class="live-dot"></span><span class="md:hidden">Open to work</span><span class="hidden md:inline">Open to new work</span></span>
+      <span class="hidden md:inline font-mono text-[0.75rem] text-[var(--color-muted)] whitespace-nowrap">Lahore <time class="clock text-[var(--color-ink)]">--:--</time></span>
+      <ThemeToggle />
+      <a href="/call" onclick={calendly} class="hidden md:inline-block text-[0.8rem] px-3 py-1 rounded-full bg-[var(--color-ink)] text-[var(--color-paper)] font-medium hover:opacity-85 transition-opacity whitespace-nowrap">Book a call</a>
+    </div>
+  </header>
 
-    <h1 class="display mt-6 sm:mt-8 text-[clamp(2.5rem,7vw,6.5rem)] max-w-[19ch] fade-in fade-in-delay-1">
-      I build AI that joins the meeting, answers the phone, and handles the follow&#8209;up.
-    </h1>
+  <main class="desktop" id="desktop">
+    <!-- Phone home screen widget: who I am at a glance -->
+    <section class="home-widget" aria-label="Shahzaib Khan at a glance">
+      <div class="flex items-center gap-3">
+        <img src="/shahzaib-256.webp" alt="Shahzaib Khan" width="48" height="48" class="avatar w-12 h-12" />
+        <div class="min-w-0">
+          <p class="display text-[1.6rem] leading-none" style="font-variation-settings:'wdth' 80">Shahzaib Khan</p>
+          <p class="text-[0.85rem] text-[var(--color-muted)] mt-1">AI engineer · Lahore, Pakistan</p>
+        </div>
+      </div>
+      <p class="mt-3 text-[0.9rem] leading-snug">I build AI agents that run in production: meeting agents, voice agents, RAG and MCP.</p>
+      <p class="label mt-4 mb-1">Now</p>
+      <ul class="widget-rows">
+        <li><button type="button" data-open="bridge"><span><span class="font-medium">Bridge</span><span class="text-[var(--color-muted)]"> · Founding Senior Engineer</span></span><span class="meta">~500 users</span></button></li>
+        <li><button type="button" data-open="dreamdesk"><span><span class="font-medium">DreamDesk AI</span><span class="text-[var(--color-muted)]"> · Team Lead</span></span><span class="meta">~1.7s voice</span></button></li>
+        <li><a href="https://zehn.school/" target="_blank" rel="noopener noreferrer"><span><span class="font-medium">Zehn</span><span class="text-[var(--color-muted)]"> · started Sep 2026</span></span><span class="meta">↗</span></a></li>
+      </ul>
+      <button type="button" data-open="readme" class="mt-3 text-[0.85rem] font-medium text-[var(--color-signal)]">Read the full README →</button>
+    </section>
 
-    <div class="mt-8 sm:mt-12 flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8 fade-in fade-in-delay-2">
-      <p class="text-[var(--color-muted)] text-base sm:text-lg leading-relaxed max-w-[46ch]">
-        I'm <span class="text-[var(--color-ink)] font-medium">Shahzaib Khan</span>. I was Bridge's first engineer:
-        MVP in two months, ~500 users today, now Founding Senior Engineer. I take AI products from the first
-        commit to real users, working remotely from Pakistan with teams in the US and UK.
+    <!-- Icons: desktop column / phone app grid -->
+    <nav class="icons" aria-label="Apps">
+      {apps.map(app => (
+        <a
+          href={app.href}
+          data-open={app.open}
+          class:list={['icon', { 'desk-only': app.on === 'desk', 'phone-only': app.on === 'phone', 'is-accent': app.accent }]}
+          {...(app.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+        >
+          <span class="icon-tile"><Glyph name={app.glyph} /></span>
+          <span class="icon-label">{app.label}</span>
+        </a>
+      ))}
+    </nav>
+
+    <!-- Phone dock -->
+    <nav class="dock" aria-label="Quick actions">
+      {dock.map(app => (
+        <a
+          href={app.href}
+          data-open={app.open}
+          class:list={['icon', { 'is-accent': app.accent }]}
+          onclick={app.href === '/call' ? calendly : undefined}
+          {...(app.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+        >
+          <span class="icon-tile"><Glyph name={app.glyph} /></span>
+          <span class="icon-label">{app.label}</span>
+        </a>
+      ))}
+    </nav>
+
+    <!-- README: open on load, says who I am -->
+    <Window id="readme" title="README.md" open width="40rem" x={136} y={28}>
+      <div class="flex items-center gap-4">
+        <img src="/shahzaib-256.webp" alt="Shahzaib Khan" width="64" height="64" class="avatar w-14 h-14 sm:w-16 sm:h-16" />
+        <h1 class="display text-4xl sm:text-5xl">Shahzaib Khan</h1>
+      </div>
+      <p class="mt-3 text-[1.02rem] leading-relaxed max-w-[52ch]">
+        AI engineer from Lahore, Pakistan. I build AI agents that run in production: meeting agents,
+        voice agents, RAG pipelines and MCP integrations, plus the backend and infrastructure behind them.
       </p>
-      <div class="flex flex-wrap items-center gap-3">
-        <a href="#clone" class="text-sm px-5 py-3 rounded-full bg-[var(--color-ink)] text-[var(--color-paper)] font-medium hover:opacity-85 transition-opacity">
-          Interview my AI clone ↓
-        </a>
-        <a href="/work" class="text-sm px-5 py-3 rounded-full border border-[var(--color-rule)] font-medium hover:border-[var(--color-ink)] transition-colors">
-          See the work
-        </a>
-      </div>
-    </div>
-  </section>
 
-  <!-- Clone: the waveform records its voice -->
-  <section id="clone" class="scroll-mt-20 pb-20 sm:pb-28 fade-in fade-in-delay-3">
-    <Waveform class="h-16 sm:h-24" />
-    <div class="flex items-center justify-between mt-3 mb-8">
-      <p class="label">Recording · my AI clone</p>
-      <p class="label hidden sm:block">Every reply is drawn here as it streams</p>
-    </div>
+      <dl class="readme-list mt-6">
+        <dt>Now</dt>
+        <dd>
+          <ul class="space-y-2">
+            <li><span class="font-medium">Founding Senior Engineer, <button type="button" data-open="bridge" class="link">Bridge</button></span> <span class="meta">since Aug 2025</span><br /><span class="text-[var(--color-muted)]">First engineer. MVP in 2 months, ~500 users.</span></li>
+            <li><span class="font-medium">AI Product Engineer &amp; Team Lead, <button type="button" data-open="dreamdesk" class="link">DreamDesk AI</button></span> <span class="meta">since Jan 2026</span><br /><span class="text-[var(--color-muted)]">Voice and chat agents for Second Nature hometels.</span></li>
+            <li><span class="font-medium">Started <a href="https://zehn.school/" target="_blank" rel="noopener noreferrer" class="link">Zehn</a></span> <span class="meta">since Sep 2026</span><br /><span class="text-[var(--color-muted)]">Computing and AI programmes for schools in Pakistan.</span></li>
+          </ul>
+        </dd>
 
-    <div class="grid lg:grid-cols-12 gap-8 lg:gap-12">
-      <div class="lg:col-span-4">
-        <h2 class="display text-4xl sm:text-5xl">Interview my AI clone</h2>
-        <p class="mt-4 text-[var(--color-muted)] leading-relaxed max-w-[40ch]">
-          It knows my work history and how I approach problems. Ask it the questions you'd ask in a first call.
-          When you want the real me, <a href="/call" class="link text-[var(--color-ink)]" onclick="if(window.Calendly){Calendly.initPopupWidget({url:'https://calendly.com/shahzaib-khan0217/30min?hide_gdpr_banner=1'});return false;}">book 30 minutes</a>.
-        </p>
-      </div>
-      <div class="lg:col-span-8 h-[32rem] sm:h-[34rem]">
-        <Chat client:load />
-      </div>
-    </div>
-  </section>
+        <dt>Before</dt>
+        <dd>{before.map((r, i) => <>{i > 0 && ' · '}{r.company === 'Foomotion' ? 'Pearson Labs (YC), via Foomotion' : r.company}</>)}</dd>
 
-  <!-- Selected work -->
-  <section aria-labelledby="work-heading" class="pb-8">
-    <div class="flex items-end justify-between border-b border-[var(--color-ink)] pb-4">
-      <h2 id="work-heading" class="display text-4xl sm:text-5xl">What I'm building now</h2>
-      <a href="/work" class="label hover:text-[var(--color-ink)] transition-colors hidden sm:block">Full history →</a>
-    </div>
+        <dt>Stack</dt>
+        <dd>Python, TypeScript, FastAPI, Node.js, Next.js, LangChain, LangGraph, Pydantic AI, MCP, LiveKit, Deepgram, Postgres, Pinecone, GCP, AWS</dd>
+
+        <dt>Studied</dt>
+        <dd>BS Computer Science, FAST NUCES, 2024. First-author paper on LLM-generated tests for smart contracts, under review at STVR.</dd>
+
+        <dt>Contact</dt>
+        <dd class="flex flex-wrap gap-x-4 gap-y-1">
+          <a href={`mailto:${person.email}`} class="link">{person.email}</a>
+          <a href="/call" onclick={calendly} class="link">Book a call</a>
+          <a href={person.linkedin} target="_blank" rel="noopener noreferrer" class="link">LinkedIn</a>
+          <a href={person.github} target="_blank" rel="noopener noreferrer" class="link">GitHub</a>
+        </dd>
+      </dl>
+
+      <div class="mt-6 pt-4 border-t border-[var(--color-rule)] flex flex-wrap items-center justify-between gap-3">
+        <p class="text-sm text-[var(--color-muted)] flex items-center gap-2"><span class="live-dot"></span>Open to new work, remote with US and UK overlap.</p>
+        <button type="button" data-open="clone" class="text-sm px-4 py-2 rounded-full bg-[var(--color-ink)] text-[var(--color-paper)] font-medium hover:opacity-85 transition-opacity">Ask my AI clone</button>
+      </div>
+    </Window>
+
+    <!-- Clone -->
+    <Window id="clone" title="Ask my clone" width="32rem" height="36rem" x={800} y={28} bodyClass="flex-1 min-h-0">
+      <Chat client:idle bare />
+    </Window>
 
     <!-- Bridge -->
-    <article id="bridge" class="scroll-mt-20 grid lg:grid-cols-12 gap-10 lg:gap-12 py-14 sm:py-20 border-b border-[var(--color-rule)]">
-      <div class="lg:col-span-5">
-        <p class="label">Career highlight · {bridge.period} · {bridge.location}</p>
-        <h3 class="display text-6xl sm:text-8xl mt-4">Bridge</h3>
-        <p class="mt-2 text-[var(--color-muted)]">by Simplora</p>
-        <p class="mt-5 text-lg leading-relaxed">
-          Where teams and AI agents meet. Bridge is one workspace for meetings: calls, live notes,
-          memory of people and companies, and agents that join the call and act on what was said.
-        </p>
-        <p class="mt-4 text-[var(--color-muted)] leading-relaxed">
-          I joined as the first engineer and built the MVP. Today I lead engineering across the product and growth.
-        </p>
+    <Window id="bridge" title="bridge.md" width="38rem" x={260} y={70}>
+      <p class="label">Aug 2025 – now · Remote, US · Part-time</p>
+      <h2 class="display text-4xl mt-2">Bridge</h2>
+      <p class="text-[var(--color-muted)]">Founding Senior Engineer · built by Simplora</p>
+      <p class="mt-4 leading-relaxed">
+        A workspace where teams and AI agents meet: calls, live notes, memory of people and companies,
+        and agents that join the meeting and act on what was said. I joined as the first engineer;
+        I now lead engineering across product and growth.
+      </p>
+      <dl class="grid grid-cols-3 gap-px bg-[var(--color-rule)] border border-[var(--color-rule)] rounded-lg overflow-hidden mt-5">
+        <div class="bg-[var(--color-panel)] p-3"><dt class="label">MVP</dt><dd class="display text-3xl mt-1">2 mo</dd></div>
+        <div class="bg-[var(--color-panel)] p-3"><dt class="label">Users</dt><dd class="display text-3xl mt-1">~500</dd></div>
+        <div class="bg-[var(--color-panel)] p-3"><dt class="label">DB queries</dt><dd class="display text-3xl mt-1">30×</dd></div>
+      </dl>
+      <ul class="mt-5 space-y-2 text-[0.95rem] leading-relaxed">
+        {bridge.points.slice(1, 5).map(p => <li class="bullet">{p}</li>)}
+      </ul>
+      <p class="mt-5 text-sm flex gap-4"><a href="/work#bridge" class="link">Full details</a><a href={bridge.url!} target="_blank" rel="noopener noreferrer" class="link">meetonbridge.com ↗</a></p>
+    </Window>
 
-        <ol class="mt-8 border-l border-[var(--color-rule)] pl-5 space-y-4" aria-label="Roles at Bridge">
-          {bridge.ladder!.map((step, i) => (
-            <li class="relative">
-              <span class={`absolute -left-[25px] top-1.5 w-2 h-2 rounded-full ${i === 0 ? 'bg-[var(--color-signal)]' : 'bg-[var(--color-rule)]'}`}></span>
-              <p class="font-medium leading-tight">{step.role}</p>
-              <p class="label mt-1">From {step.from}</p>
-            </li>
-          ))}
-        </ol>
-
-        <a href={bridge.url!} target="_blank" rel="noopener noreferrer" class="inline-block mt-8 text-sm link">meetonbridge.com ↗</a>
+    <!-- DreamDesk -->
+    <Window id="dreamdesk" title="dreamdesk.md" width="36rem" x={320} y={110}>
+      <p class="label">Jan 2026 – now · Remote, UK</p>
+      <h2 class="display text-4xl mt-2">DreamDesk AI</h2>
+      <p class="text-[var(--color-muted)]">AI Product Engineer &amp; Team Lead</p>
+      <p class="mt-4 leading-relaxed">{dreamdesk.summary}</p>
+      <div class="mt-5 rounded-lg border border-[var(--color-rule)] p-4">
+        <div class="flex items-baseline justify-between"><p class="label">Voice response time</p><p class="label">incl. RAG + MCP</p></div>
+        <p class="display text-5xl mt-2">~1.7s</p>
+        <div class="mt-3 h-1.5 rounded-full bg-[var(--color-wash)]"><div class="h-full rounded-full bg-[var(--color-signal)]" style="width:56.7%"></div></div>
+        <div class="flex justify-between mt-1.5 font-mono text-[0.65rem] text-[var(--color-muted)]"><span>0s</span><span>1s</span><span>2s</span><span>3s</span></div>
       </div>
+      <p class="mt-4 text-[0.95rem]"><span class="label mr-2">Channels</span>Voice · WhatsApp · Email · Web chat</p>
+      <p class="mt-1 text-[0.95rem]"><span class="label mr-2">Live at</span>Chiswick (London) · Belfast · Southampton</p>
+      <p class="mt-5 text-sm"><a href="/work#dreamdesk-ai" class="link">Full details</a></p>
+    </Window>
 
-      <div class="lg:col-span-7 flex flex-col gap-10">
-        <dl class="grid grid-cols-3 gap-px bg-[var(--color-rule)] border border-[var(--color-rule)] rounded-xl overflow-hidden">
-          <div class="bg-[var(--color-paper)] p-4 sm:p-5">
-            <dt class="label">MVP shipped</dt>
-            <dd class="display text-3xl sm:text-5xl mt-2">2 mo</dd>
-          </div>
-          <div class="bg-[var(--color-paper)] p-4 sm:p-5">
-            <dt class="label">Users</dt>
-            <dd class="display text-3xl sm:text-5xl mt-2">~500</dd>
-          </div>
-          <div class="bg-[var(--color-paper)] p-4 sm:p-5">
-            <dt class="label">DB query speed</dt>
-            <dd class="display text-3xl sm:text-5xl mt-2">30×</dd>
-            <dd class="text-xs text-[var(--color-muted)] mt-1">60s → under 2s</dd>
-          </div>
-        </dl>
-
-        <div>
-          <p class="label mb-3">How a meeting becomes work</p>
-          <ol class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-            {pipeline.map((p, i) => (
-              <li class="relative rounded-xl border border-[var(--color-rule)] bg-[var(--color-panel)] p-3.5">
-                <span class="font-mono text-[0.68rem] text-[var(--color-signal)]">{String(i + 1).padStart(2, '0')}</span>
-                <p class="font-medium mt-1">{p.step}</p>
-                <p class="text-xs text-[var(--color-muted)] mt-1 leading-snug">{p.detail}</p>
-              </li>
-            ))}
-          </ol>
-        </div>
-
-        <div class="grid sm:grid-cols-2 gap-8">
-          <div>
-            <p class="label mb-3">Product</p>
-            <ul class="space-y-2.5 text-[0.95rem] leading-relaxed">
-              {bridgeProduct.map(item => <li class="pl-4 relative before:content-[''] before:absolute before:left-0 before:top-[0.7em] before:w-1.5 before:h-px before:bg-[var(--color-muted)]">{item}</li>)}
-            </ul>
-          </div>
-          <div>
-            <p class="label mb-3">Growth engineering</p>
-            <ul class="space-y-2.5 text-[0.95rem] leading-relaxed">
-              {bridgeGrowth.map(item => <li class="pl-4 relative before:content-[''] before:absolute before:left-0 before:top-[0.7em] before:w-1.5 before:h-px before:bg-[var(--color-muted)]">{item}</li>)}
-            </ul>
-          </div>
-        </div>
-      </div>
-    </article>
-
-    <!-- DreamDesk × Second Nature -->
-    <article id="dreamdesk" class="scroll-mt-20 grid lg:grid-cols-12 gap-10 lg:gap-12 py-14 sm:py-20 border-b border-[var(--color-rule)]">
-      <div class="lg:col-span-5">
-        <p class="label">In production · Jan 2026 – Present · Remote, UK</p>
-        <h3 class="display text-5xl sm:text-7xl mt-4">DreamDesk AI</h3>
-        <p class="mt-2 text-[var(--color-muted)]">AI Product Engineer &amp; Team Lead</p>
-        <p class="mt-5 text-lg leading-relaxed">
-          Hospitality AI from <a href="https://staysecondnature.com/" target="_blank" rel="noopener noreferrer" class="link">Second Nature</a>
-          (formerly room2), the hometel group behind DreamDesk. Our agents look after guests across its hometels
-          on the phone, WhatsApp, email and the web, with live reservation data from the hotel's systems.
-        </p>
-        <p class="mt-4 text-[var(--color-muted)] leading-relaxed">
-          I led a team of two, shipped the proof of concept in four weeks, and designed the product end to end:
-          architecture, UX, the RAG pipeline, and Mews and Guestline PMS integrations.
-        </p>
-      </div>
-
-      <div class="lg:col-span-7 flex flex-col gap-8">
-        <!-- Latency meter -->
-        <div class="rounded-xl border border-[var(--color-rule)] bg-[var(--color-panel)] p-5 sm:p-7">
-          <div class="flex items-baseline justify-between gap-4 flex-wrap">
-            <p class="label">Voice agent response time</p>
-            <p class="label">Includes RAG + MCP calls</p>
-          </div>
-          <p class="display text-6xl sm:text-8xl mt-4">~1.7<span class="text-[0.5em] align-baseline ml-1">s</span></p>
-          <div class="mt-6" aria-hidden="true">
-            <div class="relative h-2 rounded-full bg-[var(--color-wash)] overflow-hidden">
-              <div class="latency-fill absolute inset-y-0 left-0 rounded-full bg-[var(--color-signal)]" style="width: 56.7%"></div>
-            </div>
-            <div class="flex justify-between mt-2 font-mono text-[0.68rem] text-[var(--color-muted)]">
-              <span>0s</span><span>1s</span><span>2s</span><span>3s</span>
-            </div>
-          </div>
-          <p class="mt-4 text-sm text-[var(--color-muted)] leading-relaxed">
-            End to end on a voice call, including the hotel knowledge-base lookup (RAG) and tool calls over MCP.
-          </p>
-        </div>
-
-        <div class="grid sm:grid-cols-2 gap-8">
-          <div>
-            <p class="label mb-3">Channels</p>
-            <ul class="space-y-2">
-              {channels.map(c => (
-                <li class="flex items-center gap-3"><span class="live-dot"></span>{c}</li>
-              ))}
-            </ul>
-          </div>
-          <div>
-            <p class="label mb-3">Live at 3 hometels</p>
-            <ul class="space-y-2">
-              {hometels.map(h => <li>{h}</li>)}
-            </ul>
-          </div>
-        </div>
-      </div>
-    </article>
-
-    <!-- Zehn -->
-    <article id="zehn" class="scroll-mt-20 grid lg:grid-cols-12 gap-10 lg:gap-12 py-14 sm:py-20">
-      <div class="lg:col-span-5">
-        <p class="label">My own startup · Since Sep 2026</p>
-        <h3 class="display text-5xl sm:text-7xl mt-4">Zehn</h3>
-        <p class="mt-5 text-lg leading-relaxed">
-          Zehn prepares schools and colleges in Pakistan for an AI-powered future. Kids learn to build
-          software and use AI the way it's actually used at work today.
-        </p>
-        <p class="mt-4 text-[var(--color-muted)] leading-relaxed">
-          Zehn started because I was curious whether I could. It pulled me into the work that isn't code: pitching to schools, training teachers,
-          and explaining AI so a ten-year-old can build with it. It's made me better at deciding what to build,
-          not just how.
-        </p>
-        <a href="https://zehn.school/" target="_blank" rel="noopener noreferrer" class="inline-block mt-8 text-sm link">zehn.school ↗</a>
-      </div>
-
-      <div class="lg:col-span-7 grid gap-3">
-        {zehnProgrammes.map(p => (
-          <div class="rounded-xl border border-[var(--color-rule)] p-5 sm:p-6 grid sm:grid-cols-[11rem_1fr] gap-2 sm:gap-6">
-            <div>
-              <p class="font-medium">{p.name}</p>
-              <p class="label mt-1 normal-case tracking-normal">{p.meta}</p>
-            </div>
-            <p class="text-[0.95rem] text-[var(--color-muted)] leading-relaxed">{p.body}</p>
-          </div>
+    <!-- Work -->
+    <Window id="work" title="work/" width="34rem" x={380} y={150}>
+      <ul>
+        {roles.map(r => (
+          <li class="grid grid-cols-[8.5rem_1fr] gap-3 py-2.5 border-b border-[var(--color-rule)] last:border-0">
+            <span class="meta pt-0.5">{r.period.replace(' – Present', ' – now')}</span>
+            <span><span class="font-medium">{r.company}</span><br /><span class="text-sm text-[var(--color-muted)]">{r.role}</span></span>
+          </li>
         ))}
-      </div>
-    </article>
-  </section>
+      </ul>
+      <p class="mt-4 text-sm"><a href="/work" class="link">Full work history</a></p>
+    </Window>
 
-  <!-- Earlier -->
-  <section aria-labelledby="earlier-heading" class="py-14 sm:py-20">
-    <div class="flex items-end justify-between border-b border-[var(--color-ink)] pb-4">
-      <h2 id="earlier-heading" class="display text-4xl sm:text-5xl">Before that</h2>
-      <a href="/work" class="label hover:text-[var(--color-ink)] transition-colors">Details →</a>
-    </div>
-    <ul>
-      {earlier.map(job => (
-        <li class="grid grid-cols-1 sm:grid-cols-12 gap-1 sm:gap-6 py-5 border-b border-[var(--color-rule)]">
-          <p class="sm:col-span-3 label pt-1">{job.period}</p>
-          <div class="sm:col-span-4">
-            <p class="font-medium">{job.company}</p>
-            <p class="text-sm text-[var(--color-muted)]">{job.role}</p>
-          </div>
-          <p class="sm:col-span-5 text-[0.95rem] text-[var(--color-muted)] leading-relaxed">{job.summary}</p>
-        </li>
+    <!-- Contact -->
+    <Window id="contact" title="contact" width="24rem" x={440} y={190}>
+      <p class="leading-relaxed">Open to new work: roles and contracts building AI products. Remote from Lahore, overlapping US and UK hours.</p>
+      <ul class="mt-4 space-y-2">
+        <li><a href={`mailto:${person.email}`} class="link">{person.email}</a></li>
+        <li><a href="/call" onclick={calendly} class="link">Book a 30-minute call</a></li>
+        <li><a href={person.linkedin} target="_blank" rel="noopener noreferrer" class="link">LinkedIn</a> · <a href={person.github} target="_blank" rel="noopener noreferrer" class="link">GitHub</a></li>
+      </ul>
+    </Window>
+  </main>
+
+  <!-- Taskbar (desktop): every open window, minimized or not -->
+  <footer class="taskbar" aria-label="Open windows">
+    <div class="flex items-center gap-1 min-w-0 overflow-x-auto">
+      {tasks.map(t => (
+        <button type="button" class="task" data-task={t.id} hidden>
+          <span class="task-glyph"><Glyph name={t.glyph} /></span>{t.label}
+        </button>
       ))}
-      <li class="grid grid-cols-1 sm:grid-cols-12 gap-1 sm:gap-6 py-5 border-b border-[var(--color-rule)]">
-        <p class="sm:col-span-3 label pt-1">2024 · Research</p>
-        <div class="sm:col-span-4">
-          <p class="font-medium">FAST NUCES</p>
-          <p class="text-sm text-[var(--color-muted)]">BS Computer Science</p>
-        </div>
-        <p class="sm:col-span-5 text-[0.95rem] text-[var(--color-muted)] leading-relaxed">
-          First-author paper on LLM-generated test properties for Solidity smart contracts, with researchers at DFKI Bremen and UAEU. Under review at STVR.
-        </p>
-      </li>
-    </ul>
-  </section>
-
-  <!-- CTA -->
-  <section class="pt-6 pb-24 sm:pb-32">
-    <p class="label flex items-center gap-2.5"><span class="live-dot"></span> Open to new work · Remote from Pakistan, overlapping US and UK hours</p>
-    <h2 class="display mt-5 text-[clamp(2.4rem,7vw,5.5rem)] max-w-[16ch]">Building something with AI? Tell me about it.</h2>
-    <div class="mt-8 flex flex-wrap items-center gap-3">
-      <a
-        href="/call"
-        onclick="if(window.Calendly){Calendly.initPopupWidget({url:'https://calendly.com/shahzaib-khan0217/30min?hide_gdpr_banner=1'});return false;}"
-        class="text-sm px-5 py-3 rounded-full bg-[var(--color-ink)] text-[var(--color-paper)] font-medium hover:opacity-85 transition-opacity"
-      >
-        Book a 30-minute call
-      </a>
-      <a href="mailto:hello@shahzaib.ai" class="text-sm px-5 py-3 rounded-full border border-[var(--color-rule)] font-medium hover:border-[var(--color-ink)] transition-colors">
-        hello@shahzaib.ai
-      </a>
+      <span class="task-empty text-[0.75rem] text-[var(--color-muted)] pl-2" hidden>Nothing open. Pick something on the left.</span>
     </div>
-  </section>
+    <span class="ml-auto hidden xl:inline font-mono text-[0.68rem] text-[var(--color-muted)] whitespace-nowrap pr-3">drag title bars · double-click to maximize · esc closes</span>
+    <button type="button" id="show-desktop" class="show-desktop" aria-label="Minimize all windows" title="Show desktop"></button>
+  </footer>
 </BaseLayout>
 
-<style>
-  .latency-fill {
-    transform-origin: left;
-    animation: grow 1.4s cubic-bezier(0.2, 0.7, 0.2, 1) both;
-    animation-timeline: view();
-    animation-range: entry 10% cover 40%;
+<style is:global>
+  .menubar {
+    position: sticky; top: 0; z-index: 90;
+    display: flex; align-items: center; gap: 0.5rem;
+    height: 2.75rem; padding: 0 1rem; flex-shrink: 0;
+    background: color-mix(in srgb, var(--color-paper) 88%, transparent);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--color-rule);
+    font-size: 0.85rem;
   }
-  @keyframes grow {
-    from { transform: scaleX(0); }
-    to { transform: scaleX(1); }
+  .menu-link { padding: 0.2rem 0.55rem; border-radius: 6px; color: var(--color-muted); }
+  .menu-link:hover { color: var(--color-ink); background: var(--color-wash); }
+
+  .desktop {
+    position: relative;
+    flex: 1;
+    background-image: radial-gradient(color-mix(in srgb, var(--color-ink) 9%, transparent) 1px, transparent 1px);
+    background-size: 22px 22px;
   }
-  @media (prefers-reduced-motion: reduce) {
-    .latency-fill { animation: none; }
+
+  /* Icons */
+  .icon { display: flex; flex-direction: column; align-items: center; gap: 0.35rem; padding: 0.4rem 0.2rem; border-radius: 10px; text-align: center; }
+  .icon:hover .icon-tile { border-color: var(--color-ink); }
+  .icon-tile {
+    width: 3rem; height: 3rem; display: grid; place-items: center;
+    background: var(--color-panel); border: 1px solid var(--color-rule); border-radius: 12px;
+    box-shadow: 0 1px 0 color-mix(in srgb, var(--color-ink) 6%, transparent);
+    transition: border-color 0.15s, transform 0.15s;
+  }
+  .icon:active .icon-tile { transform: scale(0.94); }
+  .icon-tile svg, .task-glyph svg { fill: none; stroke: var(--color-ink); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+  .icon-tile svg { width: 1.5rem; height: 1.5rem; }
+  .icon-tile svg .accent { stroke: var(--color-signal); stroke-width: 2.2; }
+  .icon.is-accent .icon-tile { background: var(--color-signal); border-color: var(--color-signal); }
+  .icon.is-accent .icon-tile svg, .icon.is-accent .icon-tile svg .accent { stroke: #fff; }
+  .icon-label { font-size: 0.72rem; line-height: 1.2; padding: 0.05rem 0.3rem; border-radius: 4px; background: color-mix(in srgb, var(--color-paper) 80%, transparent); }
+  .icon[aria-current='true'] .icon-label { background: var(--color-ink); color: var(--color-paper); }
+
+  /* Windows */
+  .window {
+    display: none; flex-direction: column;
+    background: var(--color-panel);
+    border: 1px solid var(--color-rule);
+    border-radius: 12px;
+    box-shadow: 0 1px 2px color-mix(in srgb, var(--color-ink) 6%, transparent), 0 12px 32px -12px color-mix(in srgb, var(--color-ink) 22%, transparent);
+    overflow: hidden;
+  }
+  .window.is-open:not(.is-min) { display: flex; }
+  .window:focus { outline: none; }
+  .window-bar {
+    display: flex; align-items: center; gap: 0.5rem;
+    height: 2.25rem; padding: 0 0.35rem 0 0.9rem; flex-shrink: 0;
+    background: var(--color-wash); border-bottom: 1px solid var(--color-rule);
+    user-select: none;
+  }
+  .window.is-active .window-bar { background: color-mix(in srgb, var(--color-wash) 55%, var(--color-panel)); }
+  .window-title { font-family: var(--font-mono); font-size: 0.75rem; color: var(--color-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .window.is-active .window-title { color: var(--color-ink); }
+  .window-ctrls { margin-left: auto; display: flex; gap: 0.1rem; }
+  .window-ctrls button { width: 1.75rem; height: 1.6rem; display: grid; place-items: center; border-radius: 6px; color: var(--color-muted); }
+  .window-ctrls button:hover { background: var(--color-rule); color: var(--color-ink); }
+  .window-ctrls [data-close]:hover { background: #E5484D; color: #fff; }
+  .window-back { display: none; }
+  .window-ctrls .i-restore, .window.is-max .window-ctrls .i-max { display: none; }
+  .window.is-max .window-ctrls .i-restore { display: block; }
+  .window-body { overflow: auto; }
+
+  .readme-list { display: grid; grid-template-columns: 5.5rem 1fr; gap: 0.9rem 1rem; font-size: 0.95rem; line-height: 1.55; }
+  .readme-list dt { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-muted); padding-top: 0.2rem; }
+  .meta { font-family: var(--font-mono); font-size: 0.72rem; color: var(--color-muted); white-space: nowrap; }
+  .bullet { padding-left: 1rem; position: relative; }
+  .bullet::before { content: ''; position: absolute; left: 0; top: 0.75em; width: 0.4rem; height: 1px; background: var(--color-muted); }
+  button.link { font: inherit; color: inherit; }
+
+  /* Taskbar */
+  .taskbar { display: none; }
+  .task[hidden], .task-empty[hidden] { display: none; }
+
+  /* ---------- Phone: home screen ---------- */
+  @media (max-width: 767px) {
+    .desk-only { display: none !important; }
+    .desktop { padding: 1rem 1rem calc(7rem + env(safe-area-inset-bottom)); min-height: calc(100dvh - 2.75rem); }
+
+    .home-widget {
+      position: relative;
+      padding: 1rem 1.1rem 1.1rem;
+      background: color-mix(in srgb, var(--color-panel) 92%, transparent);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--color-rule); border-radius: 22px;
+      box-shadow: 0 8px 24px -16px color-mix(in srgb, var(--color-ink) 30%, transparent);
+    }
+    .widget-rows li + li { border-top: 1px solid var(--color-rule); }
+    .widget-rows button, .widget-rows a { width: 100%; display: flex; align-items: baseline; justify-content: space-between; gap: 0.75rem; padding: 0.5rem 0; font-size: 0.88rem; text-align: left; }
+
+    .icons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem 0.25rem; margin-top: 1.5rem; }
+    .icon-tile { width: 3.6rem; height: 3.6rem; border-radius: 16px; }
+    .icon-tile svg { width: 1.7rem; height: 1.7rem; }
+    .icon-label { background: none; font-size: 0.74rem; }
+
+    .dock {
+      position: fixed; z-index: 60; left: 0.75rem; right: 0.75rem; bottom: calc(0.75rem + env(safe-area-inset-bottom));
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      padding: 0.6rem 0.4rem 0.45rem;
+      background: color-mix(in srgb, var(--color-panel) 75%, transparent);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--color-rule); border-radius: 26px;
+    }
+    .dock .icon { padding: 0; }
+    .dock .icon-label { font-size: 0.68rem; color: var(--color-muted); }
+
+    /* Apps open as sheets under the status bar. !important beats the window manager's inline z-index. */
+    .window { position: fixed; inset: 2.75rem 0 0 0; z-index: 80 !important; border-radius: 0; border: 0; box-shadow: none; }
+    .window-bar { display: grid; grid-template-columns: 1fr auto 1fr; height: 3rem; padding: 0 0.5rem; background: var(--color-panel) !important; }
+    .window-back { display: inline-flex; align-items: center; gap: 0.35rem; justify-self: start; padding: 0.4rem 0.5rem; font-size: 0.95rem; color: var(--color-signal); }
+    .window-title { font-family: var(--font-sans); font-size: 0.95rem; font-weight: 500; color: var(--color-ink); }
+    .window-ctrls { display: none; }
+    .window-body { flex: 1; }
+    .readme-list { grid-template-columns: 1fr; gap: 0.2rem; }
+    .readme-list dd { margin-bottom: 0.7rem; }
+  }
+
+  /* ---------- Desktop ---------- */
+  @media (min-width: 768px) {
+    .phone-only, .home-widget, .dock { display: none !important; }
+    body { height: 100dvh; overflow: hidden; }
+    .desktop { overflow: hidden; }
+    .icons { position: absolute; left: 0.75rem; top: 1rem; display: flex; flex-direction: column; gap: 0.5rem; width: 6rem; z-index: 1; }
+
+    .window, .window.desk-open { position: absolute; left: var(--x); top: var(--y); width: min(var(--w), calc(100% - 9rem)); height: var(--h, auto); max-height: calc(100% - var(--y) - 1rem); }
+    .window.desk-open { display: flex; }
+    .window.is-max { left: 0 !important; top: 0 !important; width: 100%; height: 100%; max-height: none !important; border-radius: 0; border-width: 0; }
+    .window-bar { cursor: grab; }
+    .window.is-max .window-bar { cursor: default; }
+    .window.is-dragging .window-bar { cursor: grabbing; }
+
+    .taskbar {
+      display: flex; align-items: center; gap: 0.25rem; flex-shrink: 0;
+      height: 2.6rem; padding-left: 0.5rem;
+      background: color-mix(in srgb, var(--color-paper) 88%, transparent);
+      border-top: 1px solid var(--color-rule);
+    }
+    .task {
+      display: inline-flex; align-items: center; gap: 0.45rem;
+      height: 1.95rem; padding: 0 0.7rem 0 0.5rem; border-radius: 7px;
+      font-size: 0.78rem; white-space: nowrap; color: var(--color-muted);
+      position: relative;
+    }
+    .task:hover { background: var(--color-wash); color: var(--color-ink); }
+    .task-glyph svg { width: 1rem; height: 1rem; stroke: currentColor; }
+    .task.is-active { background: var(--color-panel); color: var(--color-ink); box-shadow: inset 0 0 0 1px var(--color-rule); }
+    .task.is-active::after { content: ''; position: absolute; left: 0.6rem; right: 0.6rem; bottom: 2px; height: 2px; border-radius: 2px; background: var(--color-signal); }
+    .task.is-min { opacity: 0.6; }
+    .show-desktop { width: 0.6rem; align-self: stretch; border-left: 1px solid var(--color-rule); }
+    .show-desktop:hover { background: var(--color-wash); }
   }
 </style>
+
+<script>
+  const desktop = document.getElementById('desktop')!;
+  const wide = matchMedia('(min-width: 768px)');
+  const calm = matchMedia('(prefers-reduced-motion: reduce)');
+  const windows = new Map<string, HTMLElement>();
+  document.querySelectorAll<HTMLElement>('[data-window]').forEach(w => windows.set(w.id, w));
+  const tasks = new Map<string, HTMLElement>();
+  document.querySelectorAll<HTMLElement>('[data-task]').forEach(t => tasks.set(t.dataset.task!, t));
+
+  let z = 10;
+  const isVisible = (w: HTMLElement) => w.classList.contains('is-open') && !w.classList.contains('is-min');
+
+  function sync() {
+    let anyOpen = false;
+    windows.forEach((w, id) => {
+      const open = w.classList.contains('is-open');
+      anyOpen ||= open;
+      document.querySelectorAll<HTMLElement>(`.icons .icon[data-open="${id}"]`).forEach(i => i.setAttribute('aria-current', String(open)));
+      const t = tasks.get(id);
+      if (!t) return;
+      t.hidden = !open;
+      t.classList.toggle('is-min', w.classList.contains('is-min'));
+      t.classList.toggle('is-active', isVisible(w) && w.classList.contains('is-active'));
+      t.setAttribute('aria-pressed', String(isVisible(w)));
+    });
+    (document.querySelector('.task-empty') as HTMLElement).hidden = anyOpen;
+  }
+
+  function focusWindow(w: HTMLElement) {
+    windows.forEach(other => other.classList.remove('is-active'));
+    w.classList.add('is-active');
+    w.style.zIndex = String(++z);
+    sync();
+  }
+
+  function focusTop() {
+    const top = [...windows.values()].filter(isVisible).sort((a, b) => Number(b.style.zIndex || 0) - Number(a.style.zIndex || 0))[0];
+    if (top) { focusWindow(top); top.focus({ preventScroll: true }); }
+  }
+
+  function animateIn(w: HTMLElement) {
+    if (calm.matches) return;
+    const from = wide.matches ? 'translateY(10px) scale(0.98)' : 'translateY(32px)';
+    w.animate([{ transform: from, opacity: 0 }, { transform: 'none', opacity: 1 }], { duration: wide.matches ? 160 : 220, easing: 'cubic-bezier(.2,.8,.2,1)' });
+  }
+
+  function openWindow(id: string, { updateHash = true, focus = true } = {}) {
+    const w = windows.get(id);
+    if (!w) return;
+    const wasVisible = isVisible(w);
+    w.classList.add('is-open');
+    w.classList.remove('is-min');
+    if (!wasVisible) {
+      animateIn(w);
+      // Keep windows inside the desktop on narrower screens.
+      if (wide.matches && !w.classList.contains('is-max')) {
+        const maxLeft = desktop.clientWidth - w.offsetWidth - 16;
+        if (w.offsetLeft > maxLeft) w.style.left = `${Math.max(maxLeft, 112)}px`;
+      }
+    }
+    if (!wide.matches) {
+      // Phone: one app at a time, like a phone.
+      windows.forEach(o => o !== w && o.classList.remove('is-open'));
+      document.body.style.overflow = 'hidden';
+      if (updateHash && location.hash !== `#${id}`) history.pushState({ sheet: true }, '', `#${id}`);
+    } else if (updateHash) {
+      history.replaceState(null, '', id === 'readme' ? location.pathname : `#${id}`);
+    }
+    if (!focus) { w.style.zIndex = String(++z - 2); sync(); return; }
+    focusWindow(w);
+    w.focus({ preventScroll: true });
+  }
+
+  function closeWindow(w: HTMLElement, { fromHistory = false } = {}) {
+    w.classList.remove('is-open', 'is-active', 'is-min', 'is-max');
+    if (!wide.matches) document.body.style.overflow = '';
+    if (!fromHistory && location.hash === `#${w.id}`) {
+      if (!wide.matches && history.state?.sheet) history.back();
+      else history.replaceState(null, '', location.pathname);
+    }
+    focusTop();
+    sync();
+  }
+
+  function minimizeWindow(w: HTMLElement) {
+    let anim: Animation | undefined;
+    const done = () => {
+      w.classList.add('is-min');
+      anim?.cancel();
+      w.classList.remove('is-active');
+      if (location.hash === `#${w.id}`) history.replaceState(null, '', location.pathname);
+      focusTop();
+      sync();
+    };
+    if (calm.matches) return done();
+    let finished = false;
+    const finish = () => { if (!finished) { finished = true; done(); } };
+    // Animations can stall in background tabs; don't let that block the minimize.
+    setTimeout(finish, 300);
+    // Drop toward the matching taskbar button.
+    const task = tasks.get(w.id)!.getBoundingClientRect();
+    const rect = w.getBoundingClientRect();
+    const dx = task.left + task.width / 2 - (rect.left + rect.width / 2);
+    const dy = task.top - rect.top;
+    anim = w.animate([{ transform: 'none', opacity: 1 }, { transform: `translate(${dx}px, ${dy}px) scale(0.15)`, opacity: 0 }], { duration: 220, easing: 'cubic-bezier(.4,0,.8,.6)', fill: 'forwards' });
+    anim.finished.then(finish, finish);
+  }
+
+  function toggleMax(w: HTMLElement) {
+    const max = w.classList.toggle('is-max');
+    const btn = w.querySelector<HTMLElement>('[data-max]')!;
+    const name = w.getAttribute('aria-label');
+    btn.setAttribute('aria-label', `${max ? 'Restore' : 'Maximize'} ${name}`);
+    btn.title = max ? 'Restore' : 'Maximize';
+    focusWindow(w);
+  }
+
+  // Opening, closing, minimizing, maximizing
+  document.addEventListener('click', e => {
+    const target = e.target as Element;
+    const opener = target.closest<HTMLElement>('[data-open]');
+    if (opener?.dataset.open && windows.has(opener.dataset.open)) {
+      e.preventDefault();
+      openWindow(opener.dataset.open);
+      return;
+    }
+    const w = target.closest<HTMLElement>('[data-window]');
+    if (!w) return;
+    if (target.closest('[data-close]')) closeWindow(w);
+    else if (target.closest('[data-min]')) minimizeWindow(w);
+    else if (target.closest('[data-max]')) toggleMax(w);
+  });
+
+  // Taskbar: restore a minimized window, minimize the active one, or bring one forward
+  tasks.forEach((t, id) => t.addEventListener('click', () => {
+    const w = windows.get(id)!;
+    if (w.classList.contains('is-min')) { w.classList.remove('is-min'); animateIn(w); focusWindow(w); w.focus({ preventScroll: true }); }
+    else if (w.classList.contains('is-active')) minimizeWindow(w);
+    else { focusWindow(w); w.focus({ preventScroll: true }); }
+  }));
+  document.getElementById('show-desktop')!.addEventListener('click', () => {
+    const visible = [...windows.values()].filter(isVisible);
+    visible.forEach(w => w.classList.add('is-min'));
+    windows.forEach(w => w.classList.remove('is-active'));
+    history.replaceState(null, '', location.pathname);
+    sync();
+  });
+
+  // Bring to front on interaction
+  windows.forEach(w => w.addEventListener('pointerdown', () => { if (!w.classList.contains('is-active')) focusWindow(w); }));
+
+  // Title bar: drag to move, double-click to maximize (desktop only)
+  document.querySelectorAll<HTMLElement>('[data-drag]').forEach(bar => {
+    const w = bar.closest<HTMLElement>('[data-window]')!;
+    bar.addEventListener('dblclick', e => {
+      if (wide.matches && !(e.target as Element).closest('button')) toggleMax(w);
+    });
+    bar.addEventListener('pointerdown', e => {
+      if (!wide.matches || e.button !== 0 || w.classList.contains('is-max') || (e.target as Element).closest('button')) return;
+      const area = desktop.getBoundingClientRect();
+      const rect = w.getBoundingClientRect();
+      const dx = e.clientX - rect.left;
+      const dy = e.clientY - rect.top;
+      bar.setPointerCapture(e.pointerId);
+      w.classList.add('is-dragging');
+
+      const move = (ev: PointerEvent) => {
+        const x = Math.min(Math.max(ev.clientX - area.left - dx, 80 - rect.width), area.width - 80);
+        const y = Math.min(Math.max(ev.clientY - area.top - dy, 0), area.height - 40);
+        w.style.left = `${x}px`;
+        w.style.top = `${y}px`;
+        w.style.maxHeight = `${area.height - y - 16}px`;
+      };
+      const up = () => {
+        w.classList.remove('is-dragging');
+        bar.removeEventListener('pointermove', move);
+        bar.removeEventListener('pointerup', up);
+        bar.removeEventListener('pointercancel', up);
+      };
+      bar.addEventListener('pointermove', move);
+      bar.addEventListener('pointerup', up);
+      bar.addEventListener('pointercancel', up);
+    });
+  });
+
+  // Esc closes the active window (or the open app on phones)
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Escape') return;
+    const active = document.querySelector<HTMLElement>('.window.is-active.is-open:not(.is-min)');
+    if (active) closeWindow(active);
+  });
+
+  // Phone back button closes the open app; forward reopens it
+  addEventListener('popstate', () => {
+    const id = location.hash.slice(1);
+    windows.forEach(w => { if (w.id !== id && w.classList.contains('is-open')) closeWindow(w, { fromHistory: true }); });
+    if (windows.has(id)) openWindow(id, { updateHash: false });
+  });
+
+  // Initial state. `desk-open` windows show without JS on desktop; hand them to the window manager.
+  const bootOpen = [...document.querySelectorAll<HTMLElement>('.window.desk-open')];
+  bootOpen.forEach(w => w.classList.remove('desk-open'));
+  const fromHash = location.hash.slice(1);
+  if (wide.matches) bootOpen.forEach(w => openWindow(w.id, { updateHash: false }));
+  if (windows.has(fromHash)) openWindow(fromHash, { updateHash: false });
+  // Big screens have room for the clone next to the README.
+  else if (matchMedia('(min-width: 1360px)').matches) {
+    openWindow('clone', { updateHash: false, focus: false });
+    // Pin it to the right edge so it never runs off narrower large screens.
+    const clone = windows.get('clone')!;
+    clone.style.left = `${Math.max(desktop.clientWidth - clone.offsetWidth - 24, 136 + 24)}px`;
+  }
+  sync();
+
+  // Local time in Lahore
+  const clocks = document.querySelectorAll('.clock');
+  const fmt = new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Karachi' });
+  const tick = () => { const t = fmt.format(new Date()); clocks.forEach(c => (c.textContent = t)); };
+  tick();
+  setInterval(tick, 15_000);
+</script>
