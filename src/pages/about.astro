@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { profilePage, faqPage, person } from '../data/site';
+import { profilePage, faqPage, person, PERSON_ID } from '../data/site';
 
 const faqs = [
   {
@@ -44,7 +44,20 @@ const principles = [
   title="About Shahzaib Khan · AI Engineer"
   description="About Shahzaib Khan, an AI engineer from Pakistan: Bridge, DreamDesk AI and Zehn, how he works, his stack, education and research."
   ogType="profile"
-  jsonLd={[profilePage('/about', 'About Shahzaib Khan'), faqPage('/about', faqs)]}
+  jsonLd={[
+    profilePage('/about', 'About Shahzaib Khan'),
+    faqPage('/about', faqs),
+    {
+      '@type': 'ScholarlyArticle',
+      '@id': 'https://arxiv.org/abs/2607.23308',
+      name: 'Towards LLM-assisted High-Quality Property Generation for Solidity Smart Contracts',
+      url: 'https://arxiv.org/abs/2607.23308',
+      sameAs: 'https://doi.org/10.48550/arXiv.2607.23308',
+      datePublished: '2026-07-25',
+      publisher: { '@type': 'Organization', name: 'arXiv' },
+      author: ['Muhammad Wahid', { '@id': PERSON_ID }, 'Mashhood Ali', 'Muhammad Hassan', 'Muhammad Naiman Jalil', 'Affan Rauf'].map(a => typeof a === 'string' ? { '@type': 'Person', name: a } : a),
+    },
+  ]}
 >
   <section class="pt-12 sm:pt-20 pb-14 grid lg:grid-cols-12 gap-10 lg:gap-12 items-end fade-in">
     <div class="lg:col-span-8">
@@ -122,13 +135,13 @@ const principles = [
     <div class="lg:col-span-8">
       <p class="font-medium">BS Computer Science, FAST NUCES · 2024</p>
       <div class="mt-6 rounded-xl border border-[var(--color-rule)] bg-[var(--color-panel)] p-5 sm:p-6">
-        <p class="label">Paper · Under review at STVR</p>
-        <h2 class="mt-2 font-medium text-lg leading-snug">LLM-assisted High-Quality Property Generation for Solidity Smart Contracts</h2>
-        <p class="mt-1 text-sm text-[var(--color-muted)]">First author · with Dr. Hassan (DFKI Bremen) and Dr. Jalil (UAEU)</p>
+        <p class="label">Paper · arXiv · Jul 2026</p>
+        <h2 class="mt-2 font-medium text-lg leading-snug"><a href="https://arxiv.org/abs/2607.23308" target="_blank" rel="noopener noreferrer" class="link">Towards LLM-assisted High-Quality Property Generation for Solidity Smart Contracts</a></h2>
+        <p class="mt-1 text-sm text-[var(--color-muted)]">Co-author · with Dr. Hassan (DFKI Bremen) and Dr. Jalil (UAEU)</p>
         <ul class="mt-4 space-y-2 text-[0.95rem] text-[var(--color-muted)] leading-relaxed">
           <li>An LLM pipeline that generates test invariants for property-based testing of Solidity contracts.</li>
           <li>An agent that automatically fixes compilation errors in the generated properties.</li>
-          <li>Evaluated with mutation testing: 25.99% mutation score for the LLM approach vs 31.75% for hand-written properties, with much less human effort.</li>
+          <li>Evaluated with mutation testing: Gemini 1.5 Pro with prompt chaining reached a 25.99% mutation score vs 31.75% for hand-written properties, and matched them on some contracts.</li>
         </ul>
       </div>
     </div>

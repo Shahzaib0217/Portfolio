@@ -28,7 +28,7 @@ Tools: ${r.tags.join(', ')}`).join('\n\n')}
 
 ## Education and research
 - BS Computer Science, FAST NUCES, 2024.
-- First-author paper: "LLM-assisted High-Quality Property Generation for Solidity Smart Contracts", under review at STVR, with researchers at DFKI Bremen and UAEU. An LLM pipeline that generates test invariants for property-based testing of Solidity contracts, with an agent that fixes compilation errors; evaluated with mutation testing.
+- Co-authored paper: "Towards LLM-assisted High-Quality Property Generation for Solidity Smart Contracts" (arXiv, Jul 2026: https://arxiv.org/abs/2607.23308), with researchers at DFKI Bremen and UAEU. An LLM pipeline that generates test invariants for property-based testing of Solidity contracts, with an agent that fixes compilation errors; evaluated with mutation testing.
 
 ## Disambiguation
 This is Shahzaib Khan the AI engineer (LinkedIn: shahzaib17, GitHub: Shahzaib0217), Founding Senior Engineer at Bridge. Not to be confused with other people named Shahzaib Khan.

@@ -54,7 +54,7 @@ Keep the whole turn under ~2 seconds: stream everything (STT, LLM tokens, TTS), 
 Python (FastAPI, LangChain, LangGraph, LlamaIndex, Pydantic AI), Node.js/TypeScript, Next.js, React, Docker, GCP (Cloud Run), AWS (EC2/S3/Bedrock), DigitalOcean, PostgreSQL, MongoDB, Redis, Pinecone, pgvector, Voice AI (LiveKit, VAPI, AssemblyAI, Deepgram), MCP, GitHub Actions
 
 ## Research
-BS CS from FAST NUCES, 2024. First-author paper on LLM-assisted property generation for Solidity smart contracts (under review at STVR), with researchers at DFKI Bremen and UAEU.
+BS CS from FAST NUCES, 2024. Co-authored (2nd of 6 authors) "Towards LLM-assisted High-Quality Property Generation for Solidity Smart Contracts", published on arXiv in Jul 2026 (https://arxiv.org/abs/2607.23308), with researchers at DFKI Bremen and UAEU. Best result: Gemini 1.5 Pro with prompt chaining, 25.99% average mutation score vs 31.75% for human-written properties.
 
 ## Availability
 Yes, I'm open to new work: roles and contracts building AI products. For specifics, suggest a call. Remote. PKT timezone, flexible for US/EU overlap.

@@ -1,0 +1,15 @@
+# Plan
+- CV accuracy:
+  - YC line: built products for a YC startup, not founding engineer there.
+  - "Co-authored" kept.
+  - DreamDesk header says Full-time.
+- CV consistency:
+  - 3-letter months
+  - DigitalOcean / FAST-NUCES / DataCamp / AI agents / PostgreSQL spelling
+  - Compute Engine instead of E2
+  - section named Certifications
+  - Azure and DigitalOcean added to skills
+  - "Backend, Frontend & Cloud" category
+  - Lahore/Faisalabad, Pakistan
+  - "Tech Stack:" label everywhere
+- Site: change "first author" to "co-author" in all 3 places.
