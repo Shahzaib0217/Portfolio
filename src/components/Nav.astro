@@ -1,5 +1,6 @@
 ---
 import { getPosts } from '../data/posts';
+import AskAI from './AskAI.astro';
 
 const hasPosts = (await getPosts()).length > 0;
 const navLinks = [
@@ -39,6 +40,8 @@ const isActive = (href: string) => currentPath === href || currentPath.startsWit
         </li>
       ))}
     </ul>
+
+    <AskAI class="hidden md:block" />
 
     <a
       href="/call"

@@ -4,6 +4,7 @@ import Chat from '../components/Chat';
 import ThemeToggle from '../components/ThemeToggle.astro';
 import Window from '../components/desktop/Window.astro';
 import Glyph, { type GlyphName } from '../components/desktop/Glyph.astro';
+import AskAI from '../components/AskAI.astro';
 import { roles } from '../data/work';
 import { profilePage, person } from '../data/site';
 import { getPosts } from '../data/posts';
@@ -117,6 +118,7 @@ const history: Note[] = [
       <div id="presence" class="presence" hidden></div>
       <span class="inline-flex items-center gap-2 text-[0.8rem] whitespace-nowrap"><span class="live-dot"></span><span class="lg:hidden">Open to work</span><span class="hidden lg:inline">Open to new work</span></span>
       <span class="hidden md:inline font-mono text-[0.75rem] text-[var(--color-muted)] whitespace-nowrap">Lahore <time class="clock text-[var(--color-ink)]">--:--</time></span>
+      <AskAI class="hidden md:block" />
       <span class="flex items-center">
         <a href={person.linkedin} target="_blank" rel="noopener noreferrer" class="bar-link hidden md:grid" aria-label="LinkedIn (opens in a new tab)" title="LinkedIn"><Glyph name="linkedin" /></a>
         <a href={person.github} target="_blank" rel="noopener noreferrer" class="bar-link hidden md:grid" aria-label="GitHub (opens in a new tab)" title="GitHub"><Glyph name="github" /></a>
@@ -164,6 +166,17 @@ const history: Note[] = [
         </a>
       ))}
     </nav>
+
+    <!-- Phone search widget: really a door to the AI clone, plus "copy my profile for AI" -->
+    <div class="home-search">
+      <button type="button" class="home-search-field" data-ask-clone aria-label="Ask my AI clone a question">
+        <span class="home-search-icon" aria-hidden="true"><Glyph name="chat" /></span>
+        <span class="truncate">Ask my clone anything…</span>
+      </button>
+      <button type="button" class="home-search-copy" data-copy-ai aria-label="Copy my profile for ChatGPT or Claude" title="Copy profile for AI">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5.5A1.5 1.5 0 0014.5 4h-9A1.5 1.5 0 004 5.5v9A1.5 1.5 0 005.5 16H8"/></svg>
+      </button>
+    </div>
 
     <!-- Phone dock -->
     <nav class="dock" aria-label="Quick actions">
@@ -461,7 +474,23 @@ const history: Note[] = [
     .desk-only { display: none !important; }
     /* The home screen doesn't scroll, like a phone: vertical swipes are free for the swipe-up gesture */
     html, body { height: 100%; overflow: hidden; overscroll-behavior: none; }
-    .desktop { padding: 1rem 1rem calc(7.5rem + env(safe-area-inset-bottom)); height: calc(100dvh - 2.75rem); overflow: hidden; }
+    .desktop { display: flex; flex-direction: column; padding: 1rem 1rem calc(8.4rem + env(safe-area-inset-bottom)); height: calc(100dvh - 2.75rem); overflow: hidden; }
+
+    /* Search widget sits just above the dock, in the space a phone home screen leaves free */
+    .home-search {
+      margin-top: auto; display: flex; align-items: center; gap: 0.25rem;
+      height: 3rem; padding: 0 0.35rem 0 0.4rem; border-radius: 9999px;
+      background: color-mix(in srgb, var(--color-panel) 88%, transparent);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--color-rule);
+      box-shadow: 0 6px 18px -14px color-mix(in srgb, var(--color-ink) 40%, transparent);
+    }
+    .home-search-field { flex: 1; min-width: 0; height: 100%; display: flex; align-items: center; gap: 0.6rem; padding-left: 0.35rem; font-size: 0.92rem; color: var(--color-muted); text-align: left; }
+    .home-search-icon { width: 2.1rem; height: 2.1rem; flex-shrink: 0; display: grid; place-items: center; border-radius: 9999px; background: var(--color-signal); }
+    .home-search-icon svg { width: 1.1rem; height: 1.1rem; fill: none; stroke: #fff; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .home-search-copy { width: 2.4rem; height: 2.4rem; flex-shrink: 0; display: grid; place-items: center; border-radius: 9999px; color: var(--color-muted); }
+    .home-search-copy:active, .home-search-field:active .home-search-icon { transform: scale(0.94); }
+    .home-search-copy svg { width: 1.15rem; height: 1.15rem; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
 
     .home-bar {
       position: fixed; z-index: 61; left: 50%; transform: translateX(-50%); bottom: calc(0.2rem + env(safe-area-inset-bottom));
@@ -544,12 +573,18 @@ const history: Note[] = [
       .icon-tile svg { width: 1.45rem; height: 1.45rem; }
       .dock { padding: 0.45rem 0.4rem 0.35rem; }
       .dock .icon-tile { width: 2.9rem; height: 2.9rem; }
+      .desktop { padding-bottom: calc(7.9rem + env(safe-area-inset-bottom)); }
+      .home-search { height: 2.75rem; }
+    }
+    /* Very short screens: no room for the search widget */
+    @media (max-height: 600px) {
+      .home-search { display: none; }
     }
   }
 
   /* ---------- Desktop ---------- */
   @media (min-width: 768px) {
-    .phone-only, .home-widget, .dock, .home-bar, .notifs { display: none !important; }
+    .phone-only, .home-widget, .dock, .home-bar, .notifs, .home-search { display: none !important; }
     body { height: 100dvh; overflow: hidden; }
     .desktop { overflow: hidden; }
     .icons { position: absolute; left: 0.75rem; top: 1rem; display: flex; flex-direction: column; gap: 0.5rem; width: 6rem; z-index: 1; }
@@ -786,6 +821,16 @@ const history: Note[] = [
     if (active) closeWindow(active);
   });
 
+  // Phone search widget opens the clone, ready to type; its copy icon hands the profile to an AI
+  document.querySelector('[data-ask-clone]')?.addEventListener('click', () => {
+    openWindow('clone');
+    setTimeout(() => dispatchEvent(new CustomEvent('clone:focus')), 250);
+  });
+  document.querySelectorAll('[data-copy-ai]').forEach(b => b.addEventListener('click', () => {
+    const copy = (window as any).copyProfileForAI;
+    if (copy) copy(); else open('/llms-full.txt', '_blank');
+  }));
+
   // Phone: swipe up on the home screen (or tap the home bar) for notification history
   const notifs = document.getElementById('notifs')!;
   const homeBar = document.getElementById('home-bar')!;
@@ -941,6 +986,19 @@ const history: Note[] = [
   });
 
   startPresence();
+
+  // Crossing the phone/desktop breakpoint (rotating a tablet, resizing a window): reset to that layout's start
+  wide.addEventListener('change', () => {
+    document.body.style.overflow = '';
+    if (wide.matches) {
+      notifs.classList.remove('is-open');
+      if (![...windows.values()].some(isVisible)) openWindow('readme', { updateHash: false });
+    } else {
+      windows.forEach(w => w.classList.remove('is-open', 'is-active', 'is-min', 'is-max'));
+      history.replaceState(null, '', location.pathname);
+      sync();
+    }
+  });
 
   // Local time in Lahore
   const clocks = document.querySelectorAll('.clock');

@@ -1,0 +1,275 @@
+---
+interface Props {
+  class?: string;
+}
+const { class: className = '' } = Astro.props;
+
+const prompt =
+  'Read https://shahzaib.ai/llms-full.txt and tell me about Shahzaib Khan: what he has built, his strongest skills, and what kind of AI engineering roles he would fit.';
+const encoded = encodeURIComponent(prompt);
+const chatgptHref = `https://chatgpt.com/?q=${encoded}`;
+const claudeHref = `https://claude.ai/new?q=${encoded}`;
+---
+
+<div class:list={['askai relative', className]} data-askai>
+  <button
+    type="button"
+    class="askai-trigger"
+    aria-haspopup="menu"
+    aria-expanded="false"
+    data-askai-trigger
+  >
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <rect x="8" y="2" width="8" height="4" rx="1"/>
+      <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+    </svg>
+    <span>Ask AI</span>
+    <svg class="askai-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <polyline points="6 9 12 15 18 9"/>
+    </svg>
+  </button>
+
+  <div class="askai-menu" role="menu" aria-label="Ask AI about Shahzaib" hidden data-askai-menu>
+    <button type="button" role="menuitem" class="askai-item" data-askai-copy>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="9" y="9" width="13" height="13" rx="2"/>
+        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+      </svg>
+      <span class="askai-text">
+        <span class="askai-title" data-askai-copy-title>Copy profile for AI</span>
+        <span class="askai-desc">Markdown. Paste into ChatGPT or Claude</span>
+      </span>
+    </button>
+    <a role="menuitem" class="askai-item" href={chatgptHref} target="_blank" rel="noopener noreferrer">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+        <polyline points="15 3 21 3 21 9"/>
+        <line x1="10" y1="14" x2="21" y2="3"/>
+      </svg>
+      <span class="askai-text">
+        <span class="askai-title">Open in ChatGPT</span>
+        <span class="askai-desc">Starts a chat that reads the profile</span>
+      </span>
+    </a>
+    <a role="menuitem" class="askai-item" href={claudeHref} target="_blank" rel="noopener noreferrer">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+        <polyline points="15 3 21 3 21 9"/>
+        <line x1="10" y1="14" x2="21" y2="3"/>
+      </svg>
+      <span class="askai-text">
+        <span class="askai-title">Open in Claude</span>
+        <span class="askai-desc">Starts a chat that reads the profile</span>
+      </span>
+    </a>
+    <div class="askai-foot" role="none">or read <a href="/llms.txt" role="menuitem" class="askai-foot-link">/llms.txt</a></div>
+  </div>
+</div>
+
+<style is:global>
+  .askai-trigger {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    height: 2rem; padding: 0 0.6rem; border-radius: 9999px;
+    font-size: 0.8rem; color: var(--color-muted); background: transparent;
+    border: 0; cursor: pointer; transition: color 0.15s, background 0.15s;
+  }
+  .askai-trigger:hover, .askai-trigger[aria-expanded="true"] { color: var(--color-ink); background: var(--color-wash); }
+  .askai-chevron { transition: transform 0.15s; }
+  .askai-trigger[aria-expanded="true"] .askai-chevron { transform: rotate(180deg); }
+  .askai-menu {
+    position: absolute; top: calc(100% + 0.4rem); right: 0; z-index: 100;
+    width: 17rem; padding: 0.35rem;
+    background: var(--color-panel); border: 1px solid var(--color-rule); border-radius: 12px;
+    box-shadow: 0 8px 24px color-mix(in srgb, var(--color-ink) 12%, transparent);
+  }
+  .askai-menu[hidden] { display: none; }
+  .askai-item {
+    display: flex; align-items: flex-start; gap: 0.65rem; width: 100%;
+    padding: 0.5rem 0.6rem; border: 0; border-radius: 8px; background: transparent;
+    color: var(--color-ink); text-align: left; text-decoration: none; cursor: pointer; font: inherit;
+  }
+  .askai-item:hover, .askai-item:focus-visible { background: var(--color-wash); }
+  .askai-item > svg { flex: none; margin-top: 0.15rem; color: var(--color-muted); }
+  .askai-text { display: flex; flex-direction: column; min-width: 0; }
+  .askai-title { font-size: 0.84rem; font-weight: 500; }
+  .askai-desc { font-size: 0.74rem; color: var(--color-muted); line-height: 1.35; }
+  .askai-foot {
+    margin-top: 0.2rem; padding: 0.45rem 0.6rem 0.25rem; border-top: 1px solid var(--color-rule);
+    font-size: 0.72rem; color: var(--color-muted);
+  }
+  .askai-foot-link { text-decoration: underline; text-underline-offset: 2px; text-decoration-color: var(--color-rule); }
+  .askai-foot-link:hover, .askai-foot-link:focus-visible { color: var(--color-ink); }
+  .askai-toast {
+    position: fixed; left: 50%; bottom: 1.5rem; z-index: 120;
+    transform: translateX(-50%) translateY(8px); opacity: 0; pointer-events: none;
+    padding: 0.55rem 1rem; border-radius: 9999px;
+    background: var(--color-panel); color: var(--color-ink); border: 1px solid var(--color-rule);
+    box-shadow: 0 8px 24px color-mix(in srgb, var(--color-ink) 12%, transparent);
+    font-size: 0.8rem; white-space: nowrap; max-width: calc(100vw - 2rem);
+    transition: opacity 0.25s, transform 0.25s;
+  }
+  .askai-toast[data-show="true"] { opacity: 1; transform: translateX(-50%) translateY(0); }
+  @media (prefers-reduced-motion: reduce) {
+    .askai-toast, .askai-chevron { transition: none; }
+  }
+</style>
+
+<script>
+  const w = window as any;
+  if (!w.__askAIInit) {
+    w.__askAIInit = true;
+
+    const URL_PATH = '/llms-full.txt';
+    const HEADER =
+      '# Shahzaib Khan: profile for AI assistants\n' +
+      'Source: https://shahzaib.ai/llms-full.txt\n' +
+      'Use this profile to answer my questions about Shahzaib Khan.\n\n';
+
+    let profilePromise: Promise<string> | null = null;
+    const getProfile = (): Promise<string> => {
+      if (!profilePromise) {
+        profilePromise = fetch(URL_PATH, { credentials: 'same-origin' })
+          .then((r) => {
+            if (!r.ok) throw new Error('HTTP ' + r.status);
+            return r.text();
+          })
+          .then((t) => HEADER + t.trim() + '\n')
+          .catch((e) => {
+            profilePromise = null;
+            throw e;
+          });
+      }
+      return profilePromise;
+    };
+    const prefetch = () => { getProfile().catch(() => {}); };
+    if ('requestIdleCallback' in window) (window as any).requestIdleCallback(prefetch);
+    else setTimeout(prefetch, 2000);
+
+    let toast: HTMLElement | null = null;
+    let toastTimer: number | undefined;
+    const showToast = () => {
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.className = 'askai-toast';
+        toast.setAttribute('role', 'status');
+        toast.setAttribute('aria-live', 'polite');
+        document.body.appendChild(toast);
+      }
+      toast.textContent = 'Copied. Paste it into ChatGPT or Claude.';
+      // force reflow so the transition runs on repeat shows
+      void toast.offsetWidth;
+      toast.dataset.show = 'true';
+      window.clearTimeout(toastTimer);
+      toastTimer = window.setTimeout(() => { if (toast) toast.dataset.show = 'false'; }, 2400);
+    };
+
+    const copyProfile = async (): Promise<boolean> => {
+      const nav = navigator as any;
+      let ok = false;
+      // Safari needs the clipboard write to begin synchronously inside the gesture.
+      if ((window as any).ClipboardItem && nav.clipboard && nav.clipboard.write) {
+        try {
+          const blobPromise = getProfile().then((t) => new Blob([t], { type: 'text/plain' }));
+          await nav.clipboard.write([new (window as any).ClipboardItem({ 'text/plain': blobPromise })]);
+          ok = true;
+        } catch { ok = false; }
+      }
+      if (!ok) {
+        try {
+          const text = await getProfile();
+          await navigator.clipboard.writeText(text);
+          ok = true;
+        } catch { ok = false; }
+      }
+      if (ok) {
+        showToast();
+        return true;
+      }
+      window.open(URL_PATH, '_blank', 'noopener,noreferrer');
+      return false;
+    };
+    w.copyProfileForAI = copyProfile;
+
+    const closeAll = (returnFocus = false) => {
+      document.querySelectorAll<HTMLElement>('[data-askai]').forEach((root) => {
+        const menu = root.querySelector<HTMLElement>('[data-askai-menu]');
+        const trigger = root.querySelector<HTMLElement>('[data-askai-trigger]');
+        if (!menu || !trigger || menu.hidden) return;
+        menu.hidden = true;
+        trigger.setAttribute('aria-expanded', 'false');
+        if (returnFocus) trigger.focus();
+      });
+    };
+
+    const items = (root: Element) =>
+      Array.from(root.querySelectorAll<HTMLElement>('[data-askai-menu] [role="menuitem"]'));
+
+    const openMenu = (root: HTMLElement, focusFirst = false) => {
+      const menu = root.querySelector<HTMLElement>('[data-askai-menu]')!;
+      const trigger = root.querySelector<HTMLElement>('[data-askai-trigger]')!;
+      closeAll();
+      menu.hidden = false;
+      trigger.setAttribute('aria-expanded', 'true');
+      prefetch();
+      if (focusFirst) items(root)[0]?.focus();
+    };
+
+    document.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement;
+      const root = target.closest<HTMLElement>('[data-askai]');
+      if (!root) { closeAll(); return; }
+      const trigger = target.closest('[data-askai-trigger]');
+      if (trigger) {
+        const menu = root.querySelector<HTMLElement>('[data-askai-menu]')!;
+        if (menu.hidden) openMenu(root); else closeAll();
+        return;
+      }
+      const copyBtn = target.closest<HTMLElement>('[data-askai-copy]');
+      if (copyBtn) {
+        const title = copyBtn.querySelector<HTMLElement>('[data-askai-copy-title]');
+        copyProfile().then((ok) => {
+          if (ok && title) {
+            title.textContent = 'Copied';
+            setTimeout(() => { title.textContent = 'Copy profile for AI'; }, 2000);
+          }
+        });
+        closeAll(true);
+        return;
+      }
+      if (target.closest('[role="menuitem"]')) closeAll();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      const root = (e.target as HTMLElement).closest?.('[data-askai]') as HTMLElement | null;
+      const open = document.querySelector<HTMLElement>('[data-askai-menu]:not([hidden])');
+      if (e.key === 'Escape' && open) {
+        e.preventDefault();
+        closeAll(true);
+        return;
+      }
+      if (!root) return;
+      const menu = root.querySelector<HTMLElement>('[data-askai-menu]');
+      if (!menu) return;
+      const isTrigger = !!(e.target as HTMLElement).closest('[data-askai-trigger]');
+      if ((e.key === 'ArrowDown' || e.key === 'ArrowUp') && isTrigger) {
+        e.preventDefault();
+        if (menu.hidden) openMenu(root);
+        const list = items(root);
+        (e.key === 'ArrowDown' ? list[0] : list[list.length - 1])?.focus();
+        return;
+      }
+      if (!menu.hidden && (e.key === 'ArrowDown' || e.key === 'ArrowUp' || e.key === 'Home' || e.key === 'End')) {
+        e.preventDefault();
+        const list = items(root);
+        const i = list.indexOf(document.activeElement as HTMLElement);
+        let n = i;
+        if (e.key === 'ArrowDown') n = (i + 1) % list.length;
+        else if (e.key === 'ArrowUp') n = (i - 1 + list.length) % list.length;
+        else if (e.key === 'Home') n = 0;
+        else n = list.length - 1;
+        list[n]?.focus();
+      }
+      if (e.key === 'Tab' && !menu.hidden && !isTrigger) closeAll();
+    });
+  }
+</script>

@@ -173,6 +173,45 @@ export default function Chat({ bare = false }: { bare?: boolean }) {
     }
   }
 
+  // Page-level hooks, so the homepage can drive the chat:
+  //   window event `clone:ask`   detail: { text: string }  -> send as if typed (or queue in the input if a reply is streaming)
+  //   window event `clone:focus` (no detail)               -> focus the input
+  //   window.__clonePending (string) -> set by the page if it asked before this island hydrated; sent once on mount, then deleted
+  // The ref keeps listeners pointed at the latest sendMessage/isLoading.
+  const latest = useRef({ sendMessage, isLoading });
+  latest.current = { sendMessage, isLoading };
+
+  useEffect(() => {
+    function ask(raw: unknown) {
+      const text = typeof raw === 'string' ? raw.trim() : '';
+      if (!text) return;
+      if (latest.current.isLoading) {
+        if (text.length > MAX_INPUT_LENGTH) {
+          setError(`Keep your message under ${MAX_INPUT_LENGTH} characters.`);
+          return;
+        }
+        setError(null);
+        setInput(text);
+        return;
+      }
+      latest.current.sendMessage(text);
+    }
+    const onAsk = (e: Event) => ask((e as CustomEvent<{ text?: string }>).detail?.text);
+    const onFocus = () => inputRef.current?.focus({ preventScroll: true });
+
+    window.addEventListener('clone:ask', onAsk);
+    window.addEventListener('clone:focus', onFocus);
+
+    const w = window as Window & { __clonePending?: string };
+    if (typeof w.__clonePending === 'string' && w.__clonePending.trim()) ask(w.__clonePending);
+    delete w.__clonePending;
+
+    return () => {
+      window.removeEventListener('clone:ask', onAsk);
+      window.removeEventListener('clone:focus', onFocus);
+    };
+  }, []);
+
   function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
