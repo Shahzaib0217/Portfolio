@@ -20,7 +20,6 @@ export interface Role {
 export const roles: Role[] = [
   {
     company: 'Bridge',
-    org: 'Simplora',
     role: 'Founding Senior Engineer',
     ladder: [
       { role: 'Founding Senior Engineer', from: 'Oct 2026' },
@@ -30,7 +29,7 @@ export const roles: Role[] = [
     period: 'Aug 2025 – Present',
     location: 'Remote · US',
     summary:
-      'First engineer at Bridge, the workspace where teams and AI agents meet, built by Simplora. Now leading engineering across product and growth.',
+      'First engineer at Bridge, the workspace where teams and AI agents meet. Now leading engineering across product and growth.',
     points: [
       'Shipped the MVP in 2 months and grew Bridge to ~500 users.',
       'Built LangChain agentic workflows that run the full meeting lifecycle, from transcription to summaries and follow-ups.',

@@ -59,6 +59,38 @@ const tasks = [
 ] as const;
 
 const before = roles.filter(r => !r.current);
+
+// Phone "notification history" (swipe up on the home screen): the career as lock-screen notifications.
+interface Note { app: string; glyph: GlyphName; when: string; title: string; body: string; open?: string; href?: string }
+const MONTHS = 'JanFebMarAprMayJunJulAugSepOctNovDec';
+const monthIndex = (when: string) => { const [m, y] = when.split(' '); return y ? Number(y) * 12 + MONTHS.indexOf(m) / 3 : Number(m) * 12; };
+const appGlyph: Record<string, GlyphName> = { Bridge: 'meet', 'DreamDesk AI': 'bell', Zehn: 'school' };
+const appWindow: Record<string, string> = { Bridge: 'bridge', 'DreamDesk AI': 'dreamdesk' };
+const displayName = (company: string) => (company === 'Foomotion' ? 'Pearson Labs (YC)' : company);
+
+const pinned: Note[] = [
+  { app: 'Bridge', glyph: 'meet', when: 'now', title: '~500 people use Bridge', body: 'The workspace where teams and AI agents meet. I joined as the first engineer.', open: 'bridge' },
+  { app: 'DreamDesk AI', glyph: 'bell', when: 'now', title: 'Live at 3 locations', body: 'Guest agents on voice, WhatsApp, email and web for Second Nature hometels.', open: 'dreamdesk' },
+  { app: 'Mail', glyph: 'mail', when: 'now', title: 'Shahzaib is open to new work', body: `Roles and contracts building AI products. Tap to email ${person.email}.`, href: `mailto:${person.email}` },
+];
+
+const history: Note[] = [
+  ...roles.flatMap((r): Note[] => {
+    const base = { app: displayName(r.company), glyph: appGlyph[r.company] ?? 'folder', open: appWindow[r.company] };
+    if (r.ladder) {
+      return r.ladder.map((step, i) => ({
+        ...base,
+        when: step.from,
+        title: i === r.ladder!.length - 1 ? `Joined ${r.company} as ${step.role}` : `Promoted to ${step.role}`,
+        body: `${r.type} · ${r.location.replace(' · ', ', ')}`,
+      }));
+    }
+    const when = r.period.split(' – ')[0];
+    if (r.company === 'Zehn') return [{ ...base, when, title: 'Started Zehn', body: 'Side project: computing and AI programmes for schools in Pakistan.', href: 'https://zehn.school/' }];
+    return [{ ...base, when, title: `Joined ${displayName(r.company)} as ${r.role}`, body: `${r.type} · ${r.location.replace(' · ', ', ')}` }];
+  }),
+  { app: 'FAST NUCES', glyph: 'doc', when: '2024', title: 'Graduated', body: 'BS Computer Science, FAST NUCES, Lahore.' },
+].sort((a, b) => monthIndex(b.when) - monthIndex(a.when));
 ---
 
 <BaseLayout
@@ -148,6 +180,48 @@ const before = roles.filter(r => !r.current);
       ))}
     </nav>
 
+    <!-- Phone home indicator: swipe up (or tap) for notification history -->
+    <button type="button" class="home-bar" id="home-bar" aria-label="Show notification history" aria-controls="notifs" aria-expanded="false"><span></span></button>
+
+    <section id="notifs" class="notifs" aria-label="Notification history" aria-hidden="true">
+      <div class="notifs-inner">
+        <button type="button" class="notifs-close" data-notifs-close>Close</button>
+        <div class="text-center pt-10 pb-6">
+          <p class="notifs-date"></p>
+          <p class="clock notifs-clock display">--:--</p>
+          <p class="text-[0.8rem] text-[var(--color-muted)] mt-1">Lahore, Pakistan</p>
+        </div>
+
+        {[{ label: 'Now', notes: pinned }, { label: 'Notification history', notes: history }].map(group => (
+          <>
+            <p class="label px-1 mb-2 mt-4">{group.label}</p>
+            <ul class="space-y-2">
+              {group.notes.map(n => {
+                const inner = (
+                  <>
+                    <span class="note-icon"><Glyph name={n.glyph} /></span>
+                    <span class="min-w-0 flex-1">
+                      <span class="flex items-baseline justify-between gap-3"><span class="note-app">{n.app}</span><span class="note-when">{n.when}</span></span>
+                      <span class="block font-medium text-[0.9rem] leading-snug mt-0.5">{n.title}</span>
+                      <span class="block text-[0.82rem] text-[var(--color-muted)] leading-snug mt-0.5">{n.body}</span>
+                    </span>
+                  </>
+                );
+                return (
+                  <li>
+                    {n.open ? <button type="button" class="note" data-open={n.open}>{inner}</button>
+                      : n.href ? <a class="note" href={n.href} {...(n.href.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>{inner}</a>
+                      : <div class="note">{inner}</div>}
+                  </li>
+                );
+              })}
+            </ul>
+          </>
+        ))}
+        <p class="text-center text-[0.72rem] text-[var(--color-muted)] mt-8 mb-2">Swipe down to close</p>
+      </div>
+    </section>
+
     <!-- README: open on load, says who I am -->
     <Window id="readme" title="README.md" open width="40rem" x={136} y={28}>
       <div class="flex items-center gap-4">
@@ -202,7 +276,7 @@ const before = roles.filter(r => !r.current);
     <Window id="bridge" title="bridge.md" width="38rem" x={260} y={70}>
       <p class="label">Aug 2025 – now · Remote, US · Part-time</p>
       <h2 class="display text-4xl mt-2">Bridge</h2>
-      <p class="text-[var(--color-muted)]">Founding Senior Engineer · built by Simplora</p>
+      <p class="text-[var(--color-muted)]">Founding Senior Engineer</p>
       <p class="mt-4 leading-relaxed">
         A workspace where teams and AI agents meet: calls, live notes, memory of people and companies,
         and agents that join the meeting and act on what was said. I joined as the first engineer;
@@ -384,7 +458,42 @@ const before = roles.filter(r => !r.current);
   /* ---------- Phone: home screen ---------- */
   @media (max-width: 767px) {
     .desk-only { display: none !important; }
-    .desktop { padding: 1rem 1rem calc(7rem + env(safe-area-inset-bottom)); min-height: calc(100dvh - 2.75rem); }
+    /* The home screen doesn't scroll, like a phone: vertical swipes are free for the swipe-up gesture */
+    html, body { height: 100%; overflow: hidden; overscroll-behavior: none; }
+    .desktop { padding: 1rem 1rem calc(7.5rem + env(safe-area-inset-bottom)); height: calc(100dvh - 2.75rem); overflow: hidden; }
+
+    .home-bar {
+      position: fixed; z-index: 61; left: 50%; transform: translateX(-50%); bottom: calc(0.2rem + env(safe-area-inset-bottom));
+      width: 9rem; height: 1.1rem; display: grid; place-items: center;
+    }
+    .home-bar span { width: 7.5rem; height: 5px; border-radius: 9999px; background: var(--color-ink); opacity: 0.35; }
+    .home-bar.is-hinting span { animation: bar-hint 1.6s ease-in-out 2; }
+    @keyframes bar-hint { 0%, 100% { transform: none; } 40% { transform: translateY(-6px); opacity: 0.6; } }
+
+    .notifs {
+      position: fixed; inset: 2.75rem 0 0 0; z-index: 85;
+      background: color-mix(in srgb, var(--color-paper) 72%, transparent);
+      backdrop-filter: blur(22px) saturate(1.2);
+      transform: translateY(100%); visibility: hidden;
+      transition: transform 0.38s cubic-bezier(.2,.8,.2,1), visibility 0s linear 0.38s;
+    }
+    .notifs.is-open { transform: none; visibility: visible; transition: transform 0.38s cubic-bezier(.2,.8,.2,1); }
+    .notifs-inner { height: 100%; overflow-y: auto; overscroll-behavior: contain; padding: 0 0.9rem calc(2rem + env(safe-area-inset-bottom)); }
+    .notifs-close { position: sticky; top: 0.75rem; float: right; margin-top: 0.75rem; padding: 0.3rem 0.8rem; border-radius: 9999px; font-size: 0.8rem; font-weight: 500; background: color-mix(in srgb, var(--color-panel) 80%, transparent); border: 1px solid var(--color-rule); }
+    .notifs-date { font-size: 0.95rem; font-weight: 500; color: var(--color-muted); }
+    .notifs-clock { font-size: 5.5rem; line-height: 1; font-variation-settings: 'wdth' 90; letter-spacing: -0.02em; }
+    .note {
+      width: 100%; display: flex; gap: 0.75rem; align-items: flex-start; text-align: left;
+      padding: 0.75rem 0.85rem; border-radius: 18px;
+      background: color-mix(in srgb, var(--color-panel) 82%, transparent);
+      border: 1px solid color-mix(in srgb, var(--color-rule) 70%, transparent);
+    }
+    button.note:active, a.note:active { transform: scale(0.98); }
+    .note-icon { width: 2.1rem; height: 2.1rem; flex-shrink: 0; display: grid; place-items: center; border-radius: 9px; background: var(--color-wash); }
+    .note-icon svg { width: 1.15rem; height: 1.15rem; fill: none; stroke: var(--color-ink); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+    .note-app { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--color-muted); }
+    .note-when { font-size: 0.72rem; color: var(--color-muted); white-space: nowrap; }
+
 
     .home-widget {
       position: relative;
@@ -404,7 +513,7 @@ const before = roles.filter(r => !r.current);
     .icon-label { background: none; font-size: 0.74rem; }
 
     .dock {
-      position: fixed; z-index: 60; left: 0.75rem; right: 0.75rem; bottom: calc(0.75rem + env(safe-area-inset-bottom));
+      position: fixed; z-index: 60; left: 0.75rem; right: 0.75rem; bottom: calc(1.4rem + env(safe-area-inset-bottom));
       display: grid; grid-template-columns: repeat(4, 1fr);
       padding: 0.6rem 0.4rem 0.45rem;
       background: color-mix(in srgb, var(--color-panel) 75%, transparent);
@@ -423,11 +532,23 @@ const before = roles.filter(r => !r.current);
     .window-body { flex: 1; }
     .readme-list { grid-template-columns: 1fr; gap: 0.2rem; }
     .readme-list dd { margin-bottom: 0.7rem; }
+    /* Short phones (e.g. iPhone SE): tighten the home screen so it fits without scrolling */
+    @media (max-height: 720px) {
+      .desktop { padding-top: 0.75rem; }
+      .home-widget > p.mt-3, .home-widget > button[data-open="readme"] { display: none; }
+      .home-widget { padding: 0.85rem 1rem 0.9rem; }
+      .widget-rows button, .widget-rows a { padding: 0.42rem 0; }
+      .icons { margin-top: 0.9rem; gap: 0.5rem 0.25rem; }
+      .icon-tile { width: 3rem; height: 3rem; border-radius: 13px; }
+      .icon-tile svg { width: 1.45rem; height: 1.45rem; }
+      .dock { padding: 0.45rem 0.4rem 0.35rem; }
+      .dock .icon-tile { width: 2.9rem; height: 2.9rem; }
+    }
   }
 
   /* ---------- Desktop ---------- */
   @media (min-width: 768px) {
-    .phone-only, .home-widget, .dock { display: none !important; }
+    .phone-only, .home-widget, .dock, .home-bar, .notifs { display: none !important; }
     body { height: 100dvh; overflow: hidden; }
     .desktop { overflow: hidden; }
     .icons { position: absolute; left: 0.75rem; top: 1rem; display: flex; flex-direction: column; gap: 0.5rem; width: 6rem; z-index: 1; }
@@ -659,12 +780,69 @@ const before = roles.filter(r => !r.current);
   // Esc closes the active window (or the open app on phones)
   document.addEventListener('keydown', e => {
     if (e.key !== 'Escape') return;
+    if (notifs.classList.contains('is-open')) { setNotifs(false); return; }
     const active = document.querySelector<HTMLElement>('.window.is-active.is-open:not(.is-min)');
     if (active) closeWindow(active);
   });
 
+  // Phone: swipe up on the home screen (or tap the home bar) for notification history
+  const notifs = document.getElementById('notifs')!;
+  const homeBar = document.getElementById('home-bar')!;
+  const notifsDate = notifs.querySelector('.notifs-date')!;
+  const dateFmt = new Intl.DateTimeFormat('en-GB', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'Asia/Karachi' });
+  const anyWindowOpen = () => [...windows.values()].some(w => w.classList.contains('is-open'));
+
+  function setNotifs(open: boolean, { updateHash = true, focus = false } = {}) {
+    if (open === notifs.classList.contains('is-open')) return;
+    notifs.classList.toggle('is-open', open);
+    notifs.setAttribute('aria-hidden', String(!open));
+    homeBar.setAttribute('aria-expanded', String(open));
+    if (open) {
+      notifsDate.textContent = dateFmt.format(new Date());
+      notifs.querySelector<HTMLElement>('.notifs-inner')!.scrollTop = 0;
+      if (focus) notifs.querySelector<HTMLElement>('[data-notifs-close]')!.focus({ preventScroll: true });
+      if (updateHash && location.hash !== '#notifications') history.pushState({ sheet: true }, '', '#notifications');
+    } else if (updateHash && location.hash === '#notifications') {
+      if (history.state?.sheet) history.back();
+      else history.replaceState(null, '', location.pathname);
+    }
+  }
+
+  // Keyboard users (click with detail 0) get focus moved into the panel.
+  homeBar.addEventListener('click', e => setNotifs(true, { focus: e.detail === 0 }));
+  notifs.addEventListener('click', e => {
+    const t = e.target as Element;
+    if (t.closest('[data-notifs-close]')) setNotifs(false);
+    // Opening an app from a notification: hide the panel; back returns to it.
+    else if (t.closest('[data-open]')) { notifs.classList.remove('is-open'); notifs.setAttribute('aria-hidden', 'true'); }
+  });
+
+  let touchY = 0, touchX = 0, touchOn: 'home' | 'notifs' | null = null;
+  addEventListener('touchstart', e => {
+    if (wide.matches || e.touches.length !== 1) return;
+    touchY = e.touches[0].clientY;
+    touchX = e.touches[0].clientX;
+    const inNotifs = notifs.contains(e.target as Node);
+    if (inNotifs) touchOn = notifs.querySelector<HTMLElement>('.notifs-inner')!.scrollTop <= 0 ? 'notifs' : null;
+    else touchOn = !anyWindowOpen() && !notifs.classList.contains('is-open') ? 'home' : null;
+  }, { passive: true });
+  addEventListener('touchend', e => {
+    if (!touchOn) return;
+    const dy = e.changedTouches[0].clientY - touchY;
+    const dx = e.changedTouches[0].clientX - touchX;
+    if (Math.abs(dy) > Math.abs(dx) * 1.5) {
+      if (touchOn === 'home' && dy < -60) setNotifs(true);
+      if (touchOn === 'notifs' && dy > 80) setNotifs(false);
+    }
+    touchOn = null;
+  }, { passive: true });
+
+  // A one-time nudge of the home bar, so the gesture is discoverable
+  if (!wide.matches) setTimeout(() => homeBar.classList.add('is-hinting'), 2500);
+
   // Phone back button closes the open app; forward reopens it
   addEventListener('popstate', () => {
+    setNotifs(location.hash === '#notifications', { updateHash: false });
     const id = location.hash.slice(1);
     windows.forEach(w => { if (w.id !== id && w.classList.contains('is-open')) closeWindow(w, { fromHistory: true }); });
     if (windows.has(id)) openWindow(id, { updateHash: false });
@@ -675,6 +853,7 @@ const before = roles.filter(r => !r.current);
   bootOpen.forEach(w => w.classList.remove('desk-open'));
   const fromHash = location.hash.slice(1);
   if (wide.matches) bootOpen.forEach(w => openWindow(w.id, { updateHash: false }));
+  if (fromHash === 'notifications' && !wide.matches) setNotifs(true, { updateHash: false });
   if (windows.has(fromHash)) openWindow(fromHash, { updateHash: false });
   // Big screens have room for the clone next to the README.
   else if (matchMedia('(min-width: 1360px)').matches) {

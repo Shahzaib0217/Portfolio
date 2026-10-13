@@ -1,0 +1,12 @@
+# Execute
+- Simplora removed from:
+  - `work.ts`, `site.ts`, `about.astro`, `index.astro`, `api/chat.ts`
+  - the scratchpad cv.tex, where the DreamDesk title was also updated
+- `public/shahzaib.jpg`: watermark patched with PIL (original kept in scratchpad).
+- `about.astro`: the photo uses `?v=2`.
+- `index.astro`:
+  - `pinned`/`history` notification data
+  - home-bar button and `#notifs` panel markup
+  - phone CSS: no-scroll, notifs, home bar, short-phone block moved last so it wins the cascade
+  - script: `setNotifs`, touch gestures, hint nudge, popstate/Esc/deep-link integration
+  - desktop hides the home bar and panel

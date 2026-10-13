@@ -56,7 +56,6 @@ export function baseGraph(): JsonLd[] {
         {
           '@type': 'Organization',
           name: 'Bridge',
-          legalName: 'Simplora',
           url: 'https://meetonbridge.com',
         },
         {

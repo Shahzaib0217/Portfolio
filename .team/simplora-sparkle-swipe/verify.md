@@ -1,0 +1,11 @@
+# Verify
+- `grep -i simplora src` returns nothing.
+- Photo crop is clean; /about renders without the sparkle.
+- Synthetic touch swipe (600 to 420px) opens the panel and pushes #notifications.
+  - Document scrollHeight is 812 (no page scroll); body overflow hidden.
+  - Close button removes the hash and closes the panel.
+- Headless Chrome 375x812: panel renders the date, clock, 3 pinned items and history.
+- Headless Chrome 375x667: home screen fits above the dock.
+- Desktop 1280x800 unchanged.
+- `npm run build` passes.
+- Note: the in-app browser pane cropped its screenshots at mobile size (the page measured correctly at 375px), so the phone renders were checked with headless Chrome instead.
