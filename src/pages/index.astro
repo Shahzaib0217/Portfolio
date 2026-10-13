@@ -474,7 +474,13 @@ const history: Note[] = [
     .desk-only { display: none !important; }
     /* The home screen doesn't scroll, like a phone: vertical swipes are free for the swipe-up gesture */
     html, body { height: 100%; overflow: hidden; overscroll-behavior: none; }
-    .desktop { display: flex; flex-direction: column; padding: 1rem 1rem calc(8.4rem + env(safe-area-inset-bottom)); height: calc(100dvh - 2.75rem); overflow: hidden; }
+    /* One flex column fills the screen: widget, apps, then search + dock pinned to the bottom by layout,
+       so the dock can never cover the search bar whatever the screen height or system text size. */
+    body { height: 100dvh; }
+    .desktop { display: flex; flex-direction: column; flex: 1; min-height: 0; padding: 1rem 1rem calc(1.6rem + env(safe-area-inset-bottom)); overflow: hidden; }
+    .home-widget, .home-search, .dock { flex-shrink: 0; }
+    /* If a screen is too short, the app grid gives way first, never the search bar or dock */
+    .icons { min-height: 0; overflow: hidden; }
 
     /* Search widget sits just above the dock, in the space a phone home screen leaves free */
     .home-search {
@@ -543,7 +549,7 @@ const history: Note[] = [
     .icon-label { background: none; font-size: 0.74rem; }
 
     .dock {
-      position: fixed; z-index: 60; left: 0.75rem; right: 0.75rem; bottom: calc(1.4rem + env(safe-area-inset-bottom));
+      position: relative; z-index: 60; margin-top: 0.75rem;
       display: grid; grid-template-columns: repeat(4, 1fr);
       padding: 0.6rem 0.4rem 0.45rem;
       background: color-mix(in srgb, var(--color-panel) 75%, transparent);
@@ -563,7 +569,7 @@ const history: Note[] = [
     .readme-list { grid-template-columns: 1fr; gap: 0.2rem; }
     .readme-list dd { margin-bottom: 0.7rem; }
     /* Short phones (e.g. iPhone SE): tighten the home screen so it fits without scrolling */
-    @media (max-height: 720px) {
+    @media (max-height: 780px) {
       .desktop { padding-top: 0.75rem; }
       .home-widget > p.mt-3, .home-widget > button[data-open="readme"] { display: none; }
       .home-widget { padding: 0.85rem 1rem 0.9rem; }
@@ -573,7 +579,7 @@ const history: Note[] = [
       .icon-tile svg { width: 1.45rem; height: 1.45rem; }
       .dock { padding: 0.45rem 0.4rem 0.35rem; }
       .dock .icon-tile { width: 2.9rem; height: 2.9rem; }
-      .desktop { padding-bottom: calc(7.9rem + env(safe-area-inset-bottom)); }
+      .desktop { padding-bottom: calc(1.5rem + env(safe-area-inset-bottom)); }
       .home-search { height: 2.75rem; }
     }
     /* Very short screens: no room for the search widget */

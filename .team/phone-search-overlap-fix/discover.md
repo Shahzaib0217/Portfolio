@@ -1,0 +1,2 @@
+# Discover
+User report: on a real phone (Galaxy A07) the search bar was hidden under the dock. Cause: the dock was position:fixed and the search bar relied on a fixed padding-bottom reserve (8.4rem). Real visible heights on an A07 in Chrome are about 640-740px (address bar + Android nav), and the compact layout only kicked in at 720px or below. At 360x740 the content overflowed and the fixed dock covered the search bar.
