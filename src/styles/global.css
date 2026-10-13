@@ -151,3 +151,13 @@ body {
   flex-shrink: 0;
   box-shadow: 0 0 0 1.5px var(--color-panel), 0 0 0 2.5px var(--color-rule);
 }
+
+/* Name in the top bar: the display face at normal width and tracking, so it stays readable small */
+.wordmark {
+  font-family: var(--font-display);
+  font-variation-settings: 'wdth' 100;
+  font-weight: 640;
+  letter-spacing: 0.01em;
+  line-height: 1;
+  white-space: nowrap;
+}

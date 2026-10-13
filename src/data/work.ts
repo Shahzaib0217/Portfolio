@@ -48,7 +48,7 @@ export const roles: Role[] = [
   {
     company: 'DreamDesk AI',
     org: 'Second Nature',
-    role: 'AI Product Engineer & Team Lead',
+    role: 'Lead AI Product Engineer',
     type: 'Full-time',
     period: 'Jan 2026 – Present',
     location: 'Remote · UK',
@@ -73,7 +73,7 @@ export const roles: Role[] = [
     period: 'Sep 2026 – Present',
     location: 'Pakistan',
     summary:
-      'My own startup. Zehn prepares schools and colleges in Pakistan for an AI-powered future.',
+      'My hobby startup, run alongside my engineering work. Zehn prepares schools and colleges in Pakistan for an AI-powered future.',
     points: [
       'Zehn School: a three-year computing, AI and entrepreneurship programme for Grades 5–7, taught by the school’s own teachers with our curriculum and training.',
       'Zehn College: eight Saturday sessions on campus for FSc, ICS and FA students, covering tech careers, AI tools and a personal 90-day plan.',

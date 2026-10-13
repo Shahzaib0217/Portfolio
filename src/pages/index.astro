@@ -71,7 +71,7 @@ const before = roles.filter(r => !r.current);
   <header class="menubar">
     <a href="/" class="hidden md:flex items-center gap-2 font-medium" aria-label="Shahzaib Khan, home">
       <img src="/shahzaib-256.webp" alt="" width="28" height="28" class="avatar w-7 h-7" />
-      <span class="display text-[1.05rem] leading-none whitespace-nowrap" style="font-variation-settings:'wdth' 72">Shahzaib Khan</span>
+      <span class="wordmark text-[1rem]">Shahzaib Khan</span>
     </a>
     <time class="clock md:hidden font-mono text-[0.85rem] font-medium" aria-label="Local time in Lahore">--:--</time>
     <nav class="hidden md:flex items-center gap-1 ml-4" aria-label="Pages">
@@ -81,7 +81,8 @@ const before = roles.filter(r => !r.current);
       <a href="/cv" class="menu-link">CV</a>
     </nav>
     <div class="ml-auto flex items-center gap-2 md:gap-4">
-      <span class="inline-flex items-center gap-2 text-[0.8rem]"><span class="live-dot"></span><span class="md:hidden">Open to work</span><span class="hidden md:inline">Open to new work</span></span>
+      <div id="presence" class="presence" hidden></div>
+      <span class="inline-flex items-center gap-2 text-[0.8rem] whitespace-nowrap"><span class="live-dot"></span><span class="lg:hidden">Open to work</span><span class="hidden lg:inline">Open to new work</span></span>
       <span class="hidden md:inline font-mono text-[0.75rem] text-[var(--color-muted)] whitespace-nowrap">Lahore <time class="clock text-[var(--color-ink)]">--:--</time></span>
       <span class="flex items-center">
         <a href={person.linkedin} target="_blank" rel="noopener noreferrer" class="bar-link hidden md:grid" aria-label="LinkedIn (opens in a new tab)" title="LinkedIn"><Glyph name="linkedin" /></a>
@@ -93,6 +94,9 @@ const before = roles.filter(r => !r.current);
   </header>
 
   <main class="desktop" id="desktop">
+    <!-- Other visitors' cursors (see scripts/presence.ts) -->
+    <div id="cursors" class="cursors" aria-hidden="true"></div>
+
     <!-- Phone home screen widget: who I am at a glance -->
     <section class="home-widget" aria-label="Shahzaib Khan at a glance">
       <div class="flex items-center gap-3">
@@ -105,9 +109,9 @@ const before = roles.filter(r => !r.current);
       <p class="mt-3 text-[0.9rem] leading-snug">I build AI agents that run in production: meeting agents, voice agents, RAG and MCP.</p>
       <p class="label mt-4 mb-1">Now</p>
       <ul class="widget-rows">
-        <li><button type="button" data-open="bridge"><span><span class="font-medium">Bridge</span><span class="text-[var(--color-muted)]"> · Founding Senior Engineer</span></span><span class="meta">~500 users</span></button></li>
-        <li><button type="button" data-open="dreamdesk"><span><span class="font-medium">DreamDesk AI</span><span class="text-[var(--color-muted)]"> · Team Lead</span></span><span class="meta">~1.7s voice</span></button></li>
-        <li><a href="https://zehn.school/" target="_blank" rel="noopener noreferrer"><span><span class="font-medium">Zehn</span><span class="text-[var(--color-muted)]"> · started Sep 2026</span></span><span class="meta">↗</span></a></li>
+        <li><button type="button" data-open="bridge"><span class="row-top"><span class="font-medium">Bridge</span><span class="meta">~500 users</span></span><span class="row-sub">Founding Senior Engineer</span></button></li>
+        <li><button type="button" data-open="dreamdesk"><span class="row-top"><span class="font-medium">DreamDesk AI</span><span class="meta inline-flex items-center gap-1.5" title="Live at 3 locations"><span class="live-dot"></span>live at 3 locations</span></span><span class="row-sub">Lead AI Product Engineer</span></button></li>
+        <li><a href="https://zehn.school/" target="_blank" rel="noopener noreferrer"><span class="row-top"><span class="font-medium">Zehn</span><span class="meta">zehn.school ↗</span></span><span class="row-sub">Hobby startup</span></a></li>
       </ul>
       <button type="button" data-open="readme" class="mt-3 text-[0.85rem] font-medium text-[var(--color-signal)]">Read the full README →</button>
     </section>
@@ -119,6 +123,7 @@ const before = roles.filter(r => !r.current);
           href={app.href}
           data-open={app.open}
           class:list={['icon', { 'desk-only': app.on === 'desk', 'phone-only': app.on === 'phone', 'is-accent': app.accent }]}
+          draggable="false"
           {...(app.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
         >
           <span class="icon-tile"><Glyph name={app.glyph} /></span>
@@ -158,9 +163,9 @@ const before = roles.filter(r => !r.current);
         <dt>Now</dt>
         <dd>
           <ul class="space-y-2">
-            <li><span class="font-medium">Founding Senior Engineer, <button type="button" data-open="bridge" class="link">Bridge</button></span> <span class="meta">since Aug 2025</span><br /><span class="text-[var(--color-muted)]">First engineer. MVP in 2 months, ~500 users.</span></li>
-            <li><span class="font-medium">AI Product Engineer &amp; Team Lead, <button type="button" data-open="dreamdesk" class="link">DreamDesk AI</button></span> <span class="meta">since Jan 2026</span><br /><span class="text-[var(--color-muted)]">Voice and chat agents for Second Nature hometels.</span></li>
-            <li><span class="font-medium">Started <a href="https://zehn.school/" target="_blank" rel="noopener noreferrer" class="link">Zehn</a></span> <span class="meta">since Sep 2026</span><br /><span class="text-[var(--color-muted)]">Computing and AI programmes for schools in Pakistan.</span></li>
+            <li><span class="font-medium">Founding Senior Engineer, <button type="button" data-open="bridge" class="link">Bridge</button></span> <span class="meta">since Aug 2025 · part-time</span><br /><span class="text-[var(--color-muted)]">First engineer. MVP in 2 months, ~500 users.</span></li>
+            <li><span class="font-medium">Lead AI Product Engineer, <button type="button" data-open="dreamdesk" class="link">DreamDesk AI</button></span> <span class="meta">since Jan 2026 · full-time</span><br /><span class="text-[var(--color-muted)]">Voice and chat agents for Second Nature hometels, live at 3 locations.</span></li>
+            <li><span class="font-medium"><a href="https://zehn.school/" target="_blank" rel="noopener noreferrer" class="link">Zehn</a>, my hobby startup</span> <span class="meta">since Sep 2026</span><br /><span class="text-[var(--color-muted)]">Computing and AI programmes for schools in Pakistan.</span></li>
           </ul>
         </dd>
 
@@ -216,9 +221,9 @@ const before = roles.filter(r => !r.current);
 
     <!-- DreamDesk -->
     <Window id="dreamdesk" title="dreamdesk.md" width="36rem" x={320} y={110}>
-      <p class="label">Jan 2026 – now · Remote, UK</p>
+      <p class="label">Jan 2026 – now · Remote, UK · Full-time</p>
       <h2 class="display text-4xl mt-2">DreamDesk AI</h2>
-      <p class="text-[var(--color-muted)]">AI Product Engineer &amp; Team Lead</p>
+      <p class="text-[var(--color-muted)]">Lead AI Product Engineer</p>
       <p class="mt-4 leading-relaxed">{dreamdesk.summary}</p>
       <div class="mt-5 rounded-lg border border-[var(--color-rule)] p-4">
         <div class="flex items-baseline justify-between"><p class="label">Voice response time</p><p class="label">incl. RAG + MCP</p></div>
@@ -265,7 +270,7 @@ const before = roles.filter(r => !r.current);
       ))}
       <span class="task-empty text-[0.75rem] text-[var(--color-muted)] pl-2" hidden>Nothing open. Pick something on the left.</span>
     </div>
-    <span class="ml-auto hidden xl:inline font-mono text-[0.68rem] text-[var(--color-muted)] whitespace-nowrap pr-3">drag title bars · double-click to maximize · esc closes</span>
+    <span class="ml-auto hidden xl:inline font-mono text-[0.68rem] text-[var(--color-muted)] whitespace-nowrap pr-3">drag windows and icons · double-click to maximize · esc closes</span>
     <button type="button" id="show-desktop" class="show-desktop" aria-label="Minimize all windows" title="Show desktop"></button>
   </footer>
 </BaseLayout>
@@ -347,6 +352,31 @@ const before = roles.filter(r => !r.current);
   .bullet::before { content: ''; position: absolute; left: 0; top: 0.75em; width: 0.4rem; height: 1px; background: var(--color-muted); }
   button.link { font: inherit; color: inherit; }
 
+  /* Presence: other visitors as anonymous animals */
+  .presence { display: flex; align-items: center; }
+  .presence[hidden] { display: none; }
+  .peer {
+    width: 1.6rem; height: 1.6rem; display: grid; place-items: center; flex-shrink: 0;
+    border-radius: 9999px; font-size: 0.85rem; line-height: 1;
+    background: color-mix(in srgb, var(--c, var(--color-muted)) 22%, var(--color-panel));
+    box-shadow: 0 0 0 2px var(--color-paper), 0 0 0 3.5px var(--c, var(--color-rule));
+    animation: peer-in 0.25s ease-out;
+  }
+  .peer + .peer { margin-left: 0.2rem; }
+  .peer-more { font-family: var(--font-mono); font-size: 0.65rem; color: var(--color-muted); background: var(--color-wash); }
+  @keyframes peer-in { from { transform: scale(0.4); opacity: 0; } }
+  .cursors { display: none; }
+  .peer-cursor {
+    position: absolute; left: 0; top: 0; pointer-events: none;
+    transition: transform 0.12s linear, opacity 0.4s;
+  }
+  .peer-cursor span {
+    position: absolute; left: 14px; top: 16px; white-space: nowrap;
+    padding: 0.1rem 0.45rem; border-radius: 6px; font-size: 0.72rem; font-weight: 500;
+    background: var(--c); color: #fff;
+  }
+  .peer-cursor.is-idle { opacity: 0.35; }
+
   /* Taskbar */
   .taskbar { display: none; }
   .task[hidden], .task-empty[hidden] { display: none; }
@@ -365,7 +395,9 @@ const before = roles.filter(r => !r.current);
       box-shadow: 0 8px 24px -16px color-mix(in srgb, var(--color-ink) 30%, transparent);
     }
     .widget-rows li + li { border-top: 1px solid var(--color-rule); }
-    .widget-rows button, .widget-rows a { width: 100%; display: flex; align-items: baseline; justify-content: space-between; gap: 0.75rem; padding: 0.5rem 0; font-size: 0.88rem; text-align: left; }
+    .widget-rows button, .widget-rows a { width: 100%; display: block; padding: 0.5rem 0; font-size: 0.9rem; text-align: left; }
+    .widget-rows .row-top { display: flex; align-items: baseline; justify-content: space-between; gap: 0.75rem; }
+    .widget-rows .row-sub { display: block; font-size: 0.82rem; color: var(--color-muted); margin-top: 0.05rem; }
 
     .icons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem 0.25rem; margin-top: 1.5rem; }
     .icon-tile { width: 3.6rem; height: 3.6rem; border-radius: 16px; }
@@ -400,6 +432,14 @@ const before = roles.filter(r => !r.current);
     body { height: 100dvh; overflow: hidden; }
     .desktop { overflow: hidden; }
     .icons { position: absolute; left: 0.75rem; top: 1rem; display: flex; flex-direction: column; gap: 0.5rem; width: 6rem; z-index: 1; }
+    /* Once an icon is dragged, every icon is placed absolutely on a grid (until the page reloads) */
+    .icons.is-free { inset: 0; width: auto; display: block; pointer-events: none; }
+    .icons.is-free .icon { position: absolute; width: 6rem; pointer-events: auto; }
+    .icon { -webkit-user-drag: none; user-select: none; }
+    .icon.is-dragging { z-index: 2; cursor: grabbing; transition: none; }
+    .icon.is-dragging .icon-tile { box-shadow: 0 10px 24px -10px color-mix(in srgb, var(--color-ink) 45%, transparent); transform: scale(1.06); }
+    .icons.is-free .icon:not(.is-dragging) { transition: left 0.18s ease, top 0.18s ease; }
+    .cursors { display: block; position: absolute; inset: 0; z-index: 9000; pointer-events: none; overflow: hidden; }
 
     .window, .window.desk-open { position: absolute; left: var(--x); top: var(--y); width: min(var(--w), calc(100% - 9rem)); height: var(--h, auto); max-height: calc(100% - var(--y) - 1rem); }
     .window.desk-open { display: flex; }
@@ -431,6 +471,8 @@ const before = roles.filter(r => !r.current);
 </style>
 
 <script>
+  import { startPresence } from '../scripts/presence';
+
   const desktop = document.getElementById('desktop')!;
   const wide = matchMedia('(min-width: 768px)');
   const calm = matchMedia('(prefers-reduced-motion: reduce)');
@@ -643,6 +685,83 @@ const before = roles.filter(r => !r.current);
     clone.style.left = `${Math.max(desktop.clientWidth - clone.offsetWidth - 24, 136 + 24)}px`;
   }
   sync();
+
+  // Desktop icons: drag to rearrange on a grid. Positions live only in memory, so a reload resets them.
+  const iconNav = document.querySelector<HTMLElement>('.icons')!;
+  const deskIcons = () => [...iconNav.querySelectorAll<HTMLElement>('.icon')].filter(i => i.offsetParent);
+  let grid: { x0: number; y0: number; w: number; h: number } | null = null;
+  const cells = new Map<HTMLElement, { col: number; row: number }>();
+
+  function freeIcons() {
+    if (grid) return;
+    const icons = deskIcons();
+    const area = desktop.getBoundingClientRect();
+    const rects = icons.map(i => i.getBoundingClientRect());
+    grid = { x0: rects[0].left - area.left, y0: rects[0].top - area.top, w: rects[0].width + 8, h: rects[1].top - rects[0].top };
+    iconNav.classList.add('is-free');
+    icons.forEach((icon, row) => place(icon, 0, row));
+  }
+
+  function place(icon: HTMLElement, col: number, row: number) {
+    cells.set(icon, { col, row });
+    icon.style.left = `${grid!.x0 + col * grid!.w}px`;
+    icon.style.top = `${grid!.y0 + row * grid!.h}px`;
+  }
+
+  let suppressClick = false;
+  iconNav.addEventListener('click', e => {
+    if (suppressClick) { e.preventDefault(); e.stopImmediatePropagation(); suppressClick = false; }
+  }, true);
+
+  iconNav.addEventListener('pointerdown', e => {
+    const icon = (e.target as Element).closest<HTMLElement>('.icon');
+    if (!icon || !wide.matches || e.button !== 0 || e.pointerType === 'touch') return;
+    const startX = e.clientX, startY = e.clientY;
+    let dragging = false;
+    let offX = 0, offY = 0;
+
+    const move = (ev: PointerEvent) => {
+      if (!dragging) {
+        if (Math.hypot(ev.clientX - startX, ev.clientY - startY) < 5) return;
+        dragging = true;
+        freeIcons();
+        icon.classList.add('is-dragging');
+        const r = icon.getBoundingClientRect();
+        offX = startX - r.left;
+        offY = startY - r.top;
+      }
+      const area = desktop.getBoundingClientRect();
+      icon.style.left = `${Math.min(Math.max(ev.clientX - area.left - offX, 0), area.width - icon.offsetWidth)}px`;
+      icon.style.top = `${Math.min(Math.max(ev.clientY - area.top - offY, 0), area.height - icon.offsetHeight)}px`;
+    };
+
+    // Listen on the window: a quick flick can leave the icon before the drag starts.
+    const up = () => {
+      removeEventListener('pointermove', move);
+      removeEventListener('pointerup', up);
+      removeEventListener('pointercancel', up);
+      if (!dragging) return;
+      suppressClick = true;
+      setTimeout(() => (suppressClick = false), 0);
+      icon.classList.remove('is-dragging');
+      // Snap to the nearest cell; swap with an icon that's already there.
+      const g = grid!;
+      const maxCol = Math.max(0, Math.floor((desktop.clientWidth - g.x0 - icon.offsetWidth) / g.w));
+      const maxRow = Math.max(0, Math.floor((desktop.clientHeight - g.y0 - icon.offsetHeight) / g.h));
+      const col = Math.min(Math.max(Math.round((icon.offsetLeft - g.x0) / g.w), 0), maxCol);
+      const row = Math.min(Math.max(Math.round((icon.offsetTop - g.y0) / g.h), 0), maxRow);
+      const from = cells.get(icon)!;
+      const other = [...cells].find(([o, c]) => o !== icon && c.col === col && c.row === row)?.[0];
+      if (other) place(other, from.col, from.row);
+      place(icon, col, row);
+    };
+
+    addEventListener('pointermove', move);
+    addEventListener('pointerup', up);
+    addEventListener('pointercancel', up);
+  });
+
+  startPresence();
 
   // Local time in Lahore
   const clocks = document.querySelectorAll('.clock');

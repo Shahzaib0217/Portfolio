@@ -2,11 +2,16 @@
 	"compatibility_date": "2026-03-17",
 	"compatibility_flags": ["global_fetch_strictly_public"],
 	"name": "portfolio",
-	"main": "@astrojs/cloudflare/entrypoints/server",
+	// Astro's handler plus the Presence Durable Object (see src/worker.ts).
+	"main": "./src/worker.ts",
 	"assets": {
 		"directory": "./dist",
 		"binding": "ASSETS"
 	},
+	"durable_objects": {
+		"bindings": [{ "name": "PRESENCE", "class_name": "Presence" }]
+	},
+	"migrations": [{ "tag": "v1", "new_sqlite_classes": ["Presence"] }],
 	"observability": {
 		"enabled": true
 	}
