@@ -195,9 +195,6 @@ export default function Chat({ bare = false }: { bare?: boolean }) {
           <p className="text-sm font-medium leading-tight">Shahzaib, AI clone</p>
           <p className="text-xs text-[var(--color-muted)] truncate">Answers from my work history. It can get things wrong.</p>
         </div>
-        <span className="hidden sm:inline-flex items-center gap-2 font-mono text-[0.68rem] uppercase tracking-wider text-[var(--color-muted)]">
-          <span className="live-dot" /> {isLoading ? 'Typing' : 'Online'}
-        </span>
         {messages.length > 0 && (
           <button
             onClick={reset}
