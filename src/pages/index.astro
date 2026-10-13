@@ -143,6 +143,13 @@ const history: Note[] = [
     <!-- Other visitors' cursors (see scripts/presence.ts) -->
     <div id="cursors" class="cursors" aria-hidden="true"></div>
 
+    <!-- Empty desktop: a tiny runner game (scripts/desk-game.ts, loaded only when nothing is open) -->
+    <div id="desk-game" class="desk-game" hidden>
+      <p class="label">While you are here: ship to prod, dodge the bugs</p>
+      <canvas width="640" height="170" aria-label="Runner game: press up arrow or space to jump, down arrow to duck"></canvas>
+      <p class="desk-game-hint" data-game-hint>↑ or Space to play · ↓ to duck</p>
+    </div>
+
     <!-- Phone home screen widget: who I am at a glance -->
     <section class="home-widget" aria-label="Shahzaib Khan at a glance">
       <div class="flex items-center gap-3">
@@ -465,6 +472,7 @@ const history: Note[] = [
   .peer-more { font-family: var(--font-mono); font-size: 0.65rem; color: var(--color-muted); background: var(--color-wash); }
   @keyframes peer-in { from { transform: scale(0.4); opacity: 0; } }
   .cursors { display: none; }
+  .desk-game { display: none; }
   .peer-cursor {
     position: absolute; left: 0; top: 0; pointer-events: none;
     transition: transform 0.12s linear, opacity 0.4s;
@@ -606,6 +614,14 @@ const history: Note[] = [
     .icon.is-dragging .icon-tile { box-shadow: 0 10px 24px -10px color-mix(in srgb, var(--color-ink) 45%, transparent); transform: scale(1.06); }
     .icons.is-free .icon:not(.is-dragging) { transition: left 0.18s ease, top 0.18s ease; }
     .cursors { display: block; position: absolute; inset: 0; z-index: 9000; pointer-events: none; overflow: hidden; }
+    .desk-game {
+      display: flex; flex-direction: column; align-items: center; gap: 0.6rem;
+      position: absolute; left: 50%; top: 46%; transform: translate(-50%, -50%);
+      width: min(46rem, calc(100% - 16rem));
+    }
+    .desk-game[hidden] { display: none; }
+    .desk-game canvas { width: 100%; height: auto; aspect-ratio: 640 / 170; cursor: pointer; touch-action: manipulation; }
+    .desk-game-hint { font-family: var(--font-mono); font-size: 0.72rem; color: var(--color-muted); }
 
     .window, .window.desk-open { position: absolute; left: var(--x); top: var(--y); width: min(var(--w), calc(100% - 9rem)); height: var(--h, auto); max-height: calc(100% - var(--y) - 1rem); }
     .window.desk-open { display: flex; }
@@ -664,6 +680,17 @@ const history: Note[] = [
       t.setAttribute('aria-pressed', String(isVisible(w)));
     });
     (document.querySelector('.task-empty') as HTMLElement).hidden = anyOpen;
+    updateGame();
+  }
+
+  // Empty desktop game: fetched the first time the desktop is empty, paused whenever a window shows
+  const gameEl = document.getElementById('desk-game')!;
+  let game: Promise<import('../scripts/desk-game').DeskGame> | undefined;
+  function updateGame() {
+    const show = wide.matches && ![...windows.values()].some(isVisible);
+    gameEl.hidden = !show;
+    if (show) (game ??= import('../scripts/desk-game').then(m => m.mountGame(gameEl))).then(g => g.resume());
+    else game?.then(g => g.pause());
   }
 
   function focusWindow(w: HTMLElement) {
