@@ -42,7 +42,7 @@ const isActive = (href: string) => currentPath === href || currentPath.startsWit
 
     <a
       href="/call"
-      onclick="if(window.Calendly){Calendly.initPopupWidget({url:'https://calendly.com/shahzaib-khan0217/30min?hide_gdpr_banner=1'});return false;}"
+      onclick="return window.openCalendly ? openCalendly() : true"
       class="text-sm px-3 py-1.5 rounded-full bg-[var(--color-ink)] text-[var(--color-paper)] hover:opacity-80 transition-opacity font-medium whitespace-nowrap"
     >
       Book a call

@@ -7,7 +7,7 @@ export interface Role {
   role: string;
   /** Earlier titles at the same company, newest first. */
   ladder?: { role: string; from: string }[];
-  type: 'Full-time' | 'Part-time' | 'Contract' | 'Founder';
+  type: 'Full-time' | 'Part-time' | 'Contract' | 'Internship' | 'Founder';
   period: string;
   location: string;
   summary: string;
@@ -47,12 +47,12 @@ export const roles: Role[] = [
   {
     company: 'DreamDesk AI',
     org: 'Second Nature',
-    role: 'Lead Product Engineer',
+    role: 'Lead AI Product Engineer',
     type: 'Full-time',
     period: 'Jan 2026 – Present',
     location: 'Remote · UK',
     summary:
-      'Hospitality AI from Second Nature (formerly room2), the hometel group behind DreamDesk. Our guest-service agents are live across its hometels in London, Belfast and Southampton.',
+      'Hospitality AI from Second Nature hometels (formerly room2), the UK hometel group behind DreamDesk. Our guest-service agents are live across its hometels in London, Belfast and Southampton.',
     points: [
       'Led a team of 2 engineers and shipped the POC in 4 weeks.',
       'Designed the end-to-end product architecture and UX, working directly with the product owner on scope and R&D.',
@@ -144,6 +144,33 @@ export const roles: Role[] = [
       'Containerized each service independently with Docker.',
     ],
     tags: ['FastAPI', 'Node.js', 'gRPC', 'Docker', 'LangChain', 'Redis'],
+    url: null,
+    current: false,
+  },
+  {
+    company: 'Freelance',
+    role: 'Full-Stack AI Engineer',
+    type: 'Contract',
+    period: 'Jun 2023 – Feb 2025',
+    location: 'Remote',
+    summary: 'Part-time contract work alongside university and early roles: MVPs for AI products, voice agents and an ERP system.',
+    points: [
+      'Built MVPs for AI-powered products and an ERP system, spanning RAG, voice AI agents and multi-agent systems.',
+      'Built a real-time voice calling agent for reves.ai on Node.js and WebSockets with STT, TTS, voice cloning and intent/emotion detection; cut response latency and cost by 20%, deployed with Nginx on a VPS.',
+    ],
+    tags: ['FastAPI', 'Node.js', 'Next.js', 'React', 'LangGraph', 'LangChain', 'LlamaIndex', 'VAPI', 'LiveKit', 'Deepgram', 'Twilio'],
+    url: null,
+    current: false,
+  },
+  {
+    company: 'DevDen',
+    role: 'Software Engineering Intern',
+    type: 'Internship',
+    period: 'Jun 2023 – Aug 2023',
+    location: 'Faisalabad · Pakistan',
+    summary: 'Internship building a React admin dashboard for a point-of-sale system.',
+    points: ['Built an admin dashboard for a POS system with React, featuring user management and sales analytics.'],
+    tags: ['React', 'JavaScript'],
     url: null,
     current: false,
   },

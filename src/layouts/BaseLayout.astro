@@ -86,9 +86,26 @@ const canonicalURL = new URL(cleanPath, Astro.site);
     <link rel="icon" href="/favicon.ico" sizes="32x32" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
-    <!-- Calendly -->
-    <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet" />
-    <script is:inline src="https://assets.calendly.com/assets/external/widget.js" type="text/javascript" async></script>
+    <!-- Calendly loads only when someone clicks "Book a call": no third-party CSS or cookies on page load.
+         If it can't load, the link's own href (/call or calendly.com) is followed instead. -->
+    <script is:inline>
+      window.openCalendly = function () {
+        var url = 'https://calendly.com/shahzaib-khan0217/30min';
+        var open = function () { window.Calendly.initPopupWidget({ url: url + '?hide_gdpr_banner=1' }); };
+        if (window.Calendly) { open(); return false; }
+        var css = document.createElement('link');
+        css.rel = 'stylesheet';
+        css.href = 'https://assets.calendly.com/assets/external/widget.css';
+        document.head.appendChild(css);
+        var js = document.createElement('script');
+        js.src = 'https://assets.calendly.com/assets/external/widget.js';
+        js.async = true;
+        js.onload = open;
+        js.onerror = function () { location.href = url; };
+        document.head.appendChild(js);
+        return false;
+      };
+    </script>
   </head>
   <body class="flex flex-col min-h-dvh bg-[var(--color-paper)] text-[var(--color-ink)]">
     {variant === 'desktop' ? (

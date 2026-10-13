@@ -1,103 +1,91 @@
 # SEO / AEO / GEO audit: shahzaib.ai
 
-Date: 12 Oct 2026 · Site: Astro 6 on Cloudflare Workers (static pages + one chat API)
+Date: 13 Oct 2026 · Live site after the desktop redesign · Previous audit: 12 Oct 2026
 
-**Goal:** when someone asks ChatGPT, Claude or Perplexity to find an AI engineer, Shahzaib Khan gets recommended.
+**Goal:** when someone asks ChatGPT, Claude, Perplexity or Google to find an AI engineer, Shahzaib Khan gets found, and described correctly.
 
-## Scores (estimated, 0–100)
+## Score: 58 / 100 (was ~22 before the redesign)
 
-| Area | Weight | Live site today | After this change ships |
+| Area | Weight | Score | Notes |
 |---|---|---|---|
-| AI citability and visibility | 25% | 20 | 60 |
-| Brand / entity authority | 20 | 10 | 15 (needs off-site work) |
-| Content quality and E-E-A-T | 20 | 40 | 60 |
-| Technical foundations | 15 | 45 | 85 |
-| Structured data | 10 | 0 | 90 |
-| Platform readiness | 10 | 20 | 55 |
-| **Overall** | | **~22** | **~55** |
+| AI citability and visibility | 25% | 60 | Crawlers allowed, llms.txt, clear facts in server HTML. **But the site isn't showing up in search results yet.** |
+| Brand / entity authority | 20% | 20 | LinkedIn is the only strong source. Two name/company collisions (below). |
+| Content quality and E-E-A-T | 20% | 65 | Specific, first-hand, with numbers and a published paper. No articles yet. |
+| Technical foundations | 15% | 82 | Lighthouse (mobile): SEO 100, Accessibility 100, Best Practices 77. |
+| Structured data | 10% | 88 | Person, Organization, WebSite, ProfilePage, FAQPage, ScholarlyArticle all valid. |
+| Platform readiness | 10% | 45 | Not visible in search yet, so ChatGPT, Perplexity and Google AI can't cite it. |
 
-The site itself is now in good shape. **What holds the score down is that almost nothing else on the internet links "Shahzaib Khan" to Bridge, voice agents or AI engineering.** AI assistants recommend people they have seen described the same way by several independent sources. The off-site list below matters more than anything on the site.
+## What's working
 
-## What I found on the live site
+- **Every crawler is welcome.** robots.txt allows all crawlers, names the AI crawlers explicitly, has `Content-Signal: search=yes, ai-input=yes, ai-train=yes` and links the sitemap.
+- **Content is in the HTML, not hidden behind JavaScript.** The homepage serves 833 words of text in the page itself, /work 751 and /about 608, so crawlers that don't run JavaScript still read everything.
+- **Every page has the basics.** Each one has a unique title, meta description, canonical URL, share image and `lang`. Every image has alt text.
+- **Structured data is complete.** One consistent Person (`@id https://shahzaib.ai/#person`) is linked to Bridge, DreamDesk, Zehn, FAST NUCES, LinkedIn and GitHub. /about adds an FAQ and the arXiv paper as a ScholarlyArticle.
+- **AI-readable profiles exist.** `/llms.txt` and `/llms-full.txt` are live and generated from the same data as the pages, and llms-full includes a disambiguation note.
+- **The facts agree everywhere.** Site, CV, llms files and the AI clone all say the same things: Bridge only, Lead Product Engineer, part-time/full-time, co-author.
 
-1. **No sitemap, no llms.txt, no structured data.** Search engines and AI have no machine-readable statement of who you are.
-2. **Broken share image and favicon.** `og-image.png` and `favicon.ico` were referenced but returned 404, so LinkedIn and Slack link previews had no image.
-3. **robots.txt has no rules.** It only contains Cloudflare's managed "content signals" comment header, with no Sitemap line and no signals set.
-4. **The site isn't indexed as you.** A web search for "shahzaib.ai" returns other people.
-5. **Name collision.** "Shahzaib Khan AI engineer" returns your LinkedIn, but also Shahzaib Khan Gakhar (DFKI), Muhammad Shahzaib (KIOS) and several Fiverr freelancers.
-6. **The AI chat was broken in production.** The Groq model was retired; fixed in the redesign.
-7. **Heavy portrait.** The portrait was 1.1 MB for a 32–176px display.
+## Findings, most important first
 
-## What I changed (in this repo, not deployed yet)
+### Critical (you need to do these; I can't from here)
 
-| Change | File(s) | Why |
-|---|---|---|
-| Person + Organization + WebSite JSON-LD on every page; ProfilePage on /, /work, /about; FAQPage on /about | `src/data/site.ts`, `BaseLayout.astro` | Gives Google and AI one clear entity: name, role, employers, school, skills and `sameAs` links to LinkedIn and GitHub. This is how you get told apart from the other Shahzaib Khans. |
-| `/llms.txt` and `/llms-full.txt`, generated from your work data | `src/pages/llms*.txt.ts` | A plain-text profile AI assistants can read in one request. It includes a disambiguation line. |
-| `/sitemap.xml` (blog posts are added automatically) | `src/pages/sitemap.xml.ts` | For submitting to Google and Bing. |
-| `robots.txt`: allows all crawlers, names the AI crawlers explicitly, adds the Sitemap line and `Content-Signal: search=yes, ai-input=yes, ai-train=yes` | `public/robots.txt` | Lets AI search use your pages. **Training is your call**; it's set to yes because you want models to know you. |
-| Real share image (1200×630), favicon.ico, apple-touch-icon; new waveform favicon | `public/` | Fixes the 404s and gives proper link previews. |
-| Keyword-bearing titles and descriptions; a one-sentence definition used everywhere | all pages | "Shahzaib Khan is an AI engineer from Pakistan and Founding Senior Engineer at Bridge…" is the sentence AI will quote. |
-| FAQ on /about ("Is Shahzaib Khan open to new work?", "What kind of AI systems has he built?", …) | `about.astro` | Answers the exact questions people ask AI, in plain words. |
-| Blog: `/blog`, `/blog/<post>`, RSS at `/rss.xml`, BlogPosting schema, author box | `src/pages/blog/`, `src/content/blog/` | Ready for posts. The "Writing" nav link and the sitemap entry only appear once a post is published. The empty blog page is set to noindex. |
-| Portrait 1.1 MB → 5 KB / 44 KB | `public/shahzaib-256.webp`, `shahzaib.jpg` | Faster pages. |
-| Long cache for hashed assets | `public/_headers` | Faster repeat visits on Cloudflare. |
+1. **AI search is repeating that you're the paper's first author.**
+   - A search for the paper returns an AI summary saying "Shahzaib Khan is the first author", sourced from your **LinkedIn**.
+   - arXiv lists you as **2nd of 6**.
+   - Fix the LinkedIn project/publication text to "co-author" and add the arXiv link under Publications.
+   - This is the one claim that could embarrass you in front of a recruiter.
+2. **shahzaib.ai isn't showing up in search results yet.**
+   - `site:shahzaib.ai` and `"shahzaib.ai"` return only other people (Fiverr profiles, other Shahzaibs). No search engine, and therefore no AI assistant, is using the site yet.
+   - Fix: Google Search Console (add the domain, submit `https://shahzaib.ai/sitemap.xml`, request indexing of /, /about and /work) and Bing Webmaster Tools (import from Search Console). ChatGPT search relies heavily on Bing.
+   - Until this is done, nothing else in this report pays off.
+3. **Name collision with a DFKI researcher.**
+   - "Shahzaib Khan Gakhar" is a research assistant at **DFKI**, and your paper's co-author is at **DFKI Bremen**. AI assistants can easily attribute your paper, or your profile, to him.
+   - Fix: create a **Google Scholar** profile and claim the arXiv paper, plus an **ORCID** iD, both linking to shahzaib.ai. Then I'll add them to the site's structured data so the identity link is explicit.
 
-## Cloudflare: check these in the dashboard
+### High (site fixes I can make)
 
-1. **Security → Bots / AI Crawl Control:** make sure **"Block AI bots" is off**, and that GPTBot, OAI-SearchBot, ChatGPT-User, ClaudeBot, Claude-SearchBot and PerplexityBot are **allowed**. I can't verify this from outside; a spoofed user-agent test always looks fine.
-2. **Managed robots.txt:** Cloudflare puts its own block on top of your robots.txt. Either turn it off, or set its content signals to match (search yes, AI input yes, AI training your choice). Otherwise the two can conflict.
-3. **Bot Fight Mode:** if it's on, make sure verified bots are allowed.
-4. **Caching → Crawler Hints: on.** It pings Bing and others via IndexNow when pages change.
-5. **Workers env vars:** `GROQ_API_KEY` (and optionally `OPENROUTER_API_KEY`) must be set for the chat.
+4. **"Second Nature" collides with a well-known AI company.**
+   - "Second Nature" is also an AI sales-coaching company with a Wikipedia page, and a search for your DreamDesk work returns that company.
+   - Fix: always write "Second Nature hometels (formerly room2)", and add DreamDesk's own URL and a short description to the structured data, so AI doesn't say you work at the sales-training company.
+5. **Calendly loads on every page.** Its stylesheet blocks the page from drawing until it loads, and it sets a third-party cookie. These are the only two failed Lighthouse checks (Best Practices 77). Fix: load Calendly only when someone clicks "Book a call".
+6. **No security headers.** HSTS, `X-Content-Type-Options`, `Referrer-Policy` and frame protection are missing. These are trust signals, and the fix is a few lines in `_headers`.
+7. **/call is a near-empty page that search engines index.** It has 37 words, sits in the sitemap, and competes with your real pages. Fix: `noindex` it and remove it from the sitemap.
+8. **Structured data gaps:**
+   - `jobTitle` is missing "Lead Product Engineer".
+   - The address has no city (Lahore).
+   - The DreamDesk organization has no URL.
+   - The sitemap has no `lastmod` dates.
+9. **The site and CV don't fully match.**
+   - The CV lists **Freelance (Jun 2023 – Feb 2025)** and the **DevDen internship (Jun–Aug 2023)**; the site's work history doesn't.
+   - The site says your 3 years started with "university research from 2023", while the CV shows freelance work from Jun 2023.
+   - Fix: add both roles to the site and phrase the start as "freelance work and research since 2023".
+   - Also, parts of `llms-full.txt` switch between "I" and "he". Using "he" throughout is clearer for AI quoting.
 
-## Search engines (one-time, ~20 minutes)
+### Medium
 
-1. **Google Search Console:** add `shahzaib.ai` (DNS verification is one click with Cloudflare), submit `https://shahzaib.ai/sitemap.xml`, and request indexing for /, /about and /work.
-2. **Bing Webmaster Tools:** import from Search Console and submit the sitemap. **ChatGPT search leans heavily on Bing's index**, so this matters as much as Google.
+10. **No articles yet.**
+    - The blog is ready, but it's set to `noindex` while it's empty.
+    - The fastest content win is 2–3 first-hand posts, for example the ~1.7s voice agent with RAG and MCP, or "first engineer at Bridge".
+    - The topic list from the previous audit still applies. Aim for 1–2 a week, not daily.
+11. **Temporary (307) redirects.** `/about/` and `/work.html` redirect with 307 (temporary) instead of 301 (permanent). This is Cloudflare's default for static files. Canonical tags already point to the right URL, so it's low impact.
 
-## Off-site: the biggest lever
+## Search results checked (13 Oct 2026)
 
-AI assistants trust repeated, consistent mentions across independent sites more than anything you say about yourself.
+- [arXiv: Towards LLM-assisted High-Quality Property Generation for Solidity Smart Contracts](https://arxiv.org/abs/2607.23308)
+- [LinkedIn: Shahzaib Khan](https://pk.linkedin.com/in/shahzaib17)
+- [DFKI: Shahzaib Khan Gakhar](https://dsa.dfki.de/team/members/shahzaib/) (name collision)
+- [Wikipedia: Second Nature (AI company)](https://en.wikipedia.org/wiki/Second_Nature_(AI_Company)) (company-name collision)
 
-1. **Use the same one-line description everywhere:** "AI engineer, Founding Senior Engineer at Bridge. AI agents, voice AI, RAG, MCP."
-2. **LinkedIn:**
-   - put that in the headline
-   - add shahzaib.ai as the website in Contact info and as a Featured link
-   - fix the "so Simplora ranks" line to "Bridge"
-3. **GitHub:** set the website field to shahzaib.ai and add a profile README with the same sentence.
-4. **Bridge, DreamDesk and Zehn sites:** ask for a team or about-page mention with a link to shahzaib.ai. A link from meetonbridge.com is worth more than ten blog posts.
-5. **Talks and appearances:** guest posts, podcast appearances, conference or meetup talks, especially about voice agents or MCP. Each one creates a page saying "Shahzaib Khan, AI engineer at Bridge".
-6. **Talent profiles:** Wellfound, Contra, Peerlist (founding-engineer roles are posted there), each linking back.
-7. **Communities:** answer questions on Reddit (r/LocalLLaMA, r/MachineLearning, r/AI_Agents) and Hacker News about voice latency, MCP and RAG. AI assistants cite these heavily.
-8. **The paper:** when it's published, create ORCID and Google Scholar profiles linking to shahzaib.ai.
+## Order of work
 
-## Blog: daily vs. weekly
+1. You, this week:
+   - LinkedIn: change first author to co-author, add the arXiv link under Publications, and add shahzaib.ai to Contact info and Featured.
+   - Google Search Console and Bing Webmaster Tools: submit the sitemap.
+   - Google Scholar and ORCID.
+2. Me, now: fixes 4–9.
+3. You, ongoing: 1–2 first-hand posts a week; guest posts, podcasts and Reddit/HN answers about voice agents and MCP. Mentions on other sites matter more than anything on your own.
 
-**Don't publish one AI-written post a day.** Google treats mass-produced, low-originality content as spam ("scaled content abuse"), and AI engines cite first-hand experience with specific numbers. Thin daily posts can pull the whole domain down.
+## What to expect
 
-**Do publish 1–2 posts a week from your own work.** Each one should answer a question in its first paragraph, with real numbers. Topics only you can write:
-
-1. How we got a hotel voice agent to answer in ~1.7s with RAG and MCP calls
-2. Cutting a meeting app's query latency from 60s to under 2s
-3. Being the first engineer: shipping Bridge's MVP in two months
-4. AssemblyAI vs Deepgram for meeting transcription, from production use
-5. Connecting agents to ClickUp, Slack, Drive and Notion with MCP: what broke
-6. Building an AEO/GEO content engine for a startup (you did this at Bridge)
-7. Voice agents on WhatsApp, phone, email and web: one brain, four channels
-8. RAG over a hotel's knowledge base: chunking, freshness, PMS data
-9. Teaching AI to Grade 5–7 students in Pakistan: what I learned starting Zehn
-10. What a founding AI engineer actually does in the first 90 days
-
-**To publish:** copy `src/content/blog/_TEMPLATE.md` to `your-slug.md`, write it, set `draft: false`, deploy. The nav link, sitemap, RSS, llms.txt and schema all update automatically. Cross-post to LinkedIn and dev.to with a link back to the original.
-
-## Realistic expectations
-
-- "Hire an AI engineer" with no other context is a huge, generic query. No individual gets recommended for it reliably.
-- Aim to win the specific ones:
-  - "who is Shahzaib Khan, AI engineer"
-  - "AI engineer who built voice agents for hotels"
-  - "founding engineer for voice agents / MCP, remote"
-  - "AI engineer in Pakistan open to work"
-- **AI search** (ChatGPT search, Perplexity, Google AI Overviews) can pick up the new pages within weeks of indexing.
-- **Model memory** (answers without search) only updates when new models are trained, so expect months, and only if the off-site mentions exist.
+- **Once the site is indexed,** "Shahzaib Khan AI engineer", "AI engineer Pakistan voice agents" and "Bridge founding engineer" should start returning shahzaib.ai within a few weeks.
+- **AI search** (ChatGPT search, Perplexity, Google AI Overviews) follows the index: weeks.
+- **What AI models know without searching** changes only with new model training: months, and only if other sites mention you consistently.

@@ -2,12 +2,13 @@ import type { APIRoute } from 'astro';
 import { SITE } from '../data/site';
 import { getPosts } from '../data/posts';
 
-const pages = ['/', '/work', '/about', '/call'];
+const pages = ['/', '/work', '/about'];
 
 export const GET: APIRoute = async () => {
+  const buildDate = new Date().toISOString().slice(0, 10);
   const posts = await getPosts();
   const urls = [
-    ...[...pages, ...(posts.length ? ['/blog'] : [])].map(path => `  <url><loc>${SITE}${path}</loc></url>`),
+    ...[...pages, ...(posts.length ? ['/blog'] : [])].map(path => `  <url><loc>${SITE}${path}</loc><lastmod>${buildDate}</lastmod></url>`),
     ...posts.map(post => {
       const lastmod = (post.data.updatedDate ?? post.data.pubDate).toISOString().slice(0, 10);
       return `  <url><loc>${SITE}/blog/${post.id}</loc><lastmod>${lastmod}</lastmod></url>`;

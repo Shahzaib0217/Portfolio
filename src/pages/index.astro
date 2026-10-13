@@ -12,7 +12,7 @@ const bridge = roles.find(r => r.company === 'Bridge')!;
 const dreamdesk = roles.find(r => r.company === 'DreamDesk AI')!;
 const hasPosts = (await getPosts()).length > 0;
 
-const calendly = `if(window.Calendly){Calendly.initPopupWidget({url:'${person.calendly}?hide_gdpr_banner=1'});return false;}`;
+const calendly = 'return window.openCalendly ? openCalendly() : true';
 
 interface App {
   label: string;
@@ -66,7 +66,6 @@ const MONTHS = 'JanFebMarAprMayJunJulAugSepOctNovDec';
 const monthIndex = (when: string) => { const [m, y] = when.split(' '); return y ? Number(y) * 12 + MONTHS.indexOf(m) / 3 : Number(m) * 12; };
 const appGlyph: Record<string, GlyphName> = { Bridge: 'meet', 'DreamDesk AI': 'bell', Zehn: 'school' };
 const appWindow: Record<string, string> = { Bridge: 'bridge', 'DreamDesk AI': 'dreamdesk' };
-const displayName = (company: string) => (company === 'Foomotion' ? 'Pearson Labs (YC)' : company);
 
 const pinned: Note[] = [
   { app: 'Bridge', glyph: 'meet', when: 'now', title: '~500 people use Bridge', body: 'The workspace where teams and AI agents meet. I joined as the first engineer.', open: 'bridge' },
@@ -76,7 +75,7 @@ const pinned: Note[] = [
 
 const history: Note[] = [
   ...roles.flatMap((r): Note[] => {
-    const base = { app: displayName(r.company), glyph: appGlyph[r.company] ?? 'folder', open: appWindow[r.company] };
+    const base = { app: r.company, glyph: appGlyph[r.company] ?? 'folder', open: appWindow[r.company] };
     if (r.ladder) {
       return r.ladder.map((step, i) => ({
         ...base,
@@ -87,7 +86,9 @@ const history: Note[] = [
     }
     const when = r.period.split(' – ')[0];
     if (r.company === 'Zehn') return [{ ...base, when, title: 'Started Zehn', body: 'Side project: computing and AI programmes for schools in Pakistan.', href: 'https://zehn.school/' }];
-    return [{ ...base, when, title: `Joined ${displayName(r.company)} as ${r.role}`, body: `${r.type} · ${r.location.replace(' · ', ', ')}` }];
+    if (r.company === 'Foomotion') return [{ ...base, app: 'Foomotion', when, title: `Joined Foomotion as ${r.role}`, body: 'Built AI for Pearson Labs, a YC-funded legal AI startup.' }];
+    if (r.company === 'Freelance') return [{ ...base, app: 'Freelance', when, title: `Started freelancing as a ${r.role}`, body: 'Part-time contracts: AI product MVPs, voice agents and an ERP system.' }];
+    return [{ ...base, when, title: `Joined ${r.company} as ${r.role}`, body: `${r.type} · ${r.location.replace(' · ', ', ')}` }];
   }),
   { app: 'FAST NUCES', glyph: 'doc', when: '2024', title: 'Graduated', body: 'BS Computer Science, FAST NUCES, Lahore.' },
 ].sort((a, b) => monthIndex(b.when) - monthIndex(a.when));
@@ -142,7 +143,7 @@ const history: Note[] = [
       <p class="label mt-4 mb-1">Now</p>
       <ul class="widget-rows">
         <li><button type="button" data-open="bridge"><span><span class="font-medium">Bridge</span><span class="text-[var(--color-muted)]"> · Founding Senior Engineer</span></span><span class="row-go" aria-hidden="true">›</span></button></li>
-        <li><button type="button" data-open="dreamdesk"><span><span class="font-medium">DreamDesk AI</span><span class="text-[var(--color-muted)]"> · Lead Product Engineer</span></span><span class="row-go" aria-hidden="true">›</span></button></li>
+        <li><button type="button" data-open="dreamdesk"><span><span class="font-medium">DreamDesk AI</span><span class="text-[var(--color-muted)]"> · Lead AI Product Engineer</span></span><span class="row-go" aria-hidden="true">›</span></button></li>
         <li><a href="https://zehn.school/" target="_blank" rel="noopener noreferrer"><span><span class="font-medium">Zehn</span><span class="text-[var(--color-muted)]"> · Side project</span></span><span class="row-go" aria-hidden="true">↗</span></a></li>
       </ul>
       <button type="button" data-open="readme" class="mt-3 text-[0.85rem] font-medium text-[var(--color-signal)]">Read the full README →</button>
@@ -238,7 +239,7 @@ const history: Note[] = [
         <dd>
           <ul class="space-y-2">
             <li><span class="font-medium">Founding Senior Engineer, <button type="button" data-open="bridge" class="link">Bridge</button></span> <span class="meta">since Aug 2025 · part-time</span><br /><span class="text-[var(--color-muted)]">First engineer. ~500 users.</span></li>
-            <li><span class="font-medium">Lead Product Engineer, <button type="button" data-open="dreamdesk" class="link">DreamDesk AI</button></span> <span class="meta">since Jan 2026 · full-time</span><br /><span class="text-[var(--color-muted)]">Voice and chat agents for Second Nature hometels, live at 3 locations.</span></li>
+            <li><span class="font-medium">Lead AI Product Engineer, <button type="button" data-open="dreamdesk" class="link">DreamDesk AI</button></span> <span class="meta">since Jan 2026 · full-time</span><br /><span class="text-[var(--color-muted)]">Voice and chat agents for Second Nature hometels, live at 3 locations.</span></li>
             <li><span class="font-medium"><a href="https://zehn.school/" target="_blank" rel="noopener noreferrer" class="link">Zehn</a>, my side project</span> <span class="meta">since Sep 2026</span><br /><span class="text-[var(--color-muted)]">Computing and AI programmes for schools in Pakistan.</span></li>
           </ul>
         </dd>
@@ -297,7 +298,7 @@ const history: Note[] = [
     <Window id="dreamdesk" title="dreamdesk.md" width="36rem" x={320} y={110}>
       <p class="label">Jan 2026 – now · Remote, UK · Full-time</p>
       <h2 class="display text-4xl mt-2">DreamDesk AI</h2>
-      <p class="text-[var(--color-muted)]">Lead Product Engineer</p>
+      <p class="text-[var(--color-muted)]">Lead AI Product Engineer</p>
       <p class="mt-4 leading-relaxed">{dreamdesk.summary}</p>
       <div class="mt-5 rounded-lg border border-[var(--color-rule)] p-4">
         <div class="flex items-baseline justify-between"><p class="label">Voice response time</p><p class="label">incl. RAG + MCP</p></div>

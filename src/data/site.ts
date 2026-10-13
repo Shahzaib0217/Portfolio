@@ -48,9 +48,9 @@ export function baseGraph(): JsonLd[] {
       url: `${SITE}/`,
       image: `${SITE}/shahzaib.jpg`,
       email: `mailto:${person.email}`,
-      jobTitle: [person.title, 'Founding Senior Engineer'],
+      jobTitle: ['AI Engineer', 'Founding Senior Engineer', 'Lead AI Product Engineer'],
       description: person.summary,
-      address: { '@type': 'PostalAddress', addressCountry: 'PK' },
+      address: { '@type': 'PostalAddress', addressLocality: 'Lahore', addressCountry: 'PK' },
       nationality: { '@type': 'Country', name: 'Pakistan' },
       worksFor: [
         {
@@ -61,10 +61,13 @@ export function baseGraph(): JsonLd[] {
         {
           '@type': 'Organization',
           name: 'DreamDesk AI',
+          url: 'https://dreamdeskai.com/',
+          description: 'Hospitality AI agents for Second Nature hometels in the UK.',
           parentOrganization: {
             '@type': 'Organization',
             name: 'Second Nature',
             url: 'https://staysecondnature.com/',
+            description: 'UK hometel group, formerly room2.',
           },
         },
       ],
